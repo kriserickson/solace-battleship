@@ -19,6 +19,7 @@ export class Board {
       'units':5,
       'size':60
     }
+    console.log(this.player);
   }
 
   attached(){
