@@ -1,4 +1,12 @@
 <template>
   <require from="./css/style.css"></require>
-  <canvas ref="battleshipCanvas" width="600" height="600"></canvas>
+  <require from="./board"></require>
+  
+  <div class="dashboard-heading">SOLACE BATTLESHIP</div>
+  <div class="board-container">
+    <div class="game-board-1"><board player.one-time="Player1"></board></div>
+    <div class="game-board-2"><board player.one-time="Player2"></board></div>
+    <div class="game-board-title-1">PLAYER 1</div>
+    <div class="game-board-title-2">PLAYER 2</div>
+  </div>
 </template>

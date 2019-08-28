@@ -1,3 +1,52 @@
+@import url('https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap');
+
 body{
   background-color:black;
 }
+
+.dashboard-heading {
+  font-family: 'Press Start 2P', cursive;
+  color: #00C895;
+  font-size: 50px;
+  text-align:center;
+}
+
+.board-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  grid-template-areas: 
+  "board-1 board-2"
+  "title-1 title-2";
+  font-family: 'Press Start 2P', cursive;
+  color: #00C895;
+  font-size:15px;
+  justify-content: center;
+  text-align: center;
+
+}
+
+.game-board-1 {
+  grid-area: board-1;
+}
+
+.game-board-2 {
+  grid-area: board-2;
+}
+
+
+.game-board-title-1 {
+  grid-area: title-1;
+  
+}
+
+.game-board-title-2 {
+  grid-area: title-2;
+}
+
+
+
+
+
