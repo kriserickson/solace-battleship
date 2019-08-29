@@ -36,7 +36,6 @@ body{
   grid-area: board-2;
 }
 
-
 .game-board-title-player1 {
   grid-area: title-1;
   

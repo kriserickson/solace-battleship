@@ -1,7 +1,6 @@
-import './board-events';
+import {Move, Player, BoardState} from './board-events';
 
-class DashboardEvent {
-  board1Sate: BoardState;
-  board2State: BoardState;
+export default class DashboardEvent {
+  boards: Record<Player,BoardState>;
   move: Move;
 }

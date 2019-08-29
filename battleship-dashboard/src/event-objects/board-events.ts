@@ -1,13 +1,14 @@
-type CellState = 'hit' | 'miss' | 'empty';
-type Player = 'Player1' | 'Player2';
+export type CellState = 'hit' | 'miss' | 'empty';
+export type Player = 'Player1' | 'Player2';
 
 
-class BoardState {
+export class BoardState {
   boardState: CellState [][];
 }
 
-class Move {
+export class Move {
   player: Player;
-  move: CellState;
+  x: number;
+  y: number;
 }
 
