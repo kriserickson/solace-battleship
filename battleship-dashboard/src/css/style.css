@@ -12,20 +12,27 @@ body{
 }
 
 .board-container {
+  padding-top: 50px;
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto auto;
   grid-row-gap: 10px;
   grid-column-gap: 10px;
-  grid-template-areas: 
+  grid-template-areas:
+  "turn turn" 
   "board-1 board-2"
-  "title-1 title-2";
+  "title-1 title-2"
+  "action action";
   font-family: 'Press Start 2P', cursive;
   color: #00C895;
   font-size:15px;
   justify-content: center;
   text-align: center;
 
+}
+
+.game-board-turn {
+  grid-area: turn;
 }
 
 .game-board-player1 {
@@ -45,7 +52,22 @@ body{
   grid-area: title-2;
 }
 
+.game-board-action {
+  grid-area: action;
+  font-size: 50px;
+  text-transform: uppercase;
+}
 
 
+.hit-blinking{
+  animation:hit-blinkingText 0.8s infinite;
+}
+@keyframes hit-blinkingText{
+  0%{     color: rgb(255, 0, 0);    }
+  49%{    color: transparent; }
+  50%{    color: transparent; }
+  99%{    color:transparent;  }
+  100%{   color: rgb(255, 0, 0);    }
+}
 
 

@@ -1,4 +1,4 @@
-import { BoardState, Player, CellState, Move } from './event-objects/board-events';
+import { BoardState, Player, CellState, Move, BoardAction } from './event-objects/board-events';
 import obelisk from 'obelisk.js';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable,inject} from 'aurelia-framework';
@@ -31,6 +31,7 @@ export class Board {
       this.renderBoard(msg.boards[<Player>this.player].boardState);
       if(<Player>this.player===msg.move.player){
         this.dropCube(msg.boards[<Player>this.player].boardState,msg.move.x,msg.move.y,90,0xFF0000);
+        this.ea.publish('Action',{action: 'hit'})
       }
     });
     let canvas = this.battleshipCanvas;
@@ -71,10 +72,21 @@ export class Board {
   }
 
   renderCube(x:number,y:number,z:number,color:number){
-    let dimensionCube = new obelisk.CubeDimension(this.boardProperties.size, this.boardProperties.size, this.boardProperties.size);
-    let cubeColor = new obelisk.CubeColor().getByHorizontalColor(color);
-    let cube = new obelisk.Cube(dimensionCube, cubeColor);
-    this.pixelView.renderObject(cube, new obelisk.Point3D(x, y, z,color)); 
+    // let dimensionCube = new obelisk.CubeDimension(this.boardProperties.size, this.boardProperties.size, this.boardProperties.size);
+    // let cubeColor = new obelisk.CubeColor().getByHorizontalColor(color);
+    // let cube = new obelisk.Cube(dimensionCube, cubeColor);
+    let dimension = new obelisk.PyramidDimension(60);
+    let pyColor = new obelisk.PyramidColor().getByRightColor(obelisk.ColorPattern.YELLOW);
+    let pyramid = new obelisk.Pyramid(dimension, pyColor);
+    // this.pixelView.renderObject(cube, new obelisk.Point3D(x, y, z,color)); 
+    this.pixelView.renderObject(pyramid, new obelisk.Point3D(x,y,z));
+  }
+
+  renderSquare(x:number,y:number,z:number,color:number){
+    let brickDimension = new obelisk.BrickDimension(this.boardProperties.size, this.boardProperties.size);
+    let brickColor = new obelisk.SideColor().getByInnerColor(color);
+    let brick = new obelisk.Brick(brickDimension, brickColor);
+    this.pixelView.renderObject(brick, new obelisk.Point3D(x, y, z));
   }
 
   renderBoard(cells: CellState[][]){
@@ -83,9 +95,9 @@ export class Board {
     for(let i=0;i<this.boardProperties.units;i++){
       for(let j=0;j<this.boardProperties.units;j++){
         if(cells[i][j]==='hit'){
-          this.renderCube(i*this.boardProperties.size,j*this.boardProperties.size,0,0x00FF00);
+          this.renderSquare(i*this.boardProperties.size,j*this.boardProperties.size,0,0x00FF00);
         }else if(cells[i][j]==='miss'){
-          this.renderCube(i*this.boardProperties.size,j*this.boardProperties.size,0,0xFF0000);
+          this.renderSquare(i*this.boardProperties.size,j*this.boardProperties.size,0,0xFF0000);
         }
       }
     }
@@ -106,7 +118,6 @@ export class Board {
       requestAnimationFrame(() => this.dropCube(cellState,cubesX,cubesY,cubesZ,color));
     }else{
       cellState[cubesX][cubesY]='miss';
-      console.log(cellState);
       this.renderBoard(cellState);
     }
   }
