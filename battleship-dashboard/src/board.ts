@@ -1,13 +1,18 @@
-import { BoardState, Player, CellState, Move, BoardAction } from './event-objects/board-events';
+import {Player, CellState, Move } from './event-objects/board-events';
 import obelisk from 'obelisk.js';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable,inject} from 'aurelia-framework';
 import DashboardEvent from './event-objects/dashboard-events';
 
+/*
+* An interface which defines the board's properties defined by the number of squares per row (units) 
+* and a measure of the side of a square (size)
+*/
 interface BoardProperties {
   units: number,
   size: number
 }
+
 
 
 @inject(obelisk,EventAggregator)
@@ -18,6 +23,8 @@ export class Board {
   boardProperties : BoardProperties;
 
   constructor(private obelisk:obelisk, private ea: EventAggregator){
+    //Setting the board to have 5 squares per row with each square measuring 60 pixels
+    //Note: Be mindful of modifying these properties as you may need to modify the canvas width
     this.boardProperties = {
       'units':5,
       'size':60
@@ -27,26 +34,30 @@ export class Board {
 
 
   attached(){
-     this.ea.subscribe(DashboardEvent, msg => {
-      this.renderBoard(msg.boards[<Player>this.player].boardState);
+    //Subscribe to aurelia's event aggregator to receive 'DashboardEvents' 
+     this.ea.subscribe(DashboardEvent, (msg: DashboardEvent) => {
+      
+      //Render the board based on who this board belongs to (Player1 or Player2)
+      this.renderBoard(msg[<Player>this.player +'Board']);
+
+      //Figure out if the move for this event belongs to this boar'ds player
       if(<Player>this.player===msg.move.player){
-        this.dropCube(msg.boards[<Player>this.player].boardState,msg.move.x,msg.move.y,90,0xFF0000);
-        this.ea.publish('Action',{action: 'hit'})
+        //Kick off the missle animation for the player's board
+        this.dropMissile(msg[<Player>this.player+'Board'],msg.move.x,msg.move.y,90,0xFF0000);
+        //Publish the action from the move event to display on the dashboard
+        this.ea.publish('Action',{action: msg.move.action})
       }
     });
+
+
     let canvas = this.battleshipCanvas;
-    if(canvas){
-      let point = new obelisk.Point(300,100);
-      //the center of the screen
-      this.pixelView = new obelisk.PixelView(canvas, point);
-      // this.dropCube(0,0,90,0x008000);
-      this.makeGrid();
-    }
+    let point = new obelisk.Point(300,100);
+    //the center of the screen
+    this.pixelView = new obelisk.PixelView(canvas, point);
+    this.makeGrid();
 
     let db = new DashboardEvent();
-    db.boards=[];
     db.move=new Move();
-    let bs = new BoardState();
     let cs:CellState[][];
     cs = [];
     for(let i=0;i<6;i++){
@@ -62,26 +73,38 @@ export class Board {
       }
     }
 
-   bs.boardState = cs;
-   db.boards['Player1']=bs;
-   db.boards['Player2']=bs;
+ 
+   db.Player1Board=cs;
+   db.Player2Board=cs;
    db.move.x=0;
    db.move.y=4;
    db.move.player='Player1';
+   db.move.action='hit';
    this.ea.publish(db);
   }
 
-  renderCube(x:number,y:number,z:number,color:number){
-    // let dimensionCube = new obelisk.CubeDimension(this.boardProperties.size, this.boardProperties.size, this.boardProperties.size);
-    // let cubeColor = new obelisk.CubeColor().getByHorizontalColor(color);
-    // let cube = new obelisk.Cube(dimensionCube, cubeColor);
+
+  /**
+   * Function that renders a missile (a pyramid) on the board
+   * @param x x co-ordinate for the missile
+   * @param y y co-ordinate for the missile
+   * @param z z co-ordinate for the missile
+   * @param color color for the missile
+   */
+  renderMissile(x:number,y:number,z:number,color:number){
     let dimension = new obelisk.PyramidDimension(60);
     let pyColor = new obelisk.PyramidColor().getByRightColor(obelisk.ColorPattern.YELLOW);
     let pyramid = new obelisk.Pyramid(dimension, pyColor);
-    // this.pixelView.renderObject(cube, new obelisk.Point3D(x, y, z,color)); 
     this.pixelView.renderObject(pyramid, new obelisk.Point3D(x,y,z));
   }
 
+  /**
+   * A function that renders a colored square to indicate whether the move is a hit or a miss
+   * @param x x co-ordinate for the square
+   * @param y y co-ordiante for the square
+   * @param z z co-ordinate for the square
+   * @param color for the square
+   */
   renderSquare(x:number,y:number,z:number,color:number){
     let brickDimension = new obelisk.BrickDimension(this.boardProperties.size, this.boardProperties.size);
     let brickColor = new obelisk.SideColor().getByInnerColor(color);
@@ -89,6 +112,10 @@ export class Board {
     this.pixelView.renderObject(brick, new obelisk.Point3D(x, y, z));
   }
 
+  /**
+   * A function that renders the board with appropriate state for each of the cells
+   * @param cells CellState is a an object that consists of three states (hit, miss, or empty)
+   */
   renderBoard(cells: CellState[][]){
     this.pixelView.clear();
     this.makeGrid();
@@ -104,28 +131,31 @@ export class Board {
   }
 
 
-  dropCube(cellState:CellState[][],cubesX: number,cubesY:number,cubesZ:number,color:number){
-    // this.pixelView.clear();
-    // this.makeGrid();
-    console.log(cubesX);
+  /**
+   * Function that animates the board with the dropMissle animation
+   * @param cellState An 2 dimensional array of CellState's that contains the state of every cell in the grid
+   * @param missileX The co-ordinate of the missile drop
+   * @param missileY The y co-ordinate of the missile drop
+   * @param missileZ The z co-ordinate of the missile drop
+   * @param color The color of the missile
+   */
+  dropMissile(cellState:CellState[][],missileX: number,missileY:number,missileZ:number,color:number){
     this.renderBoard(cellState);
-
-    this.renderCube(cubesX*this.boardProperties.size,cubesY*this.boardProperties.size,cubesZ,color);
-
-    
-    if(cubesZ>-(cubesX*cubesY*10)){
-      cubesZ-=5;
-      requestAnimationFrame(() => this.dropCube(cellState,cubesX,cubesY,cubesZ,color));
+    this.renderMissile(missileX*this.boardProperties.size,missileY*this.boardProperties.size,missileZ,color);
+    if(missileZ>-(missileX*missileY*10)){
+      missileZ-=5;
+      requestAnimationFrame(() => this.dropMissile(cellState,missileX,missileY,missileZ,color));
     }else{
-      cellState[cubesX][cubesY]='miss';
+      cellState[missileX][missileY]='miss';
       this.renderBoard(cellState);
     }
   }
 
 
+  /**
+   * The makeGrid function draws the grid based on the properties setup in boardProperties
+   */
   makeGrid(){
-      // Let's build a grid...  
-    // Setup lines
     let lineColor = new obelisk.LineColor();
     let dimensionX = new obelisk.LineXDimension(this.boardProperties.units * this.boardProperties.size);
     let dimensionY = new obelisk.LineYDimension(this.boardProperties.units * this.boardProperties.size);

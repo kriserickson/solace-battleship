@@ -11,7 +11,8 @@
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.3.2",
     "obelisk.js": "^1.2.2",
-    "particles.js": "^2.0.0"
+    "particles.js": "^2.0.0",
+    "solclientjs": "^10.3.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.9",
