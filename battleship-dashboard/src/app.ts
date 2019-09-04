@@ -1,19 +1,17 @@
-import {bindable,inject} from 'aurelia-framework';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {PLATFORM} from 'aurelia-pal';
+import './css/style.css';
 
-@inject(EventAggregator)
 export class App {
-
-  @bindable action:String;
-
-  constructor(private ea: EventAggregator){
-    this.ea.subscribe('Action', msg => {
-      this.action = msg.action;;
-    });
+  router: any;
+  
+  configureRouter(config, router){
+    config.title = 'Battleship';
+    config.options.pushState = true;  // No # in URL
+    config.map([
+      { route: '/', moduleId: PLATFORM.moduleName('landing-page'), name: ''},
+      { route: '/join', moduleId: PLATFORM.moduleName('join'), name: 'join'},
+    ]);
+  
+    this.router = router;
   }
-
-  attached(){
-  }
-
-
 }

@@ -1,11 +1,19 @@
-<template>
+<!-- <template>
   <require from="./css/style.css"></require>
   <require from="./board"></require>
   <div class="dashboard-heading">SOLACE BATTLESHIP</div>
   <div class="board-container">
-   <div class="game-board-turn">Player2 Turn...</div>
-   <board player="Player1"></board>
-   <board player="Player2"></board>
-   <div class="game-board-action ${action=='hit'?'hit-blinking':''}">${action}!</div>
-</div>
+    <div class="game-board-turn">Player2 Turn...</div>
+    <board player="Player1"></board>
+    <board player="Player2"></board>
+    <div class="game-board-action ${action=='hit'?'hit-blinking':''}">${action}!</div>
+  </div>
+</template> -->
+<template>
+  <div class="main-layout__grid">
+    <div class="main-layout__header">
+      SOLACE BATTLESHIP
+    </div>
+    <router-view class="main-layout__content"></router-view>
+  </div>
 </template>
