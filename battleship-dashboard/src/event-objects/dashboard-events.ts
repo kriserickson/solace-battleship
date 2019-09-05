@@ -1,8 +1,10 @@
-import { Move, Player,  CellState } from './board-events';
+import {
+  Move,
+  KnownBoardCellState
+} from "./board-events";
 
-export default class DashboardEvent {
-  Player1Board: CellState[][];
-  Player2Board: CellState[][];
+export class ResponseEvent {
+  Player1KnownOpponentBoard: KnownBoardCellState[][];
+  Player2KnownOpponentBoard: KnownBoardCellState[][];
   move: Move;
-
 }

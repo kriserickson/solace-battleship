@@ -318,3 +318,59 @@ body{
 .padding-30px {
   padding: 30px;
 }
+
+/**
+ * Interactive board
+ */
+
+.board__container {
+  color: #000000;
+  margin-top: 20px;
+}
+
+.board__row {
+  display: flex;
+}
+
+.board__square {
+  height: 50px;
+  width: 50px;
+  background: #fff;
+  border: 1px solid #999;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2em;
+  line-height: 50px;
+  text-align: center;
+}
+
+.board__square:hover {
+  filter: brightness(80%);
+}
+
+.board__continue-button {
+  background-color: #00C895;
+  border: none;
+  color: #FFF;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1em;
+  text-decoration: none;
+  width: 250px;
+  padding: 20px;
+  margin: 20px; 
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.board__continue-label {
+  animation: blink 1.25s linear infinite;
+}
+
+.board__yourturn-label {
+  animation: blink 2s linear infinite;
+}
+

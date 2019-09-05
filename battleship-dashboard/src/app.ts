@@ -1,4 +1,4 @@
-import {PLATFORM} from 'aurelia-pal';
+import { PLATFORM } from 'aurelia-pal';
 import './css/style.css';
 
 export class App {
@@ -10,6 +10,7 @@ export class App {
     config.map([
       { route: '/', moduleId: PLATFORM.moduleName('landing-page'), name: ''},
       { route: '/join', moduleId: PLATFORM.moduleName('join'), name: 'join'},
+      { route: '/match', moduleId: PLATFORM.moduleName('match'), name: 'match'},
     ]);
   
     this.router = router;
