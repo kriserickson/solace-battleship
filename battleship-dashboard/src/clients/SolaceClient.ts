@@ -76,24 +76,26 @@ export class SolaceClient {
         let topicName: string = message.getDestination().getName();
         
         for(let sub of Array.from(this.topicSubscriptions.keys())){
+          console.log(`${sub} inner loop`);
           OUTER:
           if(sub.indexOf("*")!=-1 || sub.indexOf(">")!=-1){
             
             let subscriptionTopicSections = sub.split("/");
             let topicNameSections = topicName.split("/");
 
-            //if the stored subscriptions do not contain a > and the lengths of the subscriptions do not match, then break out
-            if(sub.indexOf(">")!=sub.length-1 && subscriptionTopicSections.length>topicNameSections.length){
+            //if the stored subscriptions do not contain a > and the lengths of the subscriptions do not match, then end the iteration
+            //A/B/C/> == A/B/C/D/E
+            if((subscriptionTopicSections.length<topicNameSections.length && sub.indexOf(">")!=sub.length-1) || subscriptionTopicSections.length>topicNameSections.length){
               return;
             }
 
-            //Do a regex match on topic replacing * with .*
+            //Do a regex match on topic replacing * with .*, if any of the sections do not match then the match fails and try the next one
             for(let i=0;i<subscriptionTopicSections.length-1;i++){
                 if(!topicNameSections[i].match(subscriptionTopicSections[i].replace("*",".*")))
                   break OUTER;
             }
 
-            //check the last topic section for >
+            //check the last topic section for > or for an exact match (if the lengths are equivalent)
             if(subscriptionTopicSections[subscriptionTopicSections.length-1]==">" || (topicNameSections.length==subscriptionTopicSections.length &&
                topicNameSections[subscriptionTopicSections.length-1].match(subscriptionTopicSections[subscriptionTopicSections.length-1].replace("*",".*")))){
               this.topicSubscriptions.get(sub).callback(message);
