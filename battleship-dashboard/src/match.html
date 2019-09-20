@@ -1,15 +1,17 @@
 <template>
+   
   <div show.bind="pageState === 'BOARD_SELECTION'"class="flex-column justify__center align__center w-100 h-100">
+      <div class="board__playerHeader">${player.name} (${player.nickname})</div><br> <br>
     <label show.bind="(allowedShips - placedShips) != 0">Place ${allowedShips - placedShips} more ships</label>
     <label class="board__continue-label" show.bind="(allowedShips - placedShips) == 0">PRESS CONTINUE!</label>
     <div class="board__container">
       <div repeat.for="i of boardSize" class="board__row">
         <div repeat.for="i of boardSize" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
-          ${player.boardState[$parent.i][i] === "empty" ? "🌊" : "🚢"}
+          ${player.boardState[$parent.i][i] === "empty" ? "🌊" : "🚢"} 
         </div>
       </div>
     </div>
-    <button class="board__continue-button" click.delegate="navigatePageState('TURN_PLAYER1')">CONTINUE</button>
+    <button class="board__continue-button" click.delegate="beginMatch()" show.bind="(allowedShips - placedShips) == 0">CONTINUE</button>
   </div>
   <div show.bind="pageState === 'TURN_PLAYER1'"class="flex-column justify__center align__center w-100 h-100">
     <label class="board__yourturn-label">YOUR TURN!</label>

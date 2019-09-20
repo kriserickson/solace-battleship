@@ -1,24 +1,27 @@
+import { Player } from './event-objects/player-events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
 import { SolaceClient } from 'clients/SolaceClient';
 
-@inject(Router, SolaceClient)
+@inject(Router, SolaceClient, Player)
 export class Join {
   // aurelia
-  router = null;
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
-  // solace
-  solaceClient: SolaceClient = null;
   // app logic
   playerNickname: string = null;
 
-  constructor(router: Router, solaceClient: SolaceClient) {
-    this.router = router;
-    this.solaceClient = solaceClient;
+  constructor(private router: Router,private solaceClient: SolaceClient, private player: Player) {
+
   }
 
   activate(params, routeConfig) {
-    this.connectToSolace();
+    this.connectToSolace().then(()=>{
+      this.solaceClient.subscribe("battleship/game/start",(msg)=>{
+        console.log(msg.getBinaryAttachment());
+        this.router.navigateToRoute("match");
+        });
+    });
+    
   }
 
   async connectToSolace() {
@@ -30,7 +33,10 @@ export class Join {
       alert("Please enter a nickname before continuing");
       return;
     }
-    let topicName = `battleship/start`;
+
+    this.player.name = 'Player2';
+    this.player.nickname=this.playerNickname;
+    let topicName = `battleship/join`;
     this.solaceClient.publish(topicName, this.playerNickname);
     this.pageState = page;   
   }

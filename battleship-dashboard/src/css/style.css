@@ -332,6 +332,12 @@ body{
   display: flex;
 }
 
+.board__playerHeader{
+  text-align: center;
+  justify-content: center;
+  width:100%;
+}
+
 .board__square {
   height: 50px;
   width: 50px;

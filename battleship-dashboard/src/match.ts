@@ -1,4 +1,5 @@
-import { inject } from "aurelia-framework";
+import { PlayerName } from './event-objects/player-events';
+import { inject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "clients/SolaceClient";
 import { Player } from "event-objects/player-events";
@@ -7,22 +8,19 @@ import {
   KnownBoardCellState
 } from "event-objects/board-events";
 
-@inject(Router, SolaceClient)
+@inject(Router, SolaceClient, Player)
 export class Match {
   // aurelia
-  router = null;
   pageState = "BOARD_SELECTION"; // BOARD_SELECTION => [ TURN_PLAYER1 || TURN_PLAYER2 ] => MATCH_ENDED
   // solace
-  solaceClient: SolaceClient = null;
   // game logic
-  player: Player;
   boardSize = 5;
   allowedShips = 5;
   placedShips = 0;
 
-  constructor(router: Router, solaceClient: SolaceClient) {
-    this.router = router;
-    this.solaceClient = solaceClient;
+  boardsSet=0;
+
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player) {
     // initialize empty boards
     let playerBoard: PrivateBoardCellState[][] = [];
     let knownOpponentBoard: KnownBoardCellState[][] = [];
@@ -34,21 +32,25 @@ export class Match {
         knownOpponentBoard[i][j] = "empty";
       }
     }
-    this.player = <Player>{
-      name: "Player1",
-      nickname: "Testing",
-      boardState: playerBoard,
-      knownOpponentBoardState: knownOpponentBoard,
-      isTurn: false
-    };
-  }
+    
+    this.player.boardState = playerBoard;
+    this.player.knownOpponentBoardState = knownOpponentBoard;
+    this.player.isTurn=false;
 
-  async connectToSolace() {
-    await this.solaceClient.connect();
+
+
+    this.solaceClient.subscribe('battleship/board/set/*',(msg)=>{
+      // console.log(msg.getBinaryAttachment());
+      let playerObj = JSON.parse(msg.getBinaryAttachment());
+      console.log(`${playerObj.player} has set the board`);
+      this.boardsSet++;
+    });
+
+    
   }
 
   activate(params, routeConfig) {
-    this.connectToSolace();
+    // this.connectToSolace();
   }
 
   boardSelectEvent(row, column) {
@@ -87,6 +89,13 @@ export class Match {
 
       this.player.knownOpponentBoardState = tmpBoard;
       return;
+    }
+  }
+
+  beginMatch(){
+    if(this.placedShips==5){
+      console.log(`battleship/board/set/${this.player.name}`);
+      this.solaceClient.publish(`battleship/board/set/${this.player.name}`,`{"player":"${this.player.name}","placedShips":"${this.allowedShips}"}`);
     }
   }
 

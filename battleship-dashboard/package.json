@@ -10,13 +10,14 @@
   "dependencies": {
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.3.2",
+    "lodash": "^4.17.15",
     "obelisk.js": "^1.2.2",
     "particles.js": "^2.0.0",
     "solclientjs": "^10.3.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.9",
-    "@types/lodash": "^4.14.117",
+    "@types/lodash": "^4.14.138",
     "@types/node": "^10.11.6",
     "@types/webpack": "^4.4.15",
     "aurelia-cli": "^1.0.2",

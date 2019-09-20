@@ -1,8 +1,9 @@
-import {Player, CellState, Move } from './event-objects/board-events';
+import { PlayerName } from './event-objects/player-events';
+import {KnownBoardCellState, Move} from './event-objects/board-events';
 import obelisk from 'obelisk.js';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable,inject} from 'aurelia-framework';
-import DashboardEvent from './event-objects/dashboard-events';
+import {ResponseEvent} from './event-objects/dashboard-events';
 
 /*
 * An interface which defines the board's properties defined by the number of squares per row (units) 
@@ -14,9 +15,8 @@ interface BoardProperties {
 }
 
 
-
 @inject(obelisk,EventAggregator)
-export class Board {
+export class DashboardBoard {
   @bindable player: String;
   battleshipCanvas;
   pixelView;
@@ -35,15 +35,15 @@ export class Board {
 
   attached(){
     //Subscribe to aurelia's event aggregator to receive 'DashboardEvents' 
-     this.ea.subscribe(DashboardEvent, (msg: DashboardEvent) => {
+     this.ea.subscribe(ResponseEvent, (msg: ResponseEvent) => {
       
       //Render the board based on who this board belongs to (Player1 or Player2)
-      this.renderBoard(msg[<Player>this.player +'Board']);
+      this.renderBoard(msg[<PlayerName>this.player +'BoardCellState']);
 
       //Figure out if the move for this event belongs to this boar'ds player
-      if(<Player>this.player===msg.move.player){
+      if(<PlayerName>this.player===msg.move.player){
         //Kick off the missle animation for the player's board
-        this.dropMissile(msg[<Player>this.player+'Board'],msg.move.x,msg.move.y,90,0xFF0000);
+        this.dropMissile(msg[<PlayerName>this.player+'BoardCellState'],msg.move.x,msg.move.y,90,0xFF0000);
         //Publish the action from the move event to display on the dashboard
         this.ea.publish('Action',{action: msg.move.action})
       }
@@ -56,9 +56,9 @@ export class Board {
     this.pixelView = new obelisk.PixelView(canvas, point);
     this.makeGrid();
 
-    let db = new DashboardEvent();
+    let db = new ResponseEvent();
     db.move=new Move();
-    let cs:CellState[][];
+    let cs:KnownBoardCellState[][];
     cs = [];
     for(let i=0;i<6;i++){
       cs[i]=[];
@@ -74,8 +74,8 @@ export class Board {
     }
 
  
-   db.Player1Board=cs;
-   db.Player2Board=cs;
+   db.Player1KnownOpponentBoard=cs;
+   db.Player2KnownOpponentBoard=cs;
    db.move.x=0;
    db.move.y=4;
    db.move.player='Player1';
@@ -116,7 +116,7 @@ export class Board {
    * A function that renders the board with appropriate state for each of the cells
    * @param cells CellState is a an object that consists of three states (hit, miss, or empty)
    */
-  renderBoard(cells: CellState[][]){
+  renderBoard(cells: KnownBoardCellState[][]){
     this.pixelView.clear();
     this.makeGrid();
     for(let i=0;i<this.boardProperties.units;i++){
@@ -139,7 +139,7 @@ export class Board {
    * @param missileZ The z co-ordinate of the missile drop
    * @param color The color of the missile
    */
-  dropMissile(cellState:CellState[][],missileX: number,missileY:number,missileZ:number,color:number){
+  dropMissile(cellState:KnownBoardCellState[][],missileX: number,missileY:number,missileZ:number,color:number){
     this.renderBoard(cellState);
     this.renderMissile(missileX*this.boardProperties.size,missileY*this.boardProperties.size,missileZ,color);
     if(missileZ>-(missileX*missileY*10)){

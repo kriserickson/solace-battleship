@@ -4,11 +4,11 @@
       <label>Scan the QR Code to join the match</label>
       <img class="margin-top-10px" src="${qrCodeSrc}" height="200px" width="200px"/>
       <button show.bind="player2Nickname == null" class="landing-page__waiting-button">Waiting...</button>
-      <button show.bind="player2Nickname != null" class="landing-page__start-button">START</button>
+      <button show.bind="player2Nickname != null" class="landing-page__start-button" click.trigger="startGame()">START</button>
     </div>
     <div show.bind="pageState === 'PLAYER_DETAILS'" class="flex-column padding-20px">
       <label>Enter a player nickname: </label>
-      <input class="margin-top-10px" type="text" value.two-way="playerNickname">
+      <input class="margin-top-10px" type="text" value.two-way="player1Nickname">
       <div class="flex justify__flex-end margin-top-10px">
         <button class="landing-page__nav-button margin-top-10px" click.delegate="navigatePageState('QR_CODE')">Next</button>
       </div>

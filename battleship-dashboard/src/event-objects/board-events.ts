@@ -7,5 +7,5 @@ export class Move {
   player: PlayerName;
   x: number;
   y: number;
-  //action: CellState;
+  action: KnownBoardCellState;
 }
