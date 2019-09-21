@@ -76,35 +76,18 @@ export class SolaceClient {
         let topicName: string = message.getDestination().getName();
         
         for(let sub of Array.from(this.topicSubscriptions.keys())){
-          console.log(`${sub} inner loop`);
-          OUTER:
-          if(sub.indexOf("*")!=-1 || sub.indexOf(">")!=-1){
-            
-            let subscriptionTopicSections = sub.split("/");
-            let topicNameSections = topicName.split("/");
+         let regexdSub = sub.replace(/\*/g,'.*');
+         if(sub.lastIndexOf('>')==sub.length-1)
+            regexdSub=regexdSub.substring(0,regexdSub.length-1).concat('.*');
+         
+         let matched=topicName.match(regexdSub);
 
-            //if the stored subscriptions do not contain a > and the lengths of the subscriptions do not match, then end the iteration
-            //A/B/C/> == A/B/C/D/E
-            if((subscriptionTopicSections.length<topicNameSections.length && sub.indexOf(">")!=sub.length-1) || subscriptionTopicSections.length>topicNameSections.length){
-              return;
-            }
-
-            //Do a regex match on topic replacing * with .*, if any of the sections do not match then the match fails and try the next one
-            for(let i=0;i<subscriptionTopicSections.length-1;i++){
-                if(!topicNameSections[i].match(subscriptionTopicSections[i].replace("*",".*")))
-                  break OUTER;
-            }
-
-            //check the last topic section for > or for an exact match (if the lengths are equivalent)
-            if(subscriptionTopicSections[subscriptionTopicSections.length-1]==">" || (topicNameSections.length==subscriptionTopicSections.length &&
-               topicNameSections[subscriptionTopicSections.length-1].match(subscriptionTopicSections[subscriptionTopicSections.length-1].replace("*",".*")))){
-              this.topicSubscriptions.get(sub).callback(message);
-            }
+          if(matched && matched.index==0){
+            this.topicSubscriptions.get(sub).callback(message);
           }
         }
 
-        if(this.topicSubscriptions.get(topicName))
-          this.topicSubscriptions.get(topicName).callback(message); 
+       
       });
       // connect the session
       try {
