@@ -43,7 +43,7 @@ export class LandingPage {
   startGame(){
     if(this.player2Nickname && this.player1Nickname){
       this.solaceClient.publish("battleship/game/start",`${this.player1Nickname} started a game with ${this.player2Nickname}`);
-      this.router.navigateToRoute("match");
+      this.router.navigateToRoute("board-set");
     }
   }
 

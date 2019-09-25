@@ -1,12 +1,26 @@
 import solace from "solclientjs";
-import { solaceBrokerConfig } from "./solace-broker-config";
+import { gameConfig } from "./game-config";
 import { noView } from "aurelia-framework";
 import * as _ from "lodash";
 
+class SubscriptionObject {
+  callback: any;
+  isSubscribed: boolean;
+
+  constructor(_callback:any,_isSubscribed:boolean){
+   this.callback=_callback;
+   this.isSubscribed=_isSubscribed;
+  }
+ 
+}
+
 @noView
 export class SolaceClient {
+
+ 
+
   session = null;
-  topicSubscriptions: Map<string, any> = new Map<string,any>();
+  topicSubscriptions: Map<string, any> = new Map<string,SubscriptionObject>();
   
   
   constructor() {
@@ -33,10 +47,13 @@ export class SolaceClient {
       try {
         this.session = solace.SolclientFactory.createSession({
             // solace.SessionProperties
-            url:      solaceBrokerConfig.hostUrl,
-            vpnName:  solaceBrokerConfig.vpn,
-            userName: solaceBrokerConfig.userName,
-            password: solaceBrokerConfig.password,
+            url:      gameConfig.solace_hostUrl,
+            vpnName:  gameConfig.solace_vpn,
+            userName: gameConfig.solace_userName,
+            password: gameConfig.solace_password,
+            publisherProperties: {
+              acknowledgeMode: solace.MessagePublisherAcknowledgeMode.PER_MESSAGE,
+          },
         });
       } catch (error) {
         this.log(error.toString());
@@ -58,6 +75,17 @@ export class SolaceClient {
             this.session = null;
           }
       });
+
+      this.session.on(solace.SessionEventCode.ACKNOWLEDGED_MESSAGE,  (sessionEvent) => {
+        this.log('Delivery of message with correlation key = ' +
+          sessionEvent.correlationKey + ' confirmed.');
+       });
+    
+       this.session.on(solace.SessionEventCode.REJECTED_MESSAGE_ERROR,  (sessionEvent) => {
+        this.log('Delivery of message with correlation key = ' + sessionEvent.correlationKey +
+            ' rejected, info: ' + sessionEvent.infoStr);
+        });
+
       this.session.on(solace.SessionEventCode.SUBSCRIPTION_ERROR, (sessionEvent) => {
           this.log('Cannot subscribe to topic: ' + sessionEvent.correlationKey);
           this.topicSubscriptions.delete(sessionEvent.correlationKey);
@@ -76,12 +104,17 @@ export class SolaceClient {
         let topicName: string = message.getDestination().getName();
         
         for(let sub of Array.from(this.topicSubscriptions.keys())){
+
+         //Replace all * in the topic filter with a .* to make it regex compatible
          let regexdSub = sub.replace(/\*/g,'.*');
+
+         //if the last character is a '>', replace it with a .* to make it regex compatible
          if(sub.lastIndexOf('>')==sub.length-1)
             regexdSub=regexdSub.substring(0,regexdSub.length-1).concat('.*');
          
          let matched=topicName.match(regexdSub);
 
+         //if the matched index starts at 0, then the topic is a match with the topic filter and proceed with callback invocation
           if(matched && matched.index==0){
             this.topicSubscriptions.get(sub).callback(message);
           }
@@ -132,7 +165,8 @@ export class SolaceClient {
       return;
     }
     this.log(`Subscribing to ${topicName}`);
-    this.topicSubscriptions.set(topicName,{callback: callback, isSubscribed: false}); // gets updated asynchronously
+    let subscriptionObject:SubscriptionObject = new SubscriptionObject(callback,false);
+    this.topicSubscriptions.set(topicName,subscriptionObject); // gets updated asynchronously
     try {
       this.session.subscribe(
         solace.SolclientFactory.createTopicDestination(topicName),
@@ -154,7 +188,8 @@ export class SolaceClient {
     let message = solace.SolclientFactory.createMessage();
     message.setDestination(solace.SolclientFactory.createTopicDestination(topic));
     message.setBinaryAttachment(payload);
-    message.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
+    message.setCorrelationKey(topic);
+    message.setDeliveryMode(solace.MessageDeliveryModeType.PERSISTENT);
     try {
         this.session.send(message);
         this.log('Message published.');

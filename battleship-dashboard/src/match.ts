@@ -7,46 +7,21 @@ import {
   PrivateBoardCellState,
   KnownBoardCellState
 } from "event-objects/board-events";
+import { GameParams } from 'event-objects/game-params';
 
-@inject(Router, SolaceClient, Player)
+
+type PAGE_STATE = "TURN_PLAYER1" | "TURN_PLAYER2";
+
+
+@inject(Router, SolaceClient, Player, GameParams)
 export class Match {
-  // aurelia
-  pageState = "BOARD_SELECTION"; // BOARD_SELECTION => [ TURN_PLAYER1 || TURN_PLAYER2 ] => MATCH_ENDED
-  // solace
-  // game logic
-  boardSize = 5;
-  allowedShips = 5;
-  placedShips = 0;
 
-  boardsSet=0;
-
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player) {
-    // initialize empty boards
-    let playerBoard: PrivateBoardCellState[][] = [];
-    let knownOpponentBoard: KnownBoardCellState[][] = [];
-    for (let i = 0; i < 6; i++) {
-      playerBoard[i] = [];
-      knownOpponentBoard[i] = [];
-      for (let j = 0; j < 6; j++) {
-        playerBoard[i][j] = "empty";
-        knownOpponentBoard[i][j] = "empty";
-      }
-    }
-    
-    this.player.boardState = playerBoard;
-    this.player.knownOpponentBoardState = knownOpponentBoard;
-    this.player.isTurn=false;
+  private pageState: PAGE_STATE = "TURN_PLAYER1";
+  private player1Score: number = 5;
+  private player2Score: number = 5;
 
 
-
-    this.solaceClient.subscribe('battleship/board/set/*',(msg)=>{
-      // console.log(msg.getBinaryAttachment());
-      let playerObj = JSON.parse(msg.getBinaryAttachment());
-      console.log(`${playerObj.player} has set the board`);
-      this.boardsSet++;
-    });
-
-    
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams) {
   }
 
   activate(params, routeConfig) {
@@ -54,27 +29,7 @@ export class Match {
   }
 
   boardSelectEvent(row, column) {
-    if (this.pageState == "BOARD_SELECTION") {
-      // toggle cell state
-      if (this.player.boardState[row][column] == "empty") {
-        if (this.placedShips >= this.allowedShips) {
-          alert("No ships remaining, remove one first!");
-          return;
-        }
-        let tmpBoard = JSON.parse(JSON.stringify(this.player.boardState)); // a lazy man's deep copy
-        tmpBoard[row][column] = "ship";
-        this.player.boardState = tmpBoard;
-        ++this.placedShips;
-        return;
-      }
-
-      let tmpBoard = JSON.parse(JSON.stringify(this.player.boardState));
-      tmpBoard[row][column] = "empty";
-      this.player.boardState = tmpBoard;
-      --this.placedShips;
-      return;
-    }
-    if (
+      if (
       (this.player.name == "Player1" && this.pageState == "TURN_PLAYER1") ||
       (this.player.name == "Player2" && this.pageState == "TURN_PLAYER2")
     ) {
@@ -82,24 +37,29 @@ export class Match {
         JSON.stringify(this.player.knownOpponentBoardState)
       ); // a lazy man's deep copy
 
+
+      
+
       // check if guess was a hit
-      this.player.boardState[row][column] == "ship"
-        ? (tmpBoard[row][column] = "hit")
-        : (tmpBoard[row][column] = "miss");
+      if(this.player.boardState[row][column] == "ship"){
+        tmpBoard[row][column] = "hit";
+        if(this.player.name=="Player1"){
+          this.player1Score--;
+        }else{
+          this.player2Score--;
+        }
+      }else{
+        tmpBoard[row][column] = "miss";
+      }
 
       this.player.knownOpponentBoardState = tmpBoard;
       return;
     }
   }
 
-  beginMatch(){
-    if(this.placedShips==5){
-      console.log(`battleship/board/set/${this.player.name}`);
-      this.solaceClient.publish(`battleship/board/set/${this.player.name}`,`{"player":"${this.player.name}","placedShips":"${this.allowedShips}"}`);
-    }
-  }
+ 
 
-  navigatePageState(page: string) {
+  navigatePageState(page: PAGE_STATE) {
     this.pageState = page;
   }
 

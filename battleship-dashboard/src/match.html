@@ -1,32 +1,30 @@
 <template>
-   
-  <div show.bind="pageState === 'BOARD_SELECTION'"class="flex-column justify__center align__center w-100 h-100">
-      <div class="board__playerHeader">${player.name} (${player.nickname})</div><br> <br>
-    <label show.bind="(allowedShips - placedShips) != 0">Place ${allowedShips - placedShips} more ships</label>
-    <label class="board__continue-label" show.bind="(allowedShips - placedShips) == 0">PRESS CONTINUE!</label>
-    <div class="board__container">
-      <div repeat.for="i of boardSize" class="board__row">
-        <div repeat.for="i of boardSize" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
-          ${player.boardState[$parent.i][i] === "empty" ? "🌊" : "🚢"} 
+  <require from="./scoreboard"></require>
+  <div show.bind="pageState === 'TURN_PLAYER1' || pageState ==='TURN_PLAYER2'" class="flex-column align__center w-100 h-100">
+    <div class="match-board__score-card">
+      <div class="match-board__score-card__title">REMAINING SHIPS</div>
+      <div class="match-board__score-card__heading-p1">Player1</div>
+      <div class="match-board__score-card__heading-p2">Player2</div>
+      <div class="match-board__score-card__score-p1"><scoreboard score.bind="player1Score"></scoreboard></div>
+      <div class="match-board__score-card__score-p2"><scoreboard score.bind="player2Score"></scoreboard></div>
+    </div>
+    <div class="match-board__board justify_center">
+
+    <label class="match-board__yourturn-label">
+      <span show.bind="(player.name=='Player1' && pageState=='TURN_PLAYER1') || (player.name=='Player2' && pageState=='TURN_PLAYER2')">YOUR</span>
+      <span show.bind="player.name=='Player2' && pageState=='TURN_PLAYER1'">Player1's</span> 
+      <span show.bind="player.name=='Player1' && pageState=='TURN_PLAYER2'">Player2's</span>
+      TURN!</label>
+     
+        <div class="board__container">
+        <div class="board">
+            <div repeat.for="i of gameParams.gameboardDimensions" class="board__row">
+              <div repeat.for="i of gameParams.gameboardDimensions" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
+                ${player.knownOpponentBoardState[$parent.i][i] === "empty" ? "?" : (player.knownOpponentBoardState[$parent.i][i] === "miss") ? "🌊" : "🎯"}
+              </div>
+            </div>
+            </div>
         </div>
       </div>
-    </div>
-    <button class="board__continue-button" click.delegate="beginMatch()" show.bind="(allowedShips - placedShips) == 0">CONTINUE</button>
-  </div>
-  <div show.bind="pageState === 'TURN_PLAYER1'"class="flex-column justify__center align__center w-100 h-100">
-    <label class="board__yourturn-label">YOUR TURN!</label>
-    <div class="board__container">
-      <div repeat.for="i of boardSize" class="board__row">
-        <div repeat.for="i of boardSize" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
-          ${player.knownOpponentBoardState[$parent.i][i] === "empty" ? "?" : (player.knownOpponentBoardState[$parent.i][i] === "miss") ? "🌊" : "🎯"}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div show.bind="pageState === 'TURN_PLAYER2'"class="flex-column justify__center align__center w-100 h-100">
-    
-  </div>
-  <div show.bind="pageState === 'MATCH_ENDED'"class="flex-column justify__center align__center w-100 h-100">
-    
   </div>
 </template>

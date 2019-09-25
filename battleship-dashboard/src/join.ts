@@ -18,7 +18,7 @@ export class Join {
     this.connectToSolace().then(()=>{
       this.solaceClient.subscribe("battleship/game/start",(msg)=>{
         console.log(msg.getBinaryAttachment());
-        this.router.navigateToRoute("match");
+        this.router.navigateToRoute("board-set");
         });
     });
     
