@@ -13,6 +13,7 @@ export class App {
     gameParams.allowedShips = gameConfig.allowed_ships;
     gameParams.gameboardDimensions = gameConfig.gameboard_dimensions;
     gameParams.gamecellPixelSize = gameConfig.gamecell_pixelSize;
+    
   }
   
   configureRouter(config, router){
@@ -23,8 +24,16 @@ export class App {
       { route: '/join', moduleId: PLATFORM.moduleName('join'), name: 'join'},
       { route: '/board-set', moduleId: PLATFORM.moduleName('board-set'), name: 'board-set'},
       { route: '/match', moduleId: PLATFORM.moduleName('match'), name: 'match'},
+      { route: '/game-over/:msg', moduleId: PLATFORM.moduleName('game-over'), name: 'game-over'}
     ]);
   
     this.router = router;
+  }
+
+  attached(){
+    let script = document.createElement('script');
+    script.type="text/javascript";
+    script.innerHTML='particlesJS.load("particles-js", "particles.json", null);';
+    document.querySelector('body').appendChild(script);
   }
 }

@@ -8,7 +8,6 @@ export class Scoreboard {
   private score: number;
 
   constructor(private gameparams: GameParams){
-
   }
 
   

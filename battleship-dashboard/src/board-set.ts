@@ -1,4 +1,3 @@
-import { PlayerName } from './event-objects/player-events';
 import { inject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "clients/SolaceClient";
@@ -48,7 +47,9 @@ export class BoardSet {
   }
 
   
-  boardSelectEvent(row, column) {
+  boardSelectEvent(row: number, column: number) {
+
+    if(!this.donePlacing){
       // toggle cell state
       if (this.player.boardState[row][column] == "empty") {
         if (this.placedShips >= this.gameParams.allowedShips) {
@@ -67,6 +68,7 @@ export class BoardSet {
       this.player.boardState = tmpBoard;
       --this.placedShips;
       return;
+    }
     }
 
     beginMatch(){
