@@ -1,4 +1,4 @@
-import { gameConfig } from 'clients/game-config';
+import { gameConfig } from 'config/game-config';
 import { PLATFORM } from 'aurelia-pal';
 import './css/style.css';
 import { inject } from 'aurelia-framework';
@@ -12,8 +12,6 @@ export class App {
     //Initializing the game params
     gameParams.allowedShips = gameConfig.allowed_ships;
     gameParams.gameboardDimensions = gameConfig.gameboard_dimensions;
-    gameParams.gamecellPixelSize = gameConfig.gamecell_pixelSize;
-    
   }
   
   configureRouter(config, router){

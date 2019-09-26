@@ -1,6 +1,13 @@
+
+/**
+ * Class that represents the various parameters for a game
+ * allowedShips: The number of ships allowed
+ * gameboardDimensions: The number of rows and columns for the gameboard
+ * 
+ */
 export class GameParams {
 
-  constructor(private  _allowedShips: number, private  _gameboardDimensions: number, private  _gamecellPixelSize: number){
+  constructor(private  _allowedShips: number, private  _gameboardDimensions: number){
   }
 
   get allowedShips(): number{
@@ -10,20 +17,12 @@ export class GameParams {
   get gameboardDimensions(): number {
     return this._gameboardDimensions;
   }
-
-  get gamecellPixelSize(): number {
-    return this._gamecellPixelSize;
-  }
-
+  
   set allowedShips(allowedShips: number)  {
     this._allowedShips = allowedShips;
   }
 
   set gameboardDimensions(gameboardDimensions: number){
     this._gameboardDimensions = gameboardDimensions;
-  }
-
-  set gamecellPixelSize(gamecellPixelSize: number){
-    this._gamecellPixelSize = gamecellPixelSize;
   }
 }

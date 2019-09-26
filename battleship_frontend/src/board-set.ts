@@ -1,6 +1,6 @@
 import { inject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { SolaceClient } from "clients/SolaceClient";
+import { SolaceClient } from "config/SolaceClient";
 import { Player } from "event-objects/player-events";
 import {
   PrivateBoardCellState,
