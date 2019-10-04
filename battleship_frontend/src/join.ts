@@ -1,7 +1,7 @@
 import { Player } from './event-objects/player-events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
-import { SolaceClient } from 'clients/SolaceClient';
+import { SolaceClient } from 'config/SolaceClient';
 
 @inject(Router, SolaceClient, Player)
 export class Join {
@@ -33,6 +33,10 @@ export class Join {
       alert("Please enter a nickname before continuing");
       return;
     }
+
+    /*
+      Turn this into request/reply to the dashboard
+    */
 
     this.player.name = 'Player2';
     this.player.nickname=this.playerNickname;

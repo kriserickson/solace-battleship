@@ -5,5 +5,5 @@ import {gameConfig} from 'config/game-config';
 
 export function configure(config: FrameworkConfiguration) {
   //Load the SolaceClient connection library on startup
-  config.globalResources([PLATFORM.moduleName('../clients/SolaceClient')]);
+  config.globalResources([PLATFORM.moduleName('../config/SolaceClient')]);
 }

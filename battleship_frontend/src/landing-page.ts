@@ -1,62 +1,53 @@
-import { Player } from './event-objects/player-events';
+import { Player, PlayerName } from './event-objects/player-events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
-import { SolaceClient } from 'clients/SolaceClient';
+import { SolaceClient } from 'config/SolaceClient';
+
+class PlayerJoinedMessage{
+  playerName: PlayerName;
+  playerNickname: string;
+}
+
 
 @inject(Router, SolaceClient, Player)
 export class LandingPage {
-  pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => QR_CODE
-  // solace
-  // app logic
-  qrCodeSrc = null;
-  player1Nickname = null;
-  player2Nickname = null;
+  player1QR: string;
+  player2QR: string;
+  player1Joined: boolean = false;
+  player2Joined: boolean = false;
 
   constructor(private router: Router, private solaceClient: SolaceClient, private player: Player) {
+    let player1JoinURL=encodeURI(`http://${location.host}/join/player1`);
+    let player2JoinURL=encodeURI(`http://${location.host}/join/player2`);
+
+    this.player1QR = `https://api.qrserver.com/v1/create-qr-code/?data=${player1JoinURL}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333` 
+    this.player2QR = `https://api.qrserver.com/v1/create-qr-code/?data=${player2JoinURL}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333` 
   }
 
   activate(params, routeConfig) {
     // solace logic
     this.connectToSolace().then(()=>{
-      this.solaceClient.subscribe("battleship/join", (msg) => {
+      this.solaceClient.subscribe("battleship/join/*", (msg) => {
         if(msg.getBinaryAttachment()) {
-          let player2Nickname = msg.getBinaryAttachment();
-          console.log(`Player 2 joined the game using nickname "${player2Nickname}"!`);
-          this.player2Nickname = player2Nickname;
+          let playerJoinedMessage: PlayerJoinedMessage = JSON.parse(msg.getBinaryAttachment());
+          if(playerJoinedMessage.playerName=="Player1"){
+            this.player1Joined=true;
+          }else{
+            this.player2Joined=true;
+          }
         }
       })
     }
     );
-   
-    // form url to embed in QR code 
-    let url = `localhost:12345/join`;
-    // embed url in QR code
-    let src = `https://api.qrserver.com/v1/create-qr-code/?data=${url}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333>` 
-    this.qrCodeSrc = src;
   }
 
   async connectToSolace() {
     await this.solaceClient.connect();
-    
   }
 
   startGame(){
-    if(this.player2Nickname && this.player1Nickname){
-      this.solaceClient.publish("battleship/game/start",`${this.player1Nickname} started a game with ${this.player2Nickname}`);
-      this.router.navigateToRoute("board-set");
+    if(this.player1Joined && this.player2Joined){
+      this.solaceClient.publish("battleship/game/start",`Game started!`);
     }
   }
-
-  navigatePageState(page: string) {
-    if(page === "PLAYER_DETAILS" && !this.player1Nickname) {
-      alert("Please enter a nickname before continuing!");
-      return;
-    }
-
-    this.player.name = 'Player1';
-    this.player.nickname = this.player1Nickname;
-    
-    this.pageState = page;   
-  }
- 
 }

@@ -28,7 +28,6 @@ export class BoardSet {
       }
     }
 
-    console.log(this.gameParams);
 
     this.player.boardState = playerBoard;
     this.player.knownOpponentBoardState = knownOpponentBoard;
@@ -46,7 +45,11 @@ export class BoardSet {
 
   }
 
-  
+  /**
+   * Set the state of the player's board
+   * @param row 
+   * @param column 
+   */
   boardSelectEvent(row: number, column: number) {
 
     if(!this.donePlacing){

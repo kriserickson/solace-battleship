@@ -29,6 +29,7 @@ export class App {
   }
 
   attached(){
+    //Load the particlesJS library
     let script = document.createElement('script');
     script.type="text/javascript";
     script.innerHTML='particlesJS.load("particles-js", "particles.json", null);';
