@@ -17,3 +17,13 @@ export class Player {
   knownOpponentBoardState: KnownBoardCellState[][];
   isTurn: boolean;
 }
+
+export class PlayerJoined{
+  playerName: PlayerName;
+  playerNickname: string;
+}
+
+export class GameStart{
+  player1: PlayerJoined;
+  player2: PlayerJoined;
+}

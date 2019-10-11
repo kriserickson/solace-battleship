@@ -564,6 +564,7 @@ html {
 .lose-blinking{
   animation:lose-blinkingText 0.5s infinite;
 }
+
 @keyframes lose-blinkingText{
   0%{     color: red;    }
   49%{    color: transparent; }
@@ -572,3 +573,47 @@ html {
   100%{   color: red;    }
 }
 
+
+.join-screen {
+  display: grid;
+  grid-template-columns: 
+  "auto auto";
+  grid-template-rows:
+  "auto auto";
+  grid-row-gap: 50px;
+  grid-column-gap: 50px;
+  grid-template-areas:
+  "player1-title player2-title"
+  "player1-qr player2-qr"
+  "player1-wait player2-wait";
+  justify-content: center;
+  text-align: center;
+  margin-top:100px;
+}
+
+.join-screen__Player1-title {
+  grid-area: player1-title;
+}
+
+.join-screen__Player2-title {
+  grid-area: player2-title;
+}
+
+
+.join-screen__Player1-qr {
+  grid-area: player1-qr;
+}
+
+.join-screen__Player2-qr {
+  grid-area: player2-qr;
+}
+
+.join-screen__Player1-wait {
+  grid-area: player1-wait;
+  padding-top: 25px;
+}
+
+.join-screen__Player2-wait {
+  grid-area: player2-wait;
+  padding-top: 25px;
+}

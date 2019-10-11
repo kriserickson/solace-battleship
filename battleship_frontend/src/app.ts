@@ -19,7 +19,7 @@ export class App {
     config.options.pushState = true;  // No # in URL
     config.map([
       { route: '/', moduleId: PLATFORM.moduleName('landing-page'), name: ''},
-      { route: '/join', moduleId: PLATFORM.moduleName('join'), name: 'join'},
+      { route: '/join/:player', moduleId: PLATFORM.moduleName('join'), name: 'join'},
       { route: '/board-set', moduleId: PLATFORM.moduleName('board-set'), name: 'board-set'},
       { route: '/match', moduleId: PLATFORM.moduleName('match'), name: 'match'},
       { route: '/game-over/:msg', moduleId: PLATFORM.moduleName('game-over'), name: 'game-over'}

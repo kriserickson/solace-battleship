@@ -1,11 +1,10 @@
 <template>
+  <require from="./player-qr"></require>
   <div class="landing-page__container">
-      <label>Scan the QR Code to join the match</label>
-      <img class="margin-top-10px" src="${player1QR}" height="200px" width="200px"/>
-      <button show.bind="player2Nickname == null" class="landing-page__waiting-button">Waiting for Player1...</button>
-      
-      <img class="margin-top-10px" src="${player2QR}" height="200px" width="200px"/>
-      <button show.bind="player2Nickname == null" class="landing-page__waiting-button">Waiting for Player2...</button>
-      
+      <label>Players scan the QR Code to join the match</label>
+    <div class="join-screen">
+      <player-qr player="Player1" player-joined.bind="player1Joined"></player-qr>
+      <player-qr player="Player2" player-joined.bind="player2Joined"></player-qr>
+    </div>
   </div>
 </template>

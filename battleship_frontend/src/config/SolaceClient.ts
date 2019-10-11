@@ -49,11 +49,13 @@ export class SolaceClient {
     console.log(timestamp + line);
   }
 
+
   /**
    * Asynchronous function that connects to the Solace Broker and returns a promise.
    */
   async connect() {
     return new Promise((resolve, reject) => {
+
       if (this.session !== null) {
         this.log('Already connected and ready to subscribe.');
         reject();
@@ -177,6 +179,20 @@ export class SolaceClient {
     });
   } 
   
+  disconnect() {
+    this.log('Disconnecting from Solace message router...');
+    if (this.session !== null) {
+        try {
+            this.session.disconnect();
+        } catch (error) {
+            this.log(error.toString());
+        }
+    } else {
+        this.log('Not connected to Solace message router.');
+    }
+};
+
+
   /**
    * Function that sends a request message to the message broker and waits for a reply
    * @param topicName Topic string of the request

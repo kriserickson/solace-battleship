@@ -1,40 +1,38 @@
-import { Player, PlayerName } from './event-objects/player-events';
+import { PlayerJoined, GameStart } from './event-objects/player-events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
 import { SolaceClient } from 'config/SolaceClient';
 
-class PlayerJoinedMessage{
-  playerName: PlayerName;
-  playerNickname: string;
-}
 
 
-@inject(Router, SolaceClient, Player)
+@inject(Router, SolaceClient)
 export class LandingPage {
-  player1QR: string;
-  player2QR: string;
+
   player1Joined: boolean = false;
   player2Joined: boolean = false;
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player) {
-    let player1JoinURL=encodeURI(`http://${location.host}/join/player1`);
-    let player2JoinURL=encodeURI(`http://${location.host}/join/player2`);
+  gameStart: GameStart;
 
-    this.player1QR = `https://api.qrserver.com/v1/create-qr-code/?data=${player1JoinURL}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333` 
-    this.player2QR = `https://api.qrserver.com/v1/create-qr-code/?data=${player2JoinURL}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333` 
+  constructor(private router: Router, private solaceClient: SolaceClient) {
+    this.gameStart = new GameStart();
+  
   }
 
   activate(params, routeConfig) {
     // solace logic
     this.connectToSolace().then(()=>{
       this.solaceClient.subscribe("battleship/join/*", (msg) => {
+        console.log(msg.getBinaryAttachment());
         if(msg.getBinaryAttachment()) {
-          let playerJoinedMessage: PlayerJoinedMessage = JSON.parse(msg.getBinaryAttachment());
-          if(playerJoinedMessage.playerName=="Player1"){
+          let playerJoined: PlayerJoined = JSON.parse(msg.getBinaryAttachment());
+          if(playerJoined.playerName=="Player1"){
             this.player1Joined=true;
+            this.gameStart.player1 = playerJoined;
           }else{
             this.player2Joined=true;
+            this.gameStart.player2 = playerJoined;
           }
+          this.startGame();
         }
       })
     }
@@ -47,7 +45,8 @@ export class LandingPage {
 
   startGame(){
     if(this.player1Joined && this.player2Joined){
-      this.solaceClient.publish("battleship/game/start",`Game started!`);
+      this.solaceClient.publish("battleship/game/start",JSON.stringify(this.gameStart));
+      this.solaceClient.disconnect()
     }
   }
 }
