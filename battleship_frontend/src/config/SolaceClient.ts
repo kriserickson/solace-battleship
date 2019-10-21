@@ -1,6 +1,7 @@
 import solace from "solclientjs";
 import { gameConfig } from "./game-config";
 import { noView } from "aurelia-framework";
+import { request } from "http";
 
 /**
  * The SubscriptionObject represents a combination of the callback function and
@@ -29,8 +30,8 @@ export class SolaceClient {
   session = null;
 
   //Map that holds the topic subscription string and the associated callback function, subscription state
-  topicSubscriptions: Map<string, any> = new Map<string,SubscriptionObject>();
-  
+  topicSubscriptions: Map<string, SubscriptionObject> = new Map<string,SubscriptionObject>();
+
   constructor() {
     //Initializing the solace client library
     let factoryProps = new solace.SolclientFactoryProperties();
@@ -164,11 +165,10 @@ export class SolaceClient {
                 return;
             }
             //Proceed with the message callback for the topic subscription
-            this.topicSubscriptions.get(sub).callback(message);
+            if(this.topicSubscriptions.get(sub).isSubscribed)
+              this.topicSubscriptions.get(sub).callback(message);
           }
         }
-
-       
       });
       // connect the session
       try {
@@ -194,36 +194,92 @@ export class SolaceClient {
 
 
   /**
-   * Function that sends a request message to the message broker and waits for a reply
-   * @param topicName Topic string of the request
-   * @param payload Payload of the request
+   * Function that sends a request and waits for a reply for 5 seconds
+   * @param topicName The name of the topic to send the requestMessage on
+   * @param payload The payload of the request message
+   * @param replyTopic The topic to send the reply on
    */
-  async sendRequest(topicName: string, payload: string){
+  async sendRequest(topicName: string, payload: string, replyTopic: string){
     return new Promise((resolve,reject)=>{
-
+    
       let request = solace.SolclientFactory.createMessage();
       request.setDestination(solace.SolclientFactory.createTopic(topicName));
-      request.setSdtContainer(solace.SDTField.create(solace.SDTFieldType.STRING, payload));
+      request.setBinaryAttachment(payload);
       request.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
+      request.setReplyTo(solace.SolclientFactory.createTopic(replyTopic));
+      request.setCorrelationId(replyTopic);  
 
-      try {
-        this.session.sendRequest(
-          request,
-          5000,
-          (session,message)=>{
-            resolve(message);
-          },
-          (session,event)=>{
-            reject(event)
-          },
-          null
-        );
-      }catch(error){
-        this.log(error.toString());
-      }
+      this.subscribeReply(replyTopic,(msg)=>{
+        if(timeoutRef !=null ){
+          clearTimeout(timeoutRef);
+        }else{
+          this.log(`[WARNING] Request on ${topicName} already timed out.`);
+        }
+        this.unsubscribeReply(replyTopic);
+        resolve(msg);
+      });
+
+      this.session.send(request);
+
+      let timeoutRef = setTimeout(()=>{
+        let requestFailedMessage = `Request on ${topicName} timed out on the reply topic ${replyTopic}`;
+        this.log(`[WARNING] ${requestFailedMessage}`);
+        this.unsubscribeReply(replyTopic);
+        reject(requestFailedMessage);
+      },5000);
+
+     
+
     });
-
   }
+
+  subscribeReply(topic: string, callback: any){
+    if(this.topicSubscriptions.get(topic)){
+      this.topicSubscriptions.get(topic).callback=callback;
+      this.topicSubscriptions.get(topic).isSubscribed=true;
+    }
+  }
+
+  unsubscribeReply(topic: string){
+    if(this.topicSubscriptions.get(topic)){
+      this.topicSubscriptions.get(topic).callback=null;
+      this.topicSubscriptions.get(topic).isSubscribed=false;
+    }
+  }
+
+  /**
+   * A function to send a reply to
+   * @param requestMessage The message that came in from the request
+   * @param replyString The payload of the message for the reply
+   */
+  sendReply(requestMessage, replyString){
+    if(!this.session){
+      this.log("[WARNING] Cannot subscribe because not connected to Solace message router!");
+      return;
+    }
+
+    let reply = solace.SolclientFactory.createMessage();
+    reply.setBinaryAttachment(replyString);
+    reply.setDestination(requestMessage.getReplyTo());
+
+    this.session.send(reply);
+    this.log(`Replied to a request message on ${requestMessage.getReplyTo().getName()}`);
+  }
+
+  unsubscribe(topicName: string){
+    if(!this.session){
+      this.log("[WARNING] Cannot subscribe because not connected to Solace message router!")
+      return;
+    }
+
+    if(!this.topicSubscriptions.get(topicName)){
+      this.log(`[WARNING] Subscription ${topicName} does not exist - Cannot unsubscribe`);
+      return;
+    }
+    
+    this.session.unsubscribe(solace.SolclientFactory.createTopicDestination(topicName),true);
+  }
+
 
   /**
    * Function that subscribes to the topic

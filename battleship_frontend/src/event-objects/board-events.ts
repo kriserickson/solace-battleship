@@ -7,12 +7,11 @@ export type PrivateBoardCellState = 'ship' | 'empty';
 export type KnownBoardCellState = 'hit' | 'miss' | 'empty';
 
 /**
- * Object that represents a players move
+ * Object that represents a players move response
  * Author: Thomas Kunnumpurath, Andrew Roberts
  */
 export class Move {
   player: PlayerName;
   x: number;
   y: number;
-  action: KnownBoardCellState;
 }

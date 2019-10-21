@@ -6,7 +6,7 @@
       <div class="board__container">
         <div repeat.for="i of gameParams.gameboardDimensions" class="board__row">
           <div repeat.for="i of gameParams.gameboardDimensions" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
-            ${player.boardState[$parent.i][i] === "empty" ? "🌊" : "🚢"} 
+            ${player.internalBoardState[$parent.i][i] === "empty" ? "🌊" : "🚢"} 
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <template>
   <require from="./scoreboard"></require>
-  <div show.bind="pageState === 'TURN_PLAYER1' || pageState ==='TURN_PLAYER2'" class="flex-column align__center w-100 h-100">
+  <div show.bind="pageState === 'Player1' || pageState ==='Player2'" class="flex-column align__center w-100 h-100">
     <div class="match-board__score-card">
       <div class="match-board__score-card__title">REMAINING SHIPS</div>
       <div class="match-board__score-card__heading-p1">Player1</div>
@@ -9,18 +9,13 @@
       <div class="match-board__score-card__score-p2"><scoreboard score.bind="scoreMap['Player2']"></scoreboard></div>
     </div>
     <div class="match-board__board justify_center">
-
     <label class="match-board__yourturn-label">
-      <span show.bind="(player.name=='Player1' && pageState=='TURN_PLAYER1') || (player.name=='Player2' && pageState=='TURN_PLAYER2')">YOUR</span>
-      <span show.bind="player.name=='Player2' && pageState=='TURN_PLAYER1'">Player1's</span> 
-      <span show.bind="player.name=='Player1' && pageState=='TURN_PLAYER2'">Player2's</span>
-      TURN!</label>
-     
+      <span>${turnMessage}</span>
         <div class="board__container">
         <div class="board">
             <div repeat.for="i of gameParams.gameboardDimensions" class="board__row">
               <div repeat.for="i of gameParams.gameboardDimensions" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
-                ${player.knownOpponentBoardState[$parent.i][i] === "empty" ? "?" : (player.knownOpponentBoardState[$parent.i][i] === "miss") ? "🌊" : "🎯"}
+                ${enemyBoard[$parent.i][i] === "empty" ? "?" : (enemyBoard[$parent.i][i] === "miss") ? "🌊" : "🎯"}
               </div>
             </div>
             </div>
