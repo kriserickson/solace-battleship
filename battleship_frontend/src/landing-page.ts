@@ -1,13 +1,13 @@
-import { PlayerJoined, GameStart } from './event-objects/player-events';
+import { PlayerJoined, GameStart, TopicHelper } from './common/events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
-import { SolaceClient } from 'config/SolaceClient';
+import { SolaceClient } from 'common/solace-client';
 
 
 /**
  * Class that represents a landing page
  */
-@inject(Router, SolaceClient)
+@inject(Router, SolaceClient, TopicHelper)
 export class LandingPage {
 
   player1Joined: boolean = false;
@@ -15,7 +15,7 @@ export class LandingPage {
 
   gameStart: GameStart;
 
-  constructor(private router: Router, private solaceClient: SolaceClient) {
+  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper) {
     this.gameStart = new GameStart();
   
   }
@@ -29,7 +29,7 @@ export class LandingPage {
     // solace logic
     this.connectToSolace().then(()=>{
       //Listener for join events
-      this.solaceClient.subscribe("battleship/join/*", (msg) => {
+      this.solaceClient.subscribe(`${this.topicHelper.prefix}/JOIN/*`, (msg) => {
         if(msg.getBinaryAttachment()) {
           let playerJoined: PlayerJoined = JSON.parse(msg.getBinaryAttachment());
           if(playerJoined.playerName=="Player1"){
@@ -55,8 +55,12 @@ export class LandingPage {
    */
   startGame(){
     if(this.player1Joined && this.player2Joined){
-      this.solaceClient.publish("battleship/game/start",JSON.stringify(this.gameStart));
+      this.solaceClient.publish(`${this.topicHelper.prefix}/GAME/START`,JSON.stringify(this.gameStart));
       this.solaceClient.disconnect()
     }
+  }
+
+  detached(){
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN/*`);
   }
 }

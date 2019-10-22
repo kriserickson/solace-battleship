@@ -1,21 +1,25 @@
-import { gameConfig } from 'config/game-config';
+import { TopicHelper } from './common/events';
+import { gameConfig } from 'common/game-config';
 import { PLATFORM } from 'aurelia-pal';
 import { inject } from 'aurelia-framework';
-import { GameParams } from 'event-objects/game-params';
+import { GameParams } from 'common/game-params';
 import './css/style.css';
 
 /**
  * Aurelia Router Object - this object sets the paths for the various pages in the app. 
  * @author Thomas Kunnumpurath, Andrew Roberts
  */
-@inject(GameParams)
+@inject(GameParams, TopicHelper)
 export class App {
   router: any;
 
-  constructor(gameParams: GameParams){
+  constructor(gameParams: GameParams, topicHelper: TopicHelper){
     //Initializing the game params
     gameParams.allowedShips = gameConfig.allowed_ships;
     gameParams.gameboardDimensions = gameConfig.gameboard_dimensions;
+    //Initializing the TopicPrefix with
+    topicHelper.prefix = 'SOLACE/BATTLESHIP';
+
   }
   
   configureRouter(config, router){

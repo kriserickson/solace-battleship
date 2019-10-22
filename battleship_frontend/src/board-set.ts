@@ -1,19 +1,20 @@
 import { inject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { SolaceClient } from "config/SolaceClient";
-import { Player } from "event-objects/player-events";
+import { SolaceClient } from "common/solace-client";
 import {
+  Player,
   PrivateBoardCellState,
-  KnownBoardCellState
-} from "event-objects/board-events";
-import { GameParams } from 'event-objects/game-params';
+  KnownBoardCellState,
+  TopicHelper
+} from "common/events";
+import { GameParams } from 'common/game-params';
 
 
 /**
  * Responsible for setting the board
  * @author Thomas Kunnumpurath, Andrew Roberts
  */
-@inject(Router, SolaceClient, Player, GameParams)
+@inject(Router, SolaceClient, Player, GameParams, TopicHelper)
 export class BoardSet {
 
   //State for the board
@@ -21,11 +22,8 @@ export class BoardSet {
   private placedShips: number = 0;
   private donePlacing: boolean = false;
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams) {
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper) {
     
-     //Warm up the subscription to the MOVE-REPLIES
-     this.solaceClient.subscribe(`SOLACE/BATTLESHIP/${this.player.name}/MOVE-REPLY`,(msg)=>{console.log(msg.getBinaryAttachment)})
-   
     // initialize empty boards
     let playerBoard: PrivateBoardCellState[][] = [];
     let knownOpponentBoard: KnownBoardCellState[][] = [];
@@ -44,7 +42,7 @@ export class BoardSet {
     this.player.isTurn=false;
 
     //Subscribe to the board set event
-    this.solaceClient.subscribe('battleship/board/set/*',(msg)=>{
+    this.solaceClient.subscribe(this.topicHelper.prefix + '/BOARD/SET/*',(msg)=>{
     let playerObj = JSON.parse(msg.getBinaryAttachment());
     console.log(`${playerObj.player} has set the board`);
     this.boardsSet++;
@@ -91,9 +89,12 @@ export class BoardSet {
      */
     beginMatch(){
       if(this.placedShips==5){
-        console.log(`battleship/board/set/${this.player.name}`);
-        this.solaceClient.publish(`battleship/board/set/${this.player.name}`,`{"player":"${this.player.name}","placedShips":"${this.allowedShips}"}`);
+        this.solaceClient.publish(`${this.topicHelper.prefix}/BOARD/SET/${this.player.name}`,`{"player":"${this.player.name}","placedShips":"${this.placedShips}"}`);
         this.donePlacing=true;
       }
+    }
+
+    detached(){
+      this.solaceClient.unsubscribe(this.topicHelper.prefix + '/BOARD/SET/*');
     }
 }

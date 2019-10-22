@@ -1,19 +1,19 @@
-import { Player, PlayerJoined } from './event-objects/player-events';
+import { Player, PlayerJoined, TopicHelper } from './common/events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
-import { SolaceClient } from 'config/SolaceClient';
+import { SolaceClient } from 'common/solace-client';
 
 /**
  * Class that represents the Join screen for the player
  * @author Thomas Kunnumpurath
  */
-@inject(Router, SolaceClient, Player)
+@inject(Router, SolaceClient, Player, TopicHelper)
 export class Join {
   
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
   playerNickname: string = null;
 
-  constructor(private router: Router,private solaceClient: SolaceClient, private player: Player) {
+  constructor(private router: Router,private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper) {
   }
 
   /**
@@ -24,11 +24,12 @@ export class Join {
   activate(params, routeConfig) {
     //Connect to the message broker and listen for the game start event
     this.connectToSolace().then(()=>{
-      this.solaceClient.subscribe("battleship/game/start",(msg)=>{
+      this.solaceClient.subscribe(`${this.topicHelper.prefix}/GAME/START`,(msg)=>{
         console.log("Starting game...");
         console.log(msg.getBinaryAttachment());
         this.router.navigateToRoute("board-set");
         });
+        
     }).catch(ex=>{
       console.log(ex);
     }
@@ -53,13 +54,17 @@ export class Join {
     }
    
     this.player.nickname=this.playerNickname;
-    let topicName:string  = `battleship/join/${this.player.name}`;
+    let topicName:string  = `${this.topicHelper.prefix}/JOIN/${this.player.name}`;
     let playerJoined: PlayerJoined = new PlayerJoined();
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
     //Publish a join event and change the pageState to waiting
     this.solaceClient.publish(topicName, JSON.stringify(playerJoined));
     this.pageState="WAITING";
+  }
+
+  detached(){
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME/START`);
   }
   
 }

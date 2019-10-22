@@ -1,5 +1,5 @@
 import { inject, bindable } from "aurelia-framework";
-import { GameParams } from "event-objects/game-params";
+import { GameParams } from "common/game-params";
 
 /**
  * Class that represents the Scoreboard for the event

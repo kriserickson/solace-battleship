@@ -1,11 +1,8 @@
-import { MoveResponseEvent } from './event-objects/move-response-event';
-import { Move, KnownBoardCellState } from './event-objects/board-events';
-import { PlayerName } from './event-objects/player-events';
-import { inject, bindable } from "aurelia-framework";
+import { Move, KnownBoardCellState, MoveResponseEvent, PlayerName, Player, TopicHelper } from './common/events';
+import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { SolaceClient } from "config/SolaceClient";
-import { Player } from "event-objects/player-events";
-import { GameParams } from 'event-objects/game-params';
+import { SolaceClient } from "common/solace-client";
+import { GameParams } from 'common/game-params';
 
 //type for the state of the page
 type PAGE_STATE = "TURN_PLAYER1" | "TURN_PLAYER2";
@@ -21,7 +18,7 @@ class ScoreMap {
  * 
  * @authors Thomas Kunnumpurath
  */
-@inject(Router, SolaceClient, Player, GameParams)
+@inject(Router, SolaceClient, Player, GameParams, TopicHelper)
 export class Match {
 
   //Map of the score
@@ -33,7 +30,7 @@ export class Match {
 
   private turnMessage: string;
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams) {
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper) {
      this.scoreMap['Player1']=this.gameParams.allowedShips;
      this.scoreMap['Player2']=this.gameParams.allowedShips;
      for(let i=0;i<gameParams.gameboardDimensions;i++){
@@ -42,7 +39,11 @@ export class Match {
          this.enemyBoard[i][j]='empty';
        }
      }
-     this.solaceClient.subscribe(`SOLACE/BATTLESHIP/${this.player.name=='Player1'?'Player2':'Player1'}/MOVE`,(msg)=>{
+
+     //Warm up the subscription reply for processing
+     this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
+     
+     this.solaceClient.subscribe(`${this.topicHelper.prefix}/${this.player.name=='Player1'?'Player2':'Player1'}/MOVE`,(msg)=>{
         let move: Move = JSON.parse(msg.getBinaryAttachment());
         let moveResponseEvent : MoveResponseEvent = new MoveResponseEvent();
         console.log(this.player);
@@ -93,7 +94,7 @@ export class Match {
       move.x=row;
       move.y=column;
       move.player=this.player.name;
-      this.solaceClient.sendRequest(`SOLACE/BATTLESHIP/${this.player.name}/MOVE`,JSON.stringify(move),`SOLACE/BATTLESHIP/${this.player.name}/MOVE-REPLY`).then((msg:any)=>{
+      this.solaceClient.sendRequest(`${this.topicHelper.prefix}/${this.player.name}/MOVE`,JSON.stringify(move),`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`).then((msg:any)=>{
         let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
         this.enemyBoard = moveResponseEvent.playerBoard;
 
@@ -125,5 +126,10 @@ export class Match {
       this.router.navigateToRoute('game-over',{msg:'YOU WON!'});
      }
    }
+  }
+
+  detached(){
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/${this.player.name=='Player1'?'Player2':'Player1'}/MOVE`);
   }
 }

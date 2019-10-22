@@ -1,7 +1,6 @@
 import solace from "solclientjs";
 import { gameConfig } from "./game-config";
 import { noView } from "aurelia-framework";
-import { request } from "http";
 
 /**
  * The SubscriptionObject represents a combination of the callback function and
@@ -121,6 +120,7 @@ export class SolaceClient {
 
       //SUBSCRIPTION_OK implies that a subscription was succesfully applied/removed from the broker
       this.session.on(solace.SessionEventCode.SUBSCRIPTION_OK, (sessionEvent) => {
+        this.log(`Session co-relation-key for event: ${sessionEvent.correlationKey}`);
           //Check if the topic exists in the map
           if (this.topicSubscriptions.get(sessionEvent.correlationKey)) 
           {
@@ -164,8 +164,8 @@ export class SolaceClient {
               if(regexdSub.split("/").length!=topicName.split("/").length)
                 return;
             }
-            //Proceed with the message callback for the topic subscription
-            if(this.topicSubscriptions.get(sub).isSubscribed)
+            //Proceed with the message callback for the topic subscription if the subscription is active
+            if(this.topicSubscriptions.get(sub).isSubscribed && this.topicSubscriptions.get(sub).callback !=null)
               this.topicSubscriptions.get(sub).callback(message);
           }
         }
@@ -212,11 +212,12 @@ export class SolaceClient {
       this.subscribeReply(replyTopic,(msg)=>{
         if(timeoutRef !=null ){
           clearTimeout(timeoutRef);
+          timeoutRef=null;
+          resolve(msg);
         }else{
           this.log(`[WARNING] Request on ${topicName} already timed out.`);
         }
         this.unsubscribeReply(replyTopic);
-        resolve(msg);
       });
 
       this.session.send(request);
@@ -233,17 +234,32 @@ export class SolaceClient {
     });
   }
 
-  subscribeReply(topic: string, callback: any){
+  /**
+   * Function to register a subscription on a reply topic
+   * @param topic the reply topic to subscribe to
+   * @param callback the callback function
+   */
+  subscribeReply(topic: string, callback?: any){
     if(this.topicSubscriptions.get(topic)){
+      if(callback==null){
+        this.log('[WARNING] Attempting to establish a subscription on a reply without a callback topic');
+        return;
+      }
       this.topicSubscriptions.get(topic).callback=callback;
       this.topicSubscriptions.get(topic).isSubscribed=true;
+    }else{
+      //If a subscription doesn't exist, register one with the broker without a callback
+      this.subscribe(topic,null);
     }
   }
 
+  /**
+   * Function to prevent a message callback from occuring on a given reply topic but it still maintains a subscription on the broker
+   * @param topic The topic to unregister from
+   */
   unsubscribeReply(topic: string){
     if(this.topicSubscriptions.get(topic)){
       this.topicSubscriptions.get(topic).callback=null;
-      this.topicSubscriptions.get(topic).isSubscribed=false;
     }
   }
 
@@ -252,7 +268,7 @@ export class SolaceClient {
    * @param requestMessage The message that came in from the request
    * @param replyString The payload of the message for the reply
    */
-  sendReply(requestMessage, replyString){
+  sendReply(requestMessage, replyString: string){
     if(!this.session){
       this.log("[WARNING] Cannot subscribe because not connected to Solace message router!");
       return;
@@ -277,7 +293,8 @@ export class SolaceClient {
       return;
     }
     
-    this.session.unsubscribe(solace.SolclientFactory.createTopicDestination(topicName),true);
+    this.log(`Unsubscribing from ${topicName}...`)
+    this.session.unsubscribe(solace.SolclientFactory.createTopicDestination(topicName),true, topicName);
   }
 
 
