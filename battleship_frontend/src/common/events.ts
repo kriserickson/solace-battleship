@@ -50,8 +50,8 @@ export class PlayerJoined{
  * player2: The PlayerJoined object for the start of the game
  */
 export class GameStart{
-  player1: PlayerJoined;
-  player2: PlayerJoined;
+  Player1: PlayerJoined;
+  Player2: PlayerJoined;
 }
 
 
@@ -85,3 +85,11 @@ export class MoveResponseEvent {
     moveResult : PrivateBoardCellState;
   }
   
+ /**
+  * Object representing a boardset event
+  */ 
+
+  export class BoardSetEvent {
+      player: Player;
+      shipsSet: number;
+  }

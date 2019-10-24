@@ -1,7 +1,9 @@
-import { inject, bindable } from "aurelia-framework";
+import { PlayerName } from './common/events';
+import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
 import {
+  BoardSetEvent,
   Player,
   PrivateBoardCellState,
   KnownBoardCellState,
@@ -27,10 +29,10 @@ export class BoardSet {
     // initialize empty boards
     let playerBoard: PrivateBoardCellState[][] = [];
     let knownOpponentBoard: KnownBoardCellState[][] = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < this.gameParams.gameboardDimensions; i++) {
       playerBoard[i] = [];
       knownOpponentBoard[i] = [];
-      for (let j = 0; j < 6; j++) {
+      for (let j = 0; j < this.gameParams.gameboardDimensions; j++) {
         playerBoard[i][j] = "empty";
         knownOpponentBoard[i][j] = "empty";
       }
@@ -43,8 +45,8 @@ export class BoardSet {
 
     //Subscribe to the board set event
     this.solaceClient.subscribe(this.topicHelper.prefix + '/BOARD/SET/*',(msg)=>{
-    let playerObj = JSON.parse(msg.getBinaryAttachment());
-    console.log(`${playerObj.player} has set the board`);
+    let playerObj:BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
+    console.log(`${playerObj.playerName} has set the board`);
     this.boardsSet++;
 
    
@@ -61,23 +63,23 @@ export class BoardSet {
    * @param row the row for the board piece
    * @param column the column for the board piece
    */
-  boardSelectEvent(row: number, column: number) {
+  boardSelectEvent(column: number, row: number) {
     if(!this.donePlacing){
       // toggle cell state
-      if (this.player.internalBoardState[row][column] == "empty") {
+      if (this.player.internalBoardState[column][row] == "empty") {
         if (this.placedShips >= this.gameParams.allowedShips) {
           alert("No ships remaining, remove one first!");
           return;
         }
         let tmpBoard = JSON.parse(JSON.stringify(this.player.internalBoardState)); // a lazy man's deep copy
-        tmpBoard[row][column] = "ship";
+        tmpBoard[column][row] = "ship";
         this.player.internalBoardState = tmpBoard;
         ++this.placedShips;
         return;
       }
 
       let tmpBoard = JSON.parse(JSON.stringify(this.player.internalBoardState));
-      tmpBoard[row][column] = "empty";
+      tmpBoard[column][row] = "empty";
       this.player.internalBoardState = tmpBoard;
       --this.placedShips;
       return;
@@ -89,7 +91,10 @@ export class BoardSet {
      */
     beginMatch(){
       if(this.placedShips==5){
-        this.solaceClient.publish(`${this.topicHelper.prefix}/BOARD/SET/${this.player.name}`,`{"player":"${this.player.name}","placedShips":"${this.placedShips}"}`);
+        let boardsetEvent: BoardSetEvent = new BoardSetEvent();
+        boardsetEvent.playerName = this.player.name;
+        boardsetEvent.shipsSet = this.placedShips;
+        this.solaceClient.publish(`${this.topicHelper.prefix}/BOARD/SET/${this.player.name}`,JSON.stringify(boardsetEvent));
         this.donePlacing=true;
       }
     }

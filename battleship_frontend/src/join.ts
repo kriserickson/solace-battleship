@@ -1,4 +1,4 @@
-import { Player, PlayerJoined, TopicHelper } from './common/events';
+import { Player, PlayerJoined, TopicHelper, GameStart } from './common/events';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
 import { SolaceClient } from 'common/solace-client';
@@ -7,13 +7,13 @@ import { SolaceClient } from 'common/solace-client';
  * Class that represents the Join screen for the player
  * @author Thomas Kunnumpurath
  */
-@inject(Router, SolaceClient, Player, TopicHelper)
+@inject(Router, SolaceClient, Player, TopicHelper, GameStart)
 export class Join {
   
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
   playerNickname: string = null;
 
-  constructor(private router: Router,private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper) {
+  constructor(private router: Router,private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper, private gameStart: GameStart) {
   }
 
   /**
@@ -25,8 +25,11 @@ export class Join {
     //Connect to the message broker and listen for the game start event
     this.connectToSolace().then(()=>{
       this.solaceClient.subscribe(`${this.topicHelper.prefix}/GAME/START`,(msg)=>{
-        console.log("Starting game...");
-        console.log(msg.getBinaryAttachment());
+        let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+        this.gameStart.Player1=gsObj.Player1;
+        this.gameStart.Player2=gsObj.Player2;
+        console.log("Game starting...")
+        console.log(this.gameStart);
         this.router.navigateToRoute("board-set");
         });
         

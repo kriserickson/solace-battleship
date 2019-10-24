@@ -4,9 +4,9 @@
       <label show.bind="(gameParams.allowedShips - placedShips) != 0">Place ${gameParams.allowedShips  - placedShips} more ships</label>
       <label class="board__continue-label" show.bind="(gameParams.allowedShips  - placedShips) == 0 && !donePlacing">PRESS CONTINUE!</label>
       <div class="board__container">
-        <div repeat.for="i of gameParams.gameboardDimensions" class="board__row">
-          <div repeat.for="i of gameParams.gameboardDimensions" class="board__square" click.delegate="boardSelectEvent($parent.i, i)">
-            ${player.internalBoardState[$parent.i][i] === "empty" ? "🌊" : "🚢"} 
+        <div repeat.for="row of gameParams.gameboardDimensions" class="board__row">
+          <div repeat.for="column of gameParams.gameboardDimensions" class="board__square" click.delegate="boardSelectEvent(column,$parent.row)">
+            ${player.internalBoardState[column][$parent.row] === "empty" ? "🌊" : "🚢"} 
           </div>
         </div>
       </div>

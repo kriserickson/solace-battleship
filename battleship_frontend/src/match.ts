@@ -1,4 +1,4 @@
-import { Move, KnownBoardCellState, MoveResponseEvent, PlayerName, Player, TopicHelper } from './common/events';
+import { Move, KnownBoardCellState, MoveResponseEvent, PlayerName, Player, TopicHelper, GameStart } from './common/events';
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -18,7 +18,7 @@ class ScoreMap {
  * 
  * @authors Thomas Kunnumpurath
  */
-@inject(Router, SolaceClient, Player, GameParams, TopicHelper)
+@inject(Router, SolaceClient, Player, GameParams, TopicHelper, GameStart)
 export class Match {
 
   //Map of the score
@@ -30,7 +30,7 @@ export class Match {
 
   private turnMessage: string;
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper) {
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper, private gameStart: GameStart) {
      this.scoreMap['Player1']=this.gameParams.allowedShips;
      this.scoreMap['Player2']=this.gameParams.allowedShips;
      for(let i=0;i<gameParams.gameboardDimensions;i++){
@@ -84,15 +84,15 @@ export class Match {
 
 
   //A selection for the board
-  boardSelectEvent(row, column) {
+  boardSelectEvent(column: number, row: number) {
       if (
       ((this.player.name == this.pageState) ) && 
-      this.enemyBoard[row][column]=="empty"
+      this.enemyBoard[column][row]=="empty"
     ) {
 
       let move: Move = new Move();
-      move.x=row;
-      move.y=column;
+      move.x=column;
+      move.y=row;
       move.player=this.player.name;
       this.solaceClient.sendRequest(`${this.topicHelper.prefix}/${this.player.name}/MOVE`,JSON.stringify(move),`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`).then((msg:any)=>{
         let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
