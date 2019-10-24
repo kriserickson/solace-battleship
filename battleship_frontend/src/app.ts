@@ -29,7 +29,6 @@ export class App {
       { route: '/', moduleId: PLATFORM.moduleName('landing-page'), name: ''},
       { route: '/join/:player', moduleId: PLATFORM.moduleName('join'), name: 'join'},
       { route: '/board-set', moduleId: PLATFORM.moduleName('board-set'), name: 'board-set'},
-      { route: '/dashboard', moduleId: PLATFORM.moduleName('dashboard'), name: 'dashboard'},
       { route: '/match', moduleId: PLATFORM.moduleName('match'), name: 'match'},
       { route: '/game-over/:msg', moduleId: PLATFORM.moduleName('game-over'), name: 'game-over'}
     ]);

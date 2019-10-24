@@ -52,7 +52,7 @@ export class LandingPage {
           }
 
           if(this.boardsSet==2){
-            this.router.navigateToRoute('dashboard');
+            this.solaceClient.disconnect();
           }
       });
     }
