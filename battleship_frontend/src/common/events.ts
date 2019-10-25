@@ -90,6 +90,6 @@ export class MoveResponseEvent {
   */ 
 
   export class BoardSetEvent {
-      player: Player;
+      playerName: PlayerName;
       shipsSet: number;
   }
