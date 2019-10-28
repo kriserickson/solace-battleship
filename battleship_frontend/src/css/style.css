@@ -388,7 +388,10 @@ body{
   
 }
 
-
+.match-board__board{
+  padding-top: 25px;
+  text-align: center;
+}
 
 .match-board__score-card {
   border: 1px solid #00C895;
