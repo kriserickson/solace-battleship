@@ -209,60 +209,31 @@ export class SolaceClient {
       request.setReplyTo(solace.SolclientFactory.createTopic(replyTopic));
       request.setCorrelationId(replyTopic);  
 
-      this.subscribeReply(replyTopic,(msg)=>{
-        if(timeoutRef !=null ){
-          clearTimeout(timeoutRef);
-          timeoutRef=null;
+      if(this.topicSubscriptions.get(replyTopic)==null){
+        this.topicSubscriptions.set(replyTopic, new SubscriptionObject(null, false));
+        this.session.subscribe(
+            solace.SolclientFactory.createTopicDestination(replyTopic),
+            true, // do not generate confirmation when subscription is added successfully
+            replyTopic, // use topic name as correlation key
+            10000 // 10 seconds timeout for this operation
+        );
+      }
+
+      this.session.sendRequest(request,
+        5000, 
+        (session,msg)=>{
           resolve(msg);
-        }else{
-          this.log(`[WARNING] Request on ${topicName} already timed out.`);
+        },
+        (session,event)=>{
+          reject(event.toString());
         }
-        this.unsubscribeReply(replyTopic);
-      });
-
-      this.session.send(request);
-
-      let timeoutRef = setTimeout(()=>{
-        let requestFailedMessage = `Request on ${topicName} timed out on the reply topic ${replyTopic}`;
-        this.log(`[WARNING] ${requestFailedMessage}`);
-        this.unsubscribeReply(replyTopic);
-        reject(requestFailedMessage);
-      },5000);
-
+      );
      
 
     });
   }
 
-  /**
-   * Function to register a subscription on a reply topic
-   * @param topic the reply topic to subscribe to
-   * @param callback the callback function
-   */
-  subscribeReply(topic: string, callback?: any){
-    if(this.topicSubscriptions.get(topic)){
-      if(callback==null){
-        this.log('[WARNING] Attempting to establish a subscription on a reply without a callback topic');
-        return;
-      }
-      this.topicSubscriptions.get(topic).callback=callback;
-      this.topicSubscriptions.get(topic).isSubscribed=true;
-    }else{
-      //If a subscription doesn't exist, register one with the broker without a callback
-      this.subscribe(topic,null);
-    }
-  }
-
-  /**
-   * Function to prevent a message callback from occuring on a given reply topic but it still maintains a subscription on the broker
-   * @param topic The topic to unregister from
-   */
-  unsubscribeReply(topic: string){
-    if(this.topicSubscriptions.get(topic)){
-      this.topicSubscriptions.get(topic).callback=null;
-    }
-  }
-
+ 
   /**
    * A function to send a reply to
    * @param requestMessage The message that came in from the request
@@ -274,11 +245,10 @@ export class SolaceClient {
       return;
     }
 
-    let reply = solace.SolclientFactory.createMessage();
-    reply.setBinaryAttachment(replyString);
-    reply.setDestination(requestMessage.getReplyTo());
+    let replyMessage = solace.SolclientFactory.createMessage();
+    replyMessage.setBinaryAttachment(replyString);
 
-    this.session.send(reply);
+    this.session.sendReply(requestMessage, replyMessage);
     this.log(`Replied to a request message on ${requestMessage.getReplyTo().getName()}`);
   }
 

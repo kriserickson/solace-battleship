@@ -40,8 +40,6 @@ export class Match {
        }
      }
 
-     //Warm up the subscription reply for processing
-     this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
      
      this.solaceClient.subscribe(`${this.topicHelper.prefix}/${this.player.name=='Player1'?'Player2':'Player1'}/MOVE`,(msg)=>{
         let move: Move = JSON.parse(msg.getBinaryAttachment());
