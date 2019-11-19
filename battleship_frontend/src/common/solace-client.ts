@@ -135,10 +135,6 @@ export class SolaceClient {
         //Get the topic name from the message's destination
         let topicName: string = message.getDestination().getName();
 
-        console.log(`Received callback for ${topicName}`);
-
-        console.dir(this.topicSubscriptions);
-
         //Iterate over all subscriptions in the subscription map
         for (let sub of Array.from(this.topicSubscriptions.keys())) {
           //Replace all * in the topic filter with a .* to make it regex compatible
