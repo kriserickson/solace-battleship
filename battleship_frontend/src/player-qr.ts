@@ -1,4 +1,4 @@
-import { PlayerName } from './common/events';
+import { PlayerName } from "./common/events";
 import { bindable } from "aurelia-framework";
 
 /**
@@ -6,27 +6,25 @@ import { bindable } from "aurelia-framework";
  * @author Thomas Kunnumpurath
  */
 export class PlayerQr {
-    //Name of the player
-    @bindable
-    player : PlayerName;
-    @bindable
-    playerStatus: string;
+  //Name of the player
+  @bindable
+  player: PlayerName;
+  @bindable
+  playerStatus: string;
 
-    //URL of the QR Code image
-    playerQRUrl : string;
-    //Status message for the player 
-    status: string;
-    //URL for the player joined
-    playerJoinUrl: string;
+  //URL of the QR Code image
+  playerQRUrl: string;
+  //Status message for the player
+  status: string;
+  //URL for the player joined
+  playerJoinUrl: string;
 
-  
-    /**
-     * Aurelia function that is called when the page is loaded
-     */
-    attached(){
-        this.status = `Waiting for ${this.player} to join...`;
-        this.playerJoinUrl= `http://${location.host}/join/${this.player}`;
-        this.playerQRUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(this.playerJoinUrl)}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333`;
-    }
-    
+  /**
+   * Aurelia function that is called when the page is loaded
+   */
+  attached() {
+    this.status = `Waiting for ${this.player} to join...`;
+    this.playerJoinUrl = `http://${location.host}/join/${this.player}`;
+    this.playerQRUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(this.playerJoinUrl)}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333`;
+  }
 }

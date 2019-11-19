@@ -6,7 +6,7 @@
  * solace_password - Password for the PubSub+ Broker
  * allowed_ships - Ships allowed per player
  * gameboard_dimensions - Number of rows and columns for the sqare gameboard
- * 
+ *
  * @author Thomas Kunnumpurath, Andrew Roberts
  */
 export const gameConfig = {

@@ -3,20 +3,18 @@
  */
 
 export class TopicHelper {
-    private _prefix: string;
+  private _prefix: string;
 
-    get prefix(): string{
-        return this._prefix;
-    }
+  get prefix(): string {
+    return this._prefix;
+  }
 
-    set prefix(prefix:string){
-        this._prefix = prefix;
-    }
+  set prefix(prefix: string) {
+    this._prefix = prefix;
+  }
 }
 
-
-
-export type PlayerName = 'Player1' | 'Player2';
+export type PlayerName = "Player1" | "Player2";
 /**
  * Object that represents the player in a game
  * name: name of the player
@@ -39,7 +37,7 @@ export class Player {
  * playerName: the name of the player (Player1 or player2)
  * playerNickname: the nickname of hte player
  */
-export class PlayerJoined{
+export class PlayerJoined {
   playerName: PlayerName;
   playerNickname: string;
 }
@@ -49,17 +47,16 @@ export class PlayerJoined{
  * player1: The PlayerJoined object for the start of the game
  * player2: The PlayerJoined object for the start of the game
  */
-export class GameStart{
+export class GameStart {
   Player1: PlayerJoined;
   Player2: PlayerJoined;
 }
 
-
 // CellState for the Board
-export type PrivateBoardCellState = 'ship' | 'empty';
+export type PrivateBoardCellState = "ship" | "empty";
 
 // Cell state for the opponent's board
-export type KnownBoardCellState = 'hit' | 'miss' | 'empty';
+export type KnownBoardCellState = "hit" | "miss" | "empty";
 
 /**
  * Object that represents a players move response
@@ -79,17 +76,17 @@ export class Move {
  * @author: Thomas Kunnumpurath, Andrew Roberts
  */
 export class MoveResponseEvent {
-    player: PlayerName;
-    playerBoard: KnownBoardCellState[][];
-    move: Move;
-    moveResult : PrivateBoardCellState;
-  }
-  
- /**
-  * Object representing a boardset event
-  */ 
+  player: PlayerName;
+  playerBoard: KnownBoardCellState[][];
+  move: Move;
+  moveResult: PrivateBoardCellState;
+}
 
-  export class BoardSetEvent {
-      playerName: PlayerName;
-      shipsSet: number;
-  }
+/**
+ * Object representing a boardset event
+ */
+
+export class BoardSetEvent {
+  playerName: PlayerName;
+  shipsSet: number;
+}
