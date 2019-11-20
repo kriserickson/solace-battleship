@@ -10,10 +10,10 @@
  * @author Thomas Kunnumpurath, Andrew Roberts
  */
 export const gameConfig = {
-  solace_hostUrl: "ws://localhost:8081",
-  solace_vpn: "default",
-  solace_userName: "default",
-  solace_password: "default",
+  solace_hostUrl: "",
+  solace_vpn: "",
+  solace_userName: "",
+  solace_password: "",
   allowed_ships: 5,
   gameboard_dimensions: 5
 };

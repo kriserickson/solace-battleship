@@ -23,14 +23,7 @@ export class Join {
     //Connect to the message broker and listen for the game start event
     this.connectToSolace()
       .then(() => {
-        this.solaceClient.subscribe(`${this.topicHelper.prefix}/GAME/START`, msg => {
-          let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-          this.gameStart.Player1 = gsObj.Player1;
-          this.gameStart.Player2 = gsObj.Player2;
-          console.log("Game starting...");
-          console.log(this.gameStart);
-          this.router.navigateToRoute("board-set");
-        });
+        alert("Connected to Solace!");
       })
       .catch(ex => {
         console.log(ex);
@@ -63,7 +56,5 @@ export class Join {
     this.pageState = "WAITING";
   }
 
-  detached() {
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME/START`);
-  }
+  detached() {}
 }
