@@ -47,12 +47,12 @@ export class Join {
     }
 
     this.player.nickname = this.playerNickname;
-    let topicName: string = `${this.topicHelper.prefix}/JOIN/${this.player.name}`;
+
     let playerJoined: PlayerJoined = new PlayerJoined();
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
     //Publish a join event and change the pageState to waiting
-    this.solaceClient.publish(topicName, JSON.stringify(playerJoined));
+
     this.pageState = "WAITING";
   }
 
