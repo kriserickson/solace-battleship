@@ -21,17 +21,6 @@ export class LandingPage {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    // solace logic
-    this.connectToSolace()
-      .then(() => {
-        alert("Connected to Solace!");
-      })
-      .catch(error => {
-        alert(`Failed to connect to Solace because of ${error}!`);
-      });
-  }
-
-  async connectToSolace() {
-    await this.solaceClient.connect();
+    // Connect to Solace
   }
 }

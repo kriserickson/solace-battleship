@@ -20,21 +20,10 @@ export class Join {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    //Connect to the message broker and listen for the game start event
-    this.connectToSolace()
-      .then(() => {
-        alert("Connected to Solace!");
-      })
-      .catch(ex => {
-        console.log(ex);
-      });
+    //Connect to Solace
 
     //Set the name for the player from the route parameter
     this.player.name = params.player;
-  }
-
-  async connectToSolace() {
-    await this.solaceClient.connect();
   }
 
   /**
