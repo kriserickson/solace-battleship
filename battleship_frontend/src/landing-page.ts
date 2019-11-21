@@ -37,6 +37,7 @@ export class LandingPage {
         }
       });
 
+      //Listener for board set events
       this.solaceClient.subscribe(`${this.topicHelper.prefix}/BOARD/SET/*`, msg => {
         let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
         if (boardSetEvent.playerName == "Player1") {
