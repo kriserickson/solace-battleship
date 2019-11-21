@@ -66,6 +66,7 @@ export class LandingPage {
   }
 
   detached() {
+    //Unsubscribe from the ../JOIN/* event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN/*`);
   }
 }

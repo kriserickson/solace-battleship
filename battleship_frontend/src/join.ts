@@ -61,6 +61,7 @@ export class Join {
   }
 
   detached() {
+    //Unsubscribe from the ../GAME/START topic
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME/START`);
   }
 }

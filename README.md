@@ -22,36 +22,8 @@ In order to use ZEIT to deploy and host this application, you'll need to registe
 
 ---
 
-## Application flow
+## Lesson Overview
 
-In Aurelia, routes are initialized in the [src/app.ts](src/app.ts) file. Each initialized route gets assigned both a view component and a view controller component—which must be named the same (excluding file extension). These routes dictate the application's flow. Take a look at the following diagram to see which files are associated with each route:
+In this lesson, you will be setting up a subscription to the Solace PubSub+ Broker and transition between page states.
 
-![application flow](docs/app-flow-lesson-1.png "Application Flow")
 
-### Landing Page
-
-On the landing page of this application two QR code squares are displayed so that players can join a match. When a player scans or clicks on a QR code square, the player is routed to their join page.
-
-### Join Page
-
-On the join page, players are prompted to enter a nickname for use in the match. After they enter and confirm a name, a waiting prompt is displayed until the other player enters and confirms their name. Once both players have entered and confirmed their names, the match kicks off and both players are routed to the board set page.
-
-### Board Set
-
-On the board set page, both players are prompted to place their ships. Once both players place their ships and press continue, both players are routed to the match page.
-
-### Match
-
-Match start! Players take turns making guesses. Board state is exchanged by the two players using a request/reply pattern over Solace.
-
-### Game Over
-
-When a player has sunk all of their opponent player's ships, the game is over. This screen displays which player won, and which lost.
-
----
-
-## Deployment
-
-If you have ZEIT installed, all you have to do to deploy this project is execute the following command with battleship_frontend as your working directory:
-
-`now`

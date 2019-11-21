@@ -38,11 +38,6 @@ export class BoardSet {
       let playerObj: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
       console.log(`${playerObj.playerName} has set the board`);
       this.boardsSet++;
-
-      //If the boards have been set, then begin the match
-      if (this.boardsSet == 2) {
-        this.router.navigate("match");
-      }
     });
   }
 
@@ -88,6 +83,7 @@ export class BoardSet {
   }
 
   detached() {
+    //Unsubscribe from the .../BOARD/SET/* event
     this.solaceClient.unsubscribe(this.topicHelper.prefix + "/BOARD/SET/*");
   }
 }
