@@ -23,7 +23,7 @@ export class Join {
     //Connect to the message broker and listen for the game start event
     this.connectToSolace()
       .then(() => {
-        alert("Connected to Solace!");
+        console.log("Connected to Solace");
       })
       .catch(ex => {
         console.log(ex);

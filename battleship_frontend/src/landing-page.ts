@@ -10,6 +10,7 @@ import { SolaceClient } from "common/solace-client";
 export class LandingPage {
   player1Status: string = "Waiting for Player1 to Join...";
   player2Status: string = "Waiting for Player2 to Join...";
+  connectStatus: string = "";
 
   boardsSet: number = 0;
 
@@ -24,10 +25,10 @@ export class LandingPage {
     // solace logic
     this.connectToSolace()
       .then(() => {
-        alert("Connected to Solace!");
+        this.connectStatus = "Connected to Solace!";
       })
       .catch(error => {
-        alert(`Failed to connect to Solace because of ${error}!`);
+        this.connectStatus = `Failed to connect to Solace because of ${error}!`;
       });
   }
 
