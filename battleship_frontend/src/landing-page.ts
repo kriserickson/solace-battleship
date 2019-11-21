@@ -22,7 +22,7 @@ export class LandingPage {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    // solace logic
+    // Connect to Solace
     this.solaceClient
       .connect()
       .then(() => {
