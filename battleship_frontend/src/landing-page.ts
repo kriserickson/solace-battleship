@@ -21,8 +21,8 @@ export class LandingPage {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    // solace logic
-    this.connectToSolace().then(() => {
+    // Connect to Solace
+    this.solaceClient.connect().then(() => {
       //Listener for join events
       this.solaceClient.subscribe(`${this.topicHelper.prefix}/JOIN/*`, msg => {
         if (msg.getBinaryAttachment()) {
@@ -52,10 +52,6 @@ export class LandingPage {
         }
       });
     });
-  }
-
-  async connectToSolace() {
-    await this.solaceClient.connect();
   }
 
   /**

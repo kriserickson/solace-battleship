@@ -20,8 +20,9 @@ export class Join {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    //Connect to the message broker and listen for the game start event
-    this.connectToSolace()
+    //Connect to Solace
+    this.solaceClient
+      .connect()
       .then(() => {
         this.solaceClient.subscribe(`${this.topicHelper.prefix}/GAME/START`, msg => {
           let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
@@ -40,10 +41,6 @@ export class Join {
     this.player.name = params.player;
   }
 
-  async connectToSolace() {
-    await this.solaceClient.connect();
-  }
-
   /**
    * Function to join a game - asks for the Player's name before continuing
    */
@@ -54,11 +51,11 @@ export class Join {
     }
 
     this.player.nickname = this.playerNickname;
-    let topicName: string = `${this.topicHelper.prefix}/JOIN/${this.player.name}`;
     let playerJoined: PlayerJoined = new PlayerJoined();
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
     //Publish a join event and change the pageState to waiting
+    let topicName: string = `${this.topicHelper.prefix}/JOIN/${this.player.name}`;
     this.solaceClient.publish(topicName, JSON.stringify(playerJoined));
     this.pageState = "WAITING";
   }
