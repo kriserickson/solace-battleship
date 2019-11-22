@@ -24,14 +24,7 @@ export class Join {
     this.solaceClient
       .connect()
       .then(() => {
-        this.solaceClient.subscribe(`${this.topicHelper.prefix}/GAME/START`, msg => {
-          let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-          this.gameStart.Player1 = gsObj.Player1;
-          this.gameStart.Player2 = gsObj.Player2;
-          console.log("Game starting...");
-          console.log(this.gameStart);
-          this.router.navigateToRoute("board-set");
-        });
+        //Subscribe to the GAME/START event
       })
       .catch(ex => {
         console.log(ex);
@@ -62,6 +55,5 @@ export class Join {
 
   detached() {
     //Unsubscribe from the ../GAME/START topic
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME/START`);
   }
 }

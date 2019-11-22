@@ -34,11 +34,6 @@ export class BoardSet {
     this.player.isTurn = false;
 
     //Subscribe to the board set event
-    this.solaceClient.subscribe(this.topicHelper.prefix + "/BOARD/SET/*", msg => {
-      let playerObj: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
-      console.log(`${playerObj.playerName} has set the board`);
-      this.boardsSet++;
-    });
   }
 
   /**
@@ -72,18 +67,8 @@ export class BoardSet {
   /**
    * Function to begin a match - it publishes a message and then sets the done placing variable to true
    */
-  beginMatch() {
-    if (this.placedShips == 5) {
-      let boardsetEvent: BoardSetEvent = new BoardSetEvent();
-      boardsetEvent.playerName = this.player.name;
-      boardsetEvent.shipsSet = this.placedShips;
-      this.solaceClient.publish(`${this.topicHelper.prefix}/BOARD/SET/${this.player.name}`, JSON.stringify(boardsetEvent));
-      this.donePlacing = true;
-    }
-  }
 
   detached() {
     //Unsubscribe from the .../BOARD/SET/* event
-    this.solaceClient.unsubscribe(this.topicHelper.prefix + "/BOARD/SET/*");
   }
 }
