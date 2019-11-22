@@ -32,8 +32,6 @@ export class BoardSet {
     this.player.internalBoardState = playerBoard;
     this.player.publicBoardState = knownOpponentBoard;
     this.player.isTurn = false;
-
-    //Subscribe to the board set event
   }
 
   /**
