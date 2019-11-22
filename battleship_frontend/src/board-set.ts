@@ -32,13 +32,6 @@ export class BoardSet {
     this.player.internalBoardState = playerBoard;
     this.player.publicBoardState = knownOpponentBoard;
     this.player.isTurn = false;
-
-    //Subscribe to the board set event
-    this.solaceClient.subscribe(this.topicHelper.prefix + "/BOARD/SET/*", msg => {
-      let playerObj: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
-      console.log(`${playerObj.playerName} has set the board`);
-      this.boardsSet++;
-    });
   }
 
   /**
