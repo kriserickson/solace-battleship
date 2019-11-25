@@ -39,25 +39,33 @@ export class Match {
       }
     }
 
-    this.solaceClient.subscribe(`${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`, msg => {
-      let move: Move = JSON.parse(msg.getBinaryAttachment());
-      let moveResponseEvent: MoveResponseEvent = new MoveResponseEvent();
-      console.log(this.player);
-      moveResponseEvent.move = move;
-      moveResponseEvent.playerBoard = this.player.publicBoardState;
-      moveResponseEvent.player = this.player.name;
-      moveResponseEvent.moveResult = this.player.internalBoardState[move.x][move.y];
-      this.solaceClient.sendReply(msg, JSON.stringify(moveResponseEvent));
-      if (this.player.internalBoardState[move.x][move.y] == "ship") {
-        this.shipHit(this.player.name);
-        this.player.publicBoardState[move.x][move.y] = "hit";
-      } else {
-        this.player.publicBoardState[move.x][move.y] = "miss";
+    // subscribe to the other player's moves here
+    this.solaceClient.subscribe(
+      `${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`,
+      // player move event handler
+      msg => {
+        // parse message
+        let move: Move = JSON.parse(msg.getBinaryAttachment());
+        let moveResponseEvent: MoveResponseEvent = new MoveResponseEvent();
+        // form response
+        moveResponseEvent.move = move;
+        moveResponseEvent.playerBoard = this.player.publicBoardState;
+        moveResponseEvent.player = this.player.name;
+        moveResponseEvent.moveResult = this.player.internalBoardState[move.x][move.y];
+        // send reply
+        this.solaceClient.sendReply(msg, JSON.stringify(moveResponseEvent));
+        // update client board state
+        if (this.player.internalBoardState[move.x][move.y] == "ship") {
+          this.shipHit(this.player.name);
+          this.player.publicBoardState[move.x][move.y] = "hit";
+        } else {
+          this.player.publicBoardState[move.x][move.y] = "miss";
+        }
+        // update client page state
+        this.pageState = this.player.name;
+        this.rotateTurnMessage();
       }
-
-      this.pageState = this.player.name;
-      this.rotateTurnMessage();
-    });
+    );
   }
 
   rotateTurnMessage() {
