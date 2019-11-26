@@ -47,6 +47,7 @@ export class Join {
     let playerJoined: PlayerJoined = new PlayerJoined();
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
+
     //Publish a join event and change the pageState to waiting
     let topicName: string = `${this.topicHelper.prefix}/JOIN/${this.player.name}`;
     this.solaceClient.publish(topicName, JSON.stringify(playerJoined));
