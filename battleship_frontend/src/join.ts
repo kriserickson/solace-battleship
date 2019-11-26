@@ -20,7 +20,7 @@ export class Join {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    //Connect to Solace
+    // Connect to Solace
 
     //Set the name for the player from the route parameter
     this.player.name = params.player;
@@ -34,12 +34,11 @@ export class Join {
       alert("Please enter a nickname before continuing");
       return;
     }
-
     this.player.nickname = this.playerNickname;
-
     let playerJoined: PlayerJoined = new PlayerJoined();
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
+
     //Publish a join event and change the pageState to waiting
 
     this.pageState = "WAITING";
