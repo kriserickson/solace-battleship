@@ -86,25 +86,30 @@ export class Match {
     }
   }
 
-  //A selection for the board
+  // A selection for the board
   boardSelectEvent(column: number, row: number) {
     if (this.player.name == this.pageState && this.enemyBoard[column][row] == "empty") {
       let move: Move = new Move();
       move.x = column;
       move.y = row;
       move.player = this.player.name;
+
+      // request logic goes here!
       this.solaceClient
         .sendRequest(`${this.topicHelper.prefix}/${this.player.name}/MOVE`, JSON.stringify(move), `${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`)
+        // callback that is triggered when a response is received from the other player
         .then((msg: any) => {
+          // parse response
           let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
+          // update client board state
           this.enemyBoard = moveResponseEvent.playerBoard;
-
           if (moveResponseEvent.moveResult == "ship") {
             this.enemyBoard[move.x][move.y] = "hit";
             this.shipHit(this.player.name == "Player1" ? "Player2" : "Player1");
           } else {
             this.enemyBoard[move.x][move.y] = "miss";
           }
+          // update client page state
           this.pageState = this.player.name == "Player1" ? "Player2" : "Player1";
           this.rotateTurnMessage();
         })
