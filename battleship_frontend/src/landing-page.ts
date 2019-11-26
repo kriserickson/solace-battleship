@@ -23,7 +23,7 @@ export class LandingPage {
   activate(params, routeConfig) {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
-      //Listener for join events
+      // listener for join events
       this.solaceClient.subscribe(`${this.topicHelper.prefix}/JOIN/*`, msg => {
         if (msg.getBinaryAttachment()) {
           let playerJoined: PlayerJoined = JSON.parse(msg.getBinaryAttachment());
@@ -37,6 +37,7 @@ export class LandingPage {
         }
       });
 
+      //Listener for board set events
       this.solaceClient.subscribe(`${this.topicHelper.prefix}/BOARD/SET/*`, msg => {
         let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
         if (boardSetEvent.playerName == "Player1") {
