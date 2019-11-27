@@ -54,6 +54,6 @@ export class Join {
   }
 
   detached() {
-    //Unsubscribe from the ../GAME/START topic
+    //Unsubscribe from the <PREFIX>/GAME/START topic
   }
 }
