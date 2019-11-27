@@ -12,7 +12,13 @@ export class Join {
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
   playerNickname: string = null;
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper, private gameStart: GameStart) {}
+  constructor(
+    private router: Router,
+    private solaceClient: SolaceClient,
+    private player: Player,
+    private topicHelper: TopicHelper,
+    private gameStart: GameStart
+  ) {}
 
   /**
    * Aurelia function that is called once route is activated
@@ -24,14 +30,19 @@ export class Join {
     this.solaceClient
       .connect()
       .then(() => {
-        this.solaceClient.subscribe(`${this.topicHelper.prefix}/GAME/START`, msg => {
-          let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-          this.gameStart.Player1 = gsObj.Player1;
-          this.gameStart.Player2 = gsObj.Player2;
-          console.log("Game starting...");
-          console.log(this.gameStart);
-          this.router.navigateToRoute("board-set");
-        });
+        //Subscribe to the GAME/START event
+        this.solaceClient.subscribe(
+          `${this.topicHelper.prefix}/GAME/START`,
+          // game start event handler callback
+          msg => {
+            let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+            this.gameStart.Player1 = gsObj.Player1;
+            this.gameStart.Player2 = gsObj.Player2;
+            console.log("Game starting...");
+            console.log(this.gameStart);
+            this.router.navigateToRoute("board-set");
+          }
+        );
       })
       .catch(ex => {
         console.log(ex);
@@ -61,7 +72,7 @@ export class Join {
   }
 
   detached() {
-    //Unsubscribe from the ../GAME/START topic
+    //Unsubscribe from the <PREFIX>/GAME/START topic
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME/START`);
   }
 }
