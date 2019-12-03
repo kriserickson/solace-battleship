@@ -43,34 +43,37 @@ export class Match {
     this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
 
     // subscribe to the other player's moves here
-    this.solaceClient.subscribe(
-      `${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`,
-      // player move event handler
-      msg => {
-        // parse message
-        let move: Move = JSON.parse(msg.getBinaryAttachment());
-        let moveResponseEvent: MoveResponseEvent = new MoveResponseEvent();
-        // form response
-        moveResponseEvent.move = move;
-        moveResponseEvent.playerBoard = this.player.publicBoardState;
-        moveResponseEvent.player = this.player.name;
-        moveResponseEvent.moveResult = this.player.internalBoardState[move.x][move.y];
-        // send reply
-        this.solaceClient.sendReply(msg, JSON.stringify(moveResponseEvent));
-        // update client board state
-        if (this.player.internalBoardState[move.x][move.y] == "ship") {
-          this.shipHit(this.player.name);
-          this.player.publicBoardState[move.x][move.y] = "hit";
-        } else {
-          this.player.publicBoardState[move.x][move.y] = "miss";
-        }
-        // update client page state
-        this.pageState = this.player.name;
-        this.rotateTurnMessage();
+    this.solaceClient.subscribe(`${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`, msg => {
+      //De-serialize the received message into a move object
+      let move: Move = JSON.parse(msg.getBinaryAttachment());
+      //Create a Response object
+      let moveResponseEvent: MoveResponseEvent = new MoveResponseEvent();
+      //Set the move of the response object to the Move that was requested
+      moveResponseEvent.move = move;
+      //Set the board of the moveResponse to the current player's public board state
+      moveResponseEvent.playerBoard = this.player.publicBoardState;
+      //Set the Player of the move response event the name of the player
+      moveResponseEvent.player = this.player.name;
+      //Check the player's internal board state to find the corresponding
+      moveResponseEvent.moveResult = this.player.internalBoardState[move.x][move.y];
+      //Send the reply for the move request
+      this.solaceClient.sendReply(msg, JSON.stringify(moveResponseEvent));
+      //Check the move result and make changes to the score if appropriate and the corresponding icons
+      if (this.player.internalBoardState[move.x][move.y] == "ship") {
+        this.shipHit(this.player.name);
+        this.player.publicBoardState[move.x][move.y] = "hit";
+      } else {
+        this.player.publicBoardState[move.x][move.y] = "miss";
       }
-    );
+
+      this.pageState = this.player.name;
+      this.rotateTurnMessage();
+    });
   }
 
+  /**
+   * Function to rotate the turn page's message
+   */
   rotateTurnMessage() {
     if ((this.player.name == "Player1" && this.pageState == "Player1") || (this.player.name == "Player2" && this.pageState == "Player2")) {
       this.turnMessage = "YOUR TURN";
@@ -89,31 +92,30 @@ export class Match {
     }
   }
 
-  // A selection for the board
+  //A selection for the board
   boardSelectEvent(column: number, row: number) {
     if (this.player.name == this.pageState && this.enemyBoard[column][row] == "empty") {
       let move: Move = new Move();
       move.x = column;
       move.y = row;
       move.player = this.player.name;
-
-      // request logic goes here!
       this.solaceClient
         .sendRequest(`${this.topicHelper.prefix}/${this.player.name}/MOVE`, JSON.stringify(move), `${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`)
-        // callback that is triggered when a response is received from the other player
         .then((msg: any) => {
-          // parse response
+          //De-serialize the move response into a moveResponseEvent object
           let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
-          // update client board state
+          //Update the current player's enemy board's state
           this.enemyBoard = moveResponseEvent.playerBoard;
+          //Update the approrpaite score/icons based on the move response
           if (moveResponseEvent.moveResult == "ship") {
             this.enemyBoard[move.x][move.y] = "hit";
             this.shipHit(this.player.name == "Player1" ? "Player2" : "Player1");
           } else {
             this.enemyBoard[move.x][move.y] = "miss";
           }
-          // update client page state
+          //Change the page state
           this.pageState = this.player.name == "Player1" ? "Player2" : "Player1";
+          //Rotate the turn message
           this.rotateTurnMessage();
         })
         .catch(failedMessage => {
@@ -139,6 +141,7 @@ export class Match {
   }
 
   detached() {
+    //Unsubcsribe for the events
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`);
   }
