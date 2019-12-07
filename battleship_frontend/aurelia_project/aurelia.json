@@ -24,7 +24,7 @@
     "hmr": false,
     "open": false,
     "port": 12345,
-    "output": "dist"
+    "output": "public"
   },
   "packageManager": "npm"
 }
