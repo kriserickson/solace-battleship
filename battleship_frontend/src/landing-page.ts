@@ -29,7 +29,7 @@ export class LandingPage {
         this.connectStatus = "Connected to Solace!";
       })
       .catch(error => {
-        this.connectStatus = `Failed to connect to Solace because of ${error}!`;
+        this.connectStatus = `${error}!`;
       });
   }
 }

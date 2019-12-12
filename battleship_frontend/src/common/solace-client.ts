@@ -64,6 +64,7 @@ export class SolaceClient {
           vpnName: gameConfig.solace_vpn,
           userName: gameConfig.solace_userName,
           password: gameConfig.solace_password,
+          connectRetries: 3,
           publisherProperties: {
             acknowledgeMode: solace.MessagePublisherAcknowledgeMode.PER_MESSAGE
           }
@@ -82,7 +83,7 @@ export class SolaceClient {
       //The CONNECT_FAILED_ERROR implies a connection failure
       this.session.on(solace.SessionEventCode.CONNECT_FAILED_ERROR, sessionEvent => {
         this.log("Connection failed to the message router: " + sessionEvent.infoStr + " - check correct parameter values and connectivity!");
-        reject(sessionEvent.infoStr);
+        reject(`Check the settings in game-config.ts and try again!`);
       });
 
       //DISCONNECTED implies the client was disconnected
