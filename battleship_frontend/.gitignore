@@ -38,4 +38,4 @@ node_modules
 /test/coverage-karma
 
 # Environment variables
-solace.config.js
+/src/common/game-config.ts
