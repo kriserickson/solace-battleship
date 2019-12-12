@@ -82,7 +82,7 @@ export class SolaceClient {
       //The CONNECT_FAILED_ERROR implies a connection failure
       this.session.on(solace.SessionEventCode.CONNECT_FAILED_ERROR, sessionEvent => {
         this.log("Connection failed to the message router: " + sessionEvent.infoStr + " - check correct parameter values and connectivity!");
-        reject(sessionEvent.infoStr);
+        reject(`Check the settings in game-config.ts and try again!`);
       });
 
       //DISCONNECTED implies the client was disconnected
