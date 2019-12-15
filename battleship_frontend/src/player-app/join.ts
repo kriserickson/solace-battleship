@@ -1,4 +1,5 @@
-import { Player, PlayerJoined, TopicHelper, GameStart } from "./common/events";
+import { JoinResult } from "./../common/events";
+import { Player, PlayerJoined, TopicHelper, GameStart } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -10,15 +11,10 @@ import { SolaceClient } from "common/solace-client";
 @inject(Router, SolaceClient, Player, TopicHelper, GameStart)
 export class Join {
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
+  pageStatus = "Waiting for other player to join...";
   playerNickname: string = null;
 
-  constructor(
-    private router: Router,
-    private solaceClient: SolaceClient,
-    private player: Player,
-    private topicHelper: TopicHelper,
-    private gameStart: GameStart
-  ) {}
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper, private gameStart: GameStart) {}
 
   /**
    * Aurelia function that is called once route is activated
@@ -30,9 +26,11 @@ export class Join {
     this.solaceClient
       .connect()
       .then(() => {
-        //Subscribe to the GAME/START event
+        //Warm up the subscription for the JOIN-REPLY
+        this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
+        //Subscribe to the GAME-START event
         this.solaceClient.subscribe(
-          `${this.topicHelper.prefix}/GAME/START`,
+          `${this.topicHelper.prefix}/GAME-START/DASHBOARD`,
           // game start event handler callback
           msg => {
             let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
@@ -65,14 +63,24 @@ export class Join {
     let playerJoined: PlayerJoined = new PlayerJoined();
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
-    //Publish a join event and change the pageState to waiting
-    let topicName: string = `${this.topicHelper.prefix}/JOIN/${this.player.name}`;
-    this.solaceClient.publish(topicName, JSON.stringify(playerJoined));
-    this.pageState = "WAITING";
+    //Publish a join request and change the pageState to waiting if the join request succeeded
+    let topicName: string = `${this.topicHelper.prefix}/JOIN-REQUEST/${this.player.getPlayerNameForTopic()}`;
+    let replyTopic: string = `${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`;
+    this.solaceClient
+      .sendRequest(topicName, JSON.stringify(playerJoined), replyTopic)
+      .then((msg: any) => {
+        let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
+        if (joinResult.success) this.pageState = "WAITING";
+        else this.pageStatus = "Join Request Failed - Player Already Joined!";
+      })
+      .catch(error => {
+        this.pageStatus = "Join Request Failed!";
+      });
   }
 
   detached() {
-    //Unsubscribe from the <PREFIX>/GAME/START topic
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME/START`);
+    //Unsubscribe from the <PREFIX>/GAME-START and <PREFIX>>/JOIN-REPLY/[PLAYER1 or PLAYER2]
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/DASHBOARD`);
+    this.solaceClient.unsubscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
   }
 }

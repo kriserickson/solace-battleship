@@ -25,15 +25,15 @@ export class App {
     config.title = "Battleship";
     config.options.pushState = true; // No # in URL
     config.map([
-      { route: "/", moduleId: PLATFORM.moduleName("landing-page"), name: "" },
+      { route: "/", moduleId: PLATFORM.moduleName("dashboard-app/landing-page"), name: "" },
       {
         route: "/join/:player",
-        moduleId: PLATFORM.moduleName("join"),
+        moduleId: PLATFORM.moduleName("player-app/join"),
         name: "join"
       },
       {
         route: "/board-set",
-        moduleId: PLATFORM.moduleName("board-set"),
+        moduleId: PLATFORM.moduleName("player-app/board-set"),
         name: "board-set"
       }
     ]);

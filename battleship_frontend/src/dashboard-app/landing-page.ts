@@ -1,9 +1,5 @@
-import {
-  PlayerJoined,
-  GameStart,
-  TopicHelper,
-  BoardSetEvent
-} from "./common/events";
+import { JoinResult } from "./../common/events";
+import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -18,12 +14,7 @@ export class LandingPage {
 
   boardsSet: number = 0;
 
-  constructor(
-    private router: Router,
-    private solaceClient: SolaceClient,
-    private topicHelper: TopicHelper,
-    private gameStart: GameStart
-  ) {}
+  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {}
 
   /**
    * Aurelia function that is called when the page is navigated to
@@ -35,22 +26,30 @@ export class LandingPage {
     this.solaceClient.connect().then(() => {
       //Listener for join events
       this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/JOIN/*`,
+        `${this.topicHelper.prefix}/JOIN-REQUEST/*`,
         // join event handler callback
         msg => {
           if (msg.getBinaryAttachment()) {
             // parse received event
-            let playerJoined: PlayerJoined = JSON.parse(
-              msg.getBinaryAttachment()
-            );
-            // update client statuses
-            this.gameStart[playerJoined.playerName] = playerJoined;
-            if (playerJoined.playerName == "Player1") {
-              this.player1Status = "Player1 Joined!";
-            } else {
-              this.player2Status = "Player2 Joined!";
+            let playerJoined: PlayerJoined = JSON.parse(msg.getBinaryAttachment());
+            let result = new JoinResult();
+
+            if (!this.gameStart[playerJoined.playerName]) {
+              // update client statuses
+              this.gameStart[playerJoined.playerName] = playerJoined;
+              if (playerJoined.playerName == "Player1") {
+                this.player1Status = "Player1 Joined!";
+              } else {
+                this.player2Status = "Player2 Joined!";
+              }
+
+              result.playerName = playerJoined.playerName;
+              result.success = true;
+              result.message = "Successfully joined the game!";
+
+              this.solaceClient.sendReply(msg, JSON.stringify(result));
+              this.startGame();
             }
-            this.startGame();
           }
         }
       );
@@ -61,9 +60,7 @@ export class LandingPage {
         // board set event handler
         msg => {
           // parse received message
-          let boardSetEvent: BoardSetEvent = JSON.parse(
-            msg.getBinaryAttachment()
-          );
+          let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
           // update client board states
           if (boardSetEvent.playerName == "Player1") {
             this.player1Status = "Player1 Board Set!";
@@ -85,10 +82,7 @@ export class LandingPage {
    */
   startGame() {
     if (this.gameStart.Player1 && this.gameStart.Player2) {
-      this.solaceClient.publish(
-        `${this.topicHelper.prefix}/GAME/START`,
-        JSON.stringify(this.gameStart)
-      );
+      this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/DASHBOARD`, JSON.stringify(this.gameStart));
       this.player1Status = "Waiting for Player1 to set board..";
       this.player2Status = "Waiting for Player2 to set board..";
     }

@@ -59,11 +59,16 @@ export class SolaceClient {
       }
       // if there's no session, create one with the properties imported from the game-config file
       try {
+        if (gameConfig.solace_hostUrl.indexOf("ws") != 0) {
+          reject("HostUrl must be the WebMessaging Endpoint that begins with either ws:// or wss://. Please check your game-config.ts!");
+        }
+
         this.session = solace.SolclientFactory.createSession({
           url: gameConfig.solace_hostUrl,
           vpnName: gameConfig.solace_vpn,
           userName: gameConfig.solace_userName,
           password: gameConfig.solace_password,
+          connectRetries: 3,
           publisherProperties: {
             acknowledgeMode: solace.MessagePublisherAcknowledgeMode.PER_MESSAGE
           }
@@ -82,7 +87,7 @@ export class SolaceClient {
       //The CONNECT_FAILED_ERROR implies a connection failure
       this.session.on(solace.SessionEventCode.CONNECT_FAILED_ERROR, sessionEvent => {
         this.log("Connection failed to the message router: " + sessionEvent.infoStr + " - check correct parameter values and connectivity!");
-        reject(sessionEvent.infoStr);
+        reject(`Check the settings in game-config.ts and try again!`);
       });
 
       //DISCONNECTED implies the client was disconnected
