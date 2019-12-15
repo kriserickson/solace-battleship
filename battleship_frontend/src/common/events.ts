@@ -107,5 +107,14 @@ export class BoardSetEvent {
 export class JoinResult {
   playerName: PlayerName;
   success: boolean;
-  message: String;
+  message: string;
+}
+
+/**
+ * Object representing a Board-Set Result
+ */
+export class BoardSetResult {
+  playerName: PlayerName;
+  success: boolean;
+  message: string;
 }
