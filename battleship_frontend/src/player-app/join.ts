@@ -27,10 +27,10 @@ export class Join {
       .connect()
       .then(() => {
         //Warm up the subscription for the JOIN-REPLY
-        this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
+        this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
         //Subscribe to the GAME-START event
         this.solaceClient.subscribe(
-          `${this.topicHelper.prefix}/GAME-START/DASHBOARD`,
+          `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
           // game start event handler callback
           msg => {
             let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
@@ -80,7 +80,7 @@ export class Join {
 
   detached() {
     //Unsubscribe from the <PREFIX>/GAME-START and <PREFIX>>/JOIN-REPLY/[PLAYER1 or PLAYER2]
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/DASHBOARD`);
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
   }
 }

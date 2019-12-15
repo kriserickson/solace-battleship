@@ -104,14 +104,16 @@ export class LandingPage {
    */
   startGame() {
     if (this.gameStart.Player1 && this.gameStart.Player2) {
-      this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/DASHBOARD`, JSON.stringify(this.gameStart));
+      this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`, JSON.stringify(this.gameStart));
       this.player1Status = "Waiting for Player1 to set board..";
       this.player2Status = "Waiting for Player2 to set board..";
     }
   }
 
   detached() {
-    //Unsubscribe from the ../JOIN/* event
+    //Unsubscribe from the ../JOIN-REQUEST/* event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REQUEST/*`);
+    //Unsubscribe from the ../BOARD-SET-REQUEST/* event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`);
   }
 }
