@@ -25,55 +25,7 @@ export class LandingPage {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
       //Listener for join request
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/JOIN-REQUEST/*`,
-        // join event handler callback
-        msg => {
-          if (msg.getBinaryAttachment()) {
-            // parse received event
-            let playerJoined: PlayerJoined = JSON.parse(msg.getBinaryAttachment());
-            let result = new JoinResult();
-
-            if (!this.gameStart[playerJoined.playerName]) {
-              // update client statuses
-              this.gameStart[playerJoined.playerName] = playerJoined;
-              if (playerJoined.playerName == "Player1") {
-                this.player1Status = "Player1 Joined!";
-              } else {
-                this.player2Status = "Player2 Joined!";
-              }
-
-              result.playerName = playerJoined.playerName;
-              result.success = true;
-              result.message = "Successfully joined the game!";
-
-              this.solaceClient.sendReply(msg, JSON.stringify(result));
-              this.startGame();
-            }
-          }
-        }
-      );
-
       //Listener for board set events
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/BOARD/SET/*`,
-        // board set event handler
-        msg => {
-          // parse received message
-          let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
-          // update client board states
-          if (boardSetEvent.playerName == "Player1") {
-            this.player1Status = "Player1 Board Set!";
-            this.boardsSet++;
-          } else {
-            this.player2Status = "Player2 Board Set!";
-            this.boardsSet++;
-          }
-          if (this.boardsSet == 2) {
-            this.solaceClient.disconnect();
-          }
-        }
-      );
     });
   }
 
@@ -89,7 +41,6 @@ export class LandingPage {
   }
 
   detached() {
-    //Unsubscribe from the ../JOIN/* event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REQUEST/*`);
+    //Unsubscribe from the ../JOIN-REQUEST/* event
   }
 }
