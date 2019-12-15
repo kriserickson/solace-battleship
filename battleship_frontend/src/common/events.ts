@@ -107,5 +107,11 @@ export class BoardSetEvent {
 export class JoinResult {
   playerName: PlayerName;
   success: boolean;
-  message: String;
+  message: string;
+}
+
+export class BoardSetResult {
+  playerName: PlayerName;
+  success: boolean;
+  message: string;
 }

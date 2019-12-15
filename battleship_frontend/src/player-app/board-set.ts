@@ -1,8 +1,7 @@
-import { PlayerName } from "./common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
-import { BoardSetEvent, Player, PrivateBoardCellState, KnownBoardCellState, TopicHelper } from "common/events";
+import { BoardSetEvent, Player, PlayerName, PrivateBoardCellState, KnownBoardCellState, TopicHelper, BoardSetResult } from "../common/events";
 import { GameParams } from "common/game-params";
 
 /**
@@ -15,6 +14,7 @@ export class BoardSet {
   private boardsSet: number = 0;
   private placedShips: number = 0;
   private donePlacing: boolean = false;
+  private error: string = "";
 
   constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper) {
     // initialize empty boards
@@ -32,6 +32,9 @@ export class BoardSet {
     this.player.internalBoardState = playerBoard;
     this.player.publicBoardState = knownOpponentBoard;
     this.player.isTurn = false;
+
+    //WARM-UP THE BOARD-SET-REPLY SUBSCRIPTION
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
   }
 
   /**
@@ -63,10 +66,36 @@ export class BoardSet {
   }
 
   /**
-   * Function to begin a match - it publishes a message and then sets the done placing variable to true
+   * Function to begin a match - it publishes a board-set request message and then sets the done placing variable to true
    */
+  beginMatch() {
+    if (this.placedShips == 5) {
+      let boardsetEvent: BoardSetEvent = new BoardSetEvent();
+      boardsetEvent.playerName = this.player.name;
+      boardsetEvent.shipsSet = this.placedShips;
+      //Send the request to set the board
+      this.solaceClient
+        .sendRequest(
+          `${this.topicHelper.prefix}/BOARD-SET-REQUEST/${this.player.getPlayerNameForTopic()}`,
+          JSON.stringify(boardsetEvent),
+          `${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`
+        )
+        .then((msg: any) => {
+          let boardsetResult: BoardSetResult = JSON.parse(msg.getBinaryAttachment());
+          if (boardsetResult.success) {
+            this.donePlacing = true;
+          } else {
+            this.error = "Board Set Action Failed! Please try again!";
+          }
+        })
+        .catch(err => {
+          this.error = err;
+        });
+    }
+  }
 
   detached() {
     //Unsubscribe from the .../BOARD/SET/* event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
   }
 }
