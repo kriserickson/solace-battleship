@@ -30,6 +30,15 @@ export class Player {
   internalBoardState: PrivateBoardCellState[][];
   publicBoardState: KnownBoardCellState[][];
   isTurn: boolean;
+
+  getOtherPlayerNameForTopic(): string {
+    if (name == "Player1") return "PLAYER2";
+    else return "PLAYER1";
+  }
+
+  getPlayerNameForTopic(): string {
+    return this.name.toUpperCase();
+  }
 }
 
 /**
