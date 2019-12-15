@@ -18,18 +18,18 @@ export class App {
     //Initializing the game params
     gameParams.allowedShips = gameConfig.allowed_ships;
     gameParams.gameboardDimensions = gameConfig.gameboard_dimensions;
-
     //The Global Prefix for the Solace Battleship Game
+    topicHelper.prefix = "SOLACE/BATTLESHIP";
   }
 
   configureRouter(config, router) {
     config.title = "Battleship";
     config.options.pushState = true; // No # in URL
     config.map([
-      { route: "/", moduleId: PLATFORM.moduleName("landing-page"), name: "" },
+      { route: "/", moduleId: PLATFORM.moduleName("dashboard-app/landing-page"), name: "" },
       {
         route: "/join/:player",
-        moduleId: PLATFORM.moduleName("join"),
+        moduleId: PLATFORM.moduleName("player-app/join"),
         name: "join"
       }
     ]);

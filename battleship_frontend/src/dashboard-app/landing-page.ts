@@ -1,7 +1,7 @@
-import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent } from "./common/events";
+import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { SolaceClient } from "common/solace-client";
+import { SolaceClient } from "../common/solace-client";
 
 /**
  * Class that represents a landing page
@@ -10,6 +10,7 @@ import { SolaceClient } from "common/solace-client";
 export class LandingPage {
   player1Status: string = "Waiting for Player1 to Join...";
   player2Status: string = "Waiting for Player2 to Join...";
+  connectStatus: string = "";
 
   boardsSet: number = 0;
 
