@@ -90,3 +90,13 @@ export class BoardSetEvent {
   playerName: PlayerName;
   shipsSet: number;
 }
+
+/**
+ * Object representing a join result
+ */
+
+export class JoinResult {
+  playerName: PlayerName;
+  success: boolean;
+  message: String;
+}
