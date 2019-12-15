@@ -24,7 +24,7 @@ export class LandingPage {
   activate(params, routeConfig) {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
-      //Listener for join events
+      //Listener for join request
       this.solaceClient.subscribe(
         `${this.topicHelper.prefix}/JOIN-REQUEST/*`,
         // join event handler callback
@@ -90,6 +90,6 @@ export class LandingPage {
 
   detached() {
     //Unsubscribe from the ../JOIN/* event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN/*`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REQUEST/*`);
   }
 }
