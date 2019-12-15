@@ -1,4 +1,4 @@
-import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent } from "../common/events";
+import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent, JoinResult } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "../common/solace-client";
