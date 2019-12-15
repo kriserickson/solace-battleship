@@ -99,3 +99,12 @@ export class BoardSetEvent {
   playerName: PlayerName;
   shipsSet: number;
 }
+
+/**
+ * Object representing a board-set-result
+ */
+export class BoardSetResult {
+  playerName: PlayerName;
+  success: boolean;
+  message: string;
+}
