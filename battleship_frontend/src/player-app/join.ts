@@ -27,7 +27,7 @@ export class Join {
       .connect()
       .then(() => {
         //Warm up the subscription for the JOIN-REPLY
-        this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
+        this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
         //Subscribe to the GAME-START event
       })
       .catch(ex => {
@@ -53,7 +53,7 @@ export class Join {
     playerJoined.playerNickname = this.playerNickname;
     //Publish a join request and change the pageState to waiting if the join request succeeded
     let topicName: string = `${this.topicHelper.prefix}/JOIN-REQUEST/${this.player.getPlayerNameForTopic()}`;
-    let replyTopic: string = `${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`;
+    let replyTopic: string = `${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}/CONTROLLER`;
     this.solaceClient
       .sendRequest(topicName, JSON.stringify(playerJoined), replyTopic)
       .then((msg: any) => {
