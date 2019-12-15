@@ -110,6 +110,9 @@ export class JoinResult {
   message: string;
 }
 
+/**
+ * Object representing a Board-Set Result
+ */
 export class BoardSetResult {
   playerName: PlayerName;
   success: boolean;
