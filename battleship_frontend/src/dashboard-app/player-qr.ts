@@ -1,4 +1,4 @@
-import { PlayerName } from "./common/events";
+import { PlayerName } from "../common/events";
 import { bindable } from "aurelia-framework";
 
 /**

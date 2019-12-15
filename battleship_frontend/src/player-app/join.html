@@ -1,7 +1,7 @@
 <template>
   <div class="landing-page__container">
     <div show.bind="pageState ==='WAITING'" class="flex-column padding-20px align__center">
-      <p>Waiting for other player to join...</p>
+      <p>${pageStatus}</p>
     </div>
     <div show.bind="pageState === 'PLAYER_DETAILS'" class="flex-column padding-20px">
       <label>Enter a player nickname: </label>
