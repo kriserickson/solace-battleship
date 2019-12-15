@@ -1,4 +1,5 @@
-import { JoinResult } from "./../common/events";
+import { BoardSetResult } from "./../common/events";
+import { JoinResult } from "../common/events";
 import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
@@ -54,21 +55,42 @@ export class LandingPage {
         }
       );
 
-      //Listener for board set events
+      //Listener for board set requests
       this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/BOARD/SET/*`,
+        `${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`,
         // board set event handler
         msg => {
+          let boardSetResult: BoardSetResult = new BoardSetResult();
           // parse received message
           let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
-          // update client board states
+          boardSetResult.playerName = boardSetEvent.playerName;
+          //Set the response object appropriately
           if (boardSetEvent.playerName == "Player1") {
-            this.player1Status = "Player1 Board Set!";
-            this.boardsSet++;
+            if (this.player1Status === "Player1 Board Set!") {
+              boardSetResult.message = "Board already set by Player1";
+              boardSetResult.success = false;
+            } else {
+              this.player1Status = "Player1 Board Set!";
+              boardSetResult.message = "Board set!";
+              boardSetResult.success = true;
+              this.boardsSet++;
+            }
           } else {
-            this.player2Status = "Player2 Board Set!";
-            this.boardsSet++;
+            if (this.player2Status === "Player2 Board Set!") {
+              boardSetResult.message = "Board already set by Player2";
+              boardSetResult.success = false;
+            } else {
+              this.player2Status = "Player2 Board Set!";
+              boardSetResult.message = "Board set!";
+              boardSetResult.success = true;
+              this.boardsSet++;
+            }
           }
+
+          //Send the reply
+          this.solaceClient.sendReply(msg, JSON.stringify(boardSetResult));
+
+          //If both boards have been set, our work is done and the controller can now disconnect from Solace PubSub+
           if (this.boardsSet == 2) {
             this.solaceClient.disconnect();
           }
