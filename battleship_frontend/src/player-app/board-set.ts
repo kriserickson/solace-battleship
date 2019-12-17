@@ -36,7 +36,7 @@ export class BoardSet {
     //WARM-UP THE BOARD-SET-REPLY SUBSCRIPTION
     this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
 
-    //SET THE SUBSCRIPTION FOR THE MATCH START
+    //Set the subscription for the match start
     this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
       console.log(msg);
       this.router.navigateToRoute("match");
