@@ -49,7 +49,11 @@ export class LandingPage {
               result.message = "Successfully joined the game!";
 
               this.solaceClient.sendReply(msg, JSON.stringify(result));
-              this.startGame();
+              if (this.gameStart.Player1 && this.gameStart.Player2) {
+                this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`, JSON.stringify(this.gameStart));
+                this.player1Status = "Waiting for Player1 to set board..";
+                this.player2Status = "Waiting for Player2 to set board..";
+              }
             }
           }
         }
@@ -97,17 +101,6 @@ export class LandingPage {
         }
       );
     });
-  }
-
-  /**
-   * Function to start the game if both players joined. Immedeiately disconnect thereafter to prevent events from coming through
-   */
-  startGame() {
-    if (this.gameStart.Player1 && this.gameStart.Player2) {
-      this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`, JSON.stringify(this.gameStart));
-      this.player1Status = "Waiting for Player1 to set board..";
-      this.player2Status = "Waiting for Player2 to set board..";
-    }
   }
 
   detached() {

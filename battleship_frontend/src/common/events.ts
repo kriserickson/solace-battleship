@@ -32,7 +32,7 @@ export class Player {
   isTurn: boolean;
 
   getOtherPlayerNameForTopic(): string {
-    if (name == "Player1") return "PLAYER2";
+    if (this.name == "Player1") return "PLAYER2";
     else return "PLAYER1";
   }
 
