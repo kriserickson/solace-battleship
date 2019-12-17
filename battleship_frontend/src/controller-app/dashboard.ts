@@ -30,10 +30,7 @@ export class Dashboard {
   }
 
   attached() {
-    this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, msg => {
-      let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
-      this.moveResultMap[moveResponseEvent.player] = moveResponseEvent;
-    });
+    //Subscribe to all MOVE-REPLYs from Player1 and Player2 to propogate in the dashboard
 
     //Aurelia's internal event bus - this event will be triggered after the dashboard animation happens
     this.ea.subscribe(InternalMoveResult, (imr: InternalMoveResult) => {
