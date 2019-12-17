@@ -29,6 +29,7 @@ export class Player {
   nickname: string;
   internalBoardState: PrivateBoardCellState[][];
   publicBoardState: KnownBoardCellState[][];
+  sessionId: string;
   isTurn: boolean;
 
   getOtherPlayerNameForTopic(): string {

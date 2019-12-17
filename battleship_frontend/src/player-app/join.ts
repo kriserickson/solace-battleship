@@ -22,6 +22,13 @@ export class Join {
    * @param routeConfig
    */
   activate(params, routeConfig) {
+    //Set the name for the player from the route parameter
+    this.player.name = params.player;
+    //set the sessionid for the player
+    this.player.sessionId = params.sessionId;
+    //update the topicHelperPrefix with the sessionId
+    this.topicHelper.prefix = this.topicHelper.prefix + "/" + params.sessionId;
+
     //Connect to Solace
     this.solaceClient
       .connect()
@@ -45,9 +52,6 @@ export class Join {
       .catch(ex => {
         console.log(ex);
       });
-
-    //Set the name for the player from the route parameter
-    this.player.name = params.player;
   }
 
   /**

@@ -27,7 +27,7 @@ export class App {
     config.map([
       { route: "/", moduleId: PLATFORM.moduleName("controller-app/landing-page"), name: "" },
       {
-        route: "/join/:player",
+        route: "/join/:sessionId/:player",
         moduleId: PLATFORM.moduleName("player-app/join"),
         name: "join"
       },

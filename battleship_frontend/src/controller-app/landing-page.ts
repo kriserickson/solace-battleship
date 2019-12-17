@@ -16,7 +16,13 @@ export class LandingPage {
   private boardsSet: number = 0;
   private matchStartResult: MatchStart = new MatchStart();
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {}
+  //Generate a session-id for the game (a random hex string)
+  sessionId: string = Math.floor(Math.random() * 16777215).toString(16);
+
+  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {
+    //Append a session-id for the global topic prefix
+    this.topicHelper.prefix = this.topicHelper.prefix + "/" + this.sessionId;
+  }
 
   /**
    * Aurelia function that is called when the page is navigated to
