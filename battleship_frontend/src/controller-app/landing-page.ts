@@ -30,10 +30,6 @@ export class LandingPage {
     });
   }
 
-  /**
-   * Function to start the game if both players joined. Immedeiately disconnect thereafter to prevent events from coming through
-   */
-
   detached() {
     //Unsubscribe from the ../JOIN-REQUEST/* event
   }
