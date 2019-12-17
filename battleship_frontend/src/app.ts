@@ -1,5 +1,5 @@
 import { TopicHelper } from "./common/events";
-import { gameConfig } from "common/game-config";
+import { gameConfig } from "./common/game-config";
 import { PLATFORM } from "aurelia-pal";
 import { inject } from "aurelia-framework";
 import { GameParams } from "common/game-params";
