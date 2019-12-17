@@ -39,7 +39,7 @@ export class Join {
     playerJoined.playerName = this.player.name;
     playerJoined.playerNickname = this.playerNickname;
 
-    //Publish a join event and change the pageState to waiting
+    //Publish a join request and change the pageState to waiting if the join request succeeded
 
     this.pageState = "WAITING";
   }
