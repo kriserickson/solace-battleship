@@ -42,6 +42,11 @@ export class App {
         name: "match"
       },
       {
+        route: "/dashboard",
+        moduleId: PLATFORM.moduleName("controller-app/dashboard"),
+        name: "dashboard"
+      },
+      {
         route: "/game-over/:msg",
         moduleId: PLATFORM.moduleName("player-app/game-over"),
         name: "game-over"

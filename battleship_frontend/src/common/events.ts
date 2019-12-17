@@ -127,3 +127,12 @@ export class MatchStart {
   player1Board: BoardSetResult;
   player2Board: BoardSetResult;
 }
+
+/**
+ * Internal event for moves
+ */
+export class InternalMoveResult {
+  player: PlayerName;
+  score: number;
+  action: PrivateBoardCellState;
+}

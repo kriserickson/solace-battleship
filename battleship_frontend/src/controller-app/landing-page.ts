@@ -106,7 +106,7 @@ export class LandingPage {
           //If both boards have been set, publish a matchstart event and disconnect the landing page
           if (this.boardsSet == 2) {
             this.solaceClient.publish(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, JSON.stringify(this.matchStartResult));
-            this.solaceClient.disconnect();
+            this.router.navigateToRoute("dashboard");
           }
         }
       );
