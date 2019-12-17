@@ -1,4 +1,6 @@
-import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent, BoardSetResult, JoinResult } from "../common/events";
+import { BoardSetResult } from "./../common/events";
+import { JoinResult } from "../common/events";
+import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent, MatchStart } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -12,8 +14,15 @@ export class LandingPage {
   private player2Status: string = "Waiting for Player2 to Join...";
 
   private boardsSet: number = 0;
+  private matchStartResult: MatchStart = new MatchStart();
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {}
+  //Generate a session-id for the game (a random hex string)
+  sessionId: string = Math.floor(Math.random() * 16777215).toString(16);
+
+  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {
+    //Append a session-id for the global topic prefix
+    this.topicHelper.prefix = this.topicHelper.prefix + "/" + this.sessionId;
+  }
 
   /**
    * Aurelia function that is called when the page is navigated to
@@ -47,6 +56,7 @@ export class LandingPage {
               result.message = "Successfully joined the game!";
 
               this.solaceClient.sendReply(msg, JSON.stringify(result));
+
               if (this.gameStart.Player1 && this.gameStart.Player2) {
                 this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`, JSON.stringify(this.gameStart));
                 this.player1Status = "Waiting for Player1 to set board..";
@@ -75,6 +85,8 @@ export class LandingPage {
               this.player1Status = "Player1 Board Set!";
               boardSetResult.message = "Board set!";
               boardSetResult.success = true;
+              this.matchStartResult.player1Board = boardSetResult;
+
               this.boardsSet++;
             }
           } else {
@@ -85,6 +97,7 @@ export class LandingPage {
               this.player2Status = "Player2 Board Set!";
               boardSetResult.message = "Board set!";
               boardSetResult.success = true;
+              this.matchStartResult.player2Board = boardSetResult;
               this.boardsSet++;
             }
           }

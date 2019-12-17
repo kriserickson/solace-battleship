@@ -118,3 +118,11 @@ export class BoardSetResult {
   success: boolean;
   message: string;
 }
+
+/**
+ * Object representing a MATCH-START
+ */
+export class MatchStart {
+  player1Board: BoardSetResult;
+  player2Board: BoardSetResult;
+}
