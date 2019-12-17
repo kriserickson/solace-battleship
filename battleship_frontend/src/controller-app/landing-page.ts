@@ -8,10 +8,10 @@ import { SolaceClient } from "common/solace-client";
  */
 @inject(Router, SolaceClient, TopicHelper, GameStart)
 export class LandingPage {
-  player1Status: string = "Waiting for Player1 to Join...";
-  player2Status: string = "Waiting for Player2 to Join...";
+  private player1Status: string = "Waiting for Player1 to Join...";
+  private player2Status: string = "Waiting for Player2 to Join...";
 
-  boardsSet: number = 0;
+  private boardsSet: number = 0;
 
   constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {}
 
@@ -92,8 +92,9 @@ export class LandingPage {
           //Send the reply
           this.solaceClient.sendReply(msg, JSON.stringify(boardSetResult));
 
-          //If both boards have been set, our work is done and the controller can now disconnect from Solace PubSub+
+          //If both boards have been set, publish a matchstart event and disconnect the landing page
           if (this.boardsSet == 2) {
+            this.solaceClient.publish(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, JSON.stringify(this.matchStartResult));
             this.solaceClient.disconnect();
           }
         }
