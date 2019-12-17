@@ -25,25 +25,25 @@ export class App {
     config.title = "Battleship";
     config.options.pushState = true; // No # in URL
     config.map([
-      { route: "/", moduleId: PLATFORM.moduleName("landing-page"), name: "" },
+      { route: "/", moduleId: PLATFORM.moduleName("controller-app/landing-page"), name: "" },
       {
         route: "/join/:player",
-        moduleId: PLATFORM.moduleName("join"),
+        moduleId: PLATFORM.moduleName("player-app/join"),
         name: "join"
       },
       {
         route: "/board-set",
-        moduleId: PLATFORM.moduleName("board-set"),
+        moduleId: PLATFORM.moduleName("player-app/board-set"),
         name: "board-set"
       },
       {
         route: "/match",
-        moduleId: PLATFORM.moduleName("match"),
+        moduleId: PLATFORM.moduleName("player-app/match"),
         name: "match"
       },
       {
         route: "/game-over/:msg",
-        moduleId: PLATFORM.moduleName("game-over"),
+        moduleId: PLATFORM.moduleName("player-app/game-over"),
         name: "game-over"
       }
     ]);
@@ -54,8 +54,7 @@ export class App {
     //Load the particlesJS library by appending an HTML element to the end of the Body - its the only way to load it in
     let script = document.createElement("script");
     script.type = "text/javascript";
-    script.innerHTML =
-      'particlesJS.load("particles-js", "particles.json", null);';
+    script.innerHTML = 'particlesJS.load("particles-js", "particles.json", null);';
     document.querySelector("body").appendChild(script);
   }
 }

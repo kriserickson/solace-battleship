@@ -1,8 +1,8 @@
-import { Move, KnownBoardCellState, MoveResponseEvent, PlayerName, Player, TopicHelper, GameStart } from "./common/events";
+import { Move, KnownBoardCellState, MoveResponseEvent, PlayerName, Player, TopicHelper, GameStart } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { SolaceClient } from "common/solace-client";
-import { GameParams } from "common/game-params";
+import { SolaceClient } from "../common/solace-client";
+import { GameParams } from "../common/game-params";
 
 //type for the state of the page
 type PAGE_STATE = "TURN_PLAYER1" | "TURN_PLAYER2";
@@ -40,10 +40,10 @@ export class Match {
     }
 
     //Warm up the reply subscription
-    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
 
     // subscribe to the other player's moves here
-    this.solaceClient.subscribe(`${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`, msg => {
+    this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getOtherPlayerNameForTopic()}`, msg => {
       //De-serialize the received message into a move object
       let move: Move = JSON.parse(msg.getBinaryAttachment());
       //Create a Response object
@@ -100,7 +100,11 @@ export class Match {
       move.y = row;
       move.player = this.player.name;
       this.solaceClient
-        .sendRequest(`${this.topicHelper.prefix}/${this.player.name}/MOVE`, JSON.stringify(move), `${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`)
+        .sendRequest(
+          `${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getPlayerNameForTopic()}`,
+          JSON.stringify(move),
+          `${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`
+        )
         .then((msg: any) => {
           //De-serialize the move response into a moveResponseEvent object
           let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
@@ -142,7 +146,7 @@ export class Match {
 
   detached() {
     //Unsubcsribe for the events
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/${this.player.name}/MOVE-REPLY`);
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/${this.player.name == "Player1" ? "Player2" : "Player1"}/MOVE`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getOtherPlayerNameForTopic()}`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
   }
 }

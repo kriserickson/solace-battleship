@@ -30,6 +30,15 @@ export class Player {
   internalBoardState: PrivateBoardCellState[][];
   publicBoardState: KnownBoardCellState[][];
   isTurn: boolean;
+
+  getOtherPlayerNameForTopic(): string {
+    if (this.name == "Player1") return "PLAYER2";
+    else return "PLAYER1";
+  }
+
+  getPlayerNameForTopic(): string {
+    return this.name.toUpperCase();
+  }
 }
 
 /**
@@ -89,4 +98,31 @@ export class MoveResponseEvent {
 export class BoardSetEvent {
   playerName: PlayerName;
   shipsSet: number;
+}
+
+/**
+ * Object representing a join result
+ */
+
+export class JoinResult {
+  playerName: PlayerName;
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Object representing a Board-Set Result
+ */
+export class BoardSetResult {
+  playerName: PlayerName;
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Object representing a MATCH-START
+ */
+export class MatchStart {
+  player1Board: BoardSetResult;
+  player2Board: BoardSetResult;
 }
