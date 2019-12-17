@@ -27,11 +27,11 @@ export class Dashboard {
     this.scoreMap.Player1 = gameParams.allowedShips;
     this.scoreMap.Player2 = gameParams.allowedShips;
     this.turnMessage = "Player1's Turn";
+
+    //Subscribe to all MOVE-REPLYs from Player1 and Player2 to propogate in the dashboard
   }
 
   attached() {
-    //Subscribe to all MOVE-REPLYs from Player1 and Player2 to propogate in the dashboard
-
     //Aurelia's internal event bus - this event will be triggered after the dashboard animation happens
     this.ea.subscribe(InternalMoveResult, (imr: InternalMoveResult) => {
       if (imr.action == "ship") {
@@ -45,5 +45,10 @@ export class Dashboard {
       }
       this.turnMessage = `${imr.player}'s Turn`;
     });
+  }
+
+  detached() {
+    // Unsubscribe from all MOVE-REPLY events
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`);
   }
 }
