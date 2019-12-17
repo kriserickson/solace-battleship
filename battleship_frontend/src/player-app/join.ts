@@ -25,8 +25,9 @@ export class Join {
     //Set the name for the player from the route parameter
     this.player.name = params.player;
     //set the sessionid for the player
-
+    this.player.sessionId = params.sessionId;
     //update the topicHelperPrefix with the sessionId
+    this.topicHelper.prefix = this.topicHelper.prefix + "/" + params.sessionId;
 
     //Connect to Solace
     this.solaceClient
