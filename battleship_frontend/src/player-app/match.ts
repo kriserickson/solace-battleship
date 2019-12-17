@@ -99,6 +99,7 @@ export class Match {
       move.x = column;
       move.y = row;
       move.player = this.player.name;
+      //Send the Move Request
       this.solaceClient
         .sendRequest(
           `${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getPlayerNameForTopic()}`,
@@ -134,6 +135,7 @@ export class Match {
    * @param shipHitOwner the player of the ship that was hit
    */
   shipHit(shipHitOwner: PlayerName) {
+    //Ship hit logic
     this.scoreMap[shipHitOwner]--;
     if (this.scoreMap[shipHitOwner] == 0) {
       if (shipHitOwner == this.player.name) {
