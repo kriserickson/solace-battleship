@@ -32,37 +32,34 @@ export class LandingPage {
   activate(params, routeConfig) {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
-      //Listener for join request
+      //Listener for join replies
       this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/JOIN-REQUEST/*`,
+        `${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`,
         // join event handler callback
         msg => {
           if (msg.getBinaryAttachment()) {
             // parse received event
-            let playerJoined: PlayerJoined = JSON.parse(msg.getBinaryAttachment());
-            let result = new JoinResult();
-
-            if (!this.gameStart[playerJoined.playerName]) {
+            let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
+            if (joinResult.success) {
               // update client statuses
-              this.gameStart[playerJoined.playerName] = playerJoined;
-              if (playerJoined.playerName == "Player1") {
+              if (joinResult.playerName == "Player1") {
                 this.player1Status = "Player1 Joined!";
               } else {
                 this.player2Status = "Player2 Joined!";
               }
-
-              result.playerName = playerJoined.playerName;
-              result.success = true;
-              result.message = "Successfully joined the game!";
-
-              this.solaceClient.sendReply(msg, JSON.stringify(result));
-
-              if (this.gameStart.Player1 && this.gameStart.Player2) {
-                this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`, JSON.stringify(this.gameStart));
-                this.player1Status = "Waiting for Player1 to set board..";
-                this.player2Status = "Waiting for Player2 to set board..";
-              }
             }
+          }
+        }
+      );
+
+      //Listening for a GAME-START event
+      this.solaceClient.subscribe(
+        `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
+        // Game-Start event
+        msg => {
+          if (msg.getBinaryAttachment()) {
+            this.player1Status = "Waiting for Player1 to set the board";
+            this.player2Status = "Waiting for Player2 to set the board";
           }
         }
       );

@@ -50,6 +50,7 @@ export class Player {
 export class PlayerJoined {
   playerName: PlayerName;
   playerNickname: string;
+  sessionId: string;
 }
 
 /**
@@ -60,6 +61,7 @@ export class PlayerJoined {
 export class GameStart {
   Player1: PlayerJoined;
   Player2: PlayerJoined;
+  sessionId: string;
 }
 
 // CellState for the Board
@@ -76,6 +78,7 @@ export class Move {
   player: PlayerName;
   x: number;
   y: number;
+  sessionId: string;
 }
 
 /**
@@ -90,6 +93,7 @@ export class MoveResponseEvent {
   playerBoard: KnownBoardCellState[][];
   move: Move;
   moveResult: PrivateBoardCellState;
+  sessionId: string;
 }
 
 /**
@@ -99,6 +103,7 @@ export class MoveResponseEvent {
 export class BoardSetEvent {
   playerName: PlayerName;
   shipsSet: number;
+  sessionId: string;
 }
 
 /**
@@ -109,6 +114,7 @@ export class JoinResult {
   playerName: PlayerName;
   success: boolean;
   message: string;
+  sessionId: string;
 }
 
 /**
@@ -118,6 +124,7 @@ export class BoardSetResult {
   playerName: PlayerName;
   success: boolean;
   message: string;
+  sessionId: string;
 }
 
 /**
@@ -126,6 +133,7 @@ export class BoardSetResult {
 export class MatchStart {
   player1Board: BoardSetResult;
   player2Board: BoardSetResult;
+  sessionId: string;
 }
 
 /**
