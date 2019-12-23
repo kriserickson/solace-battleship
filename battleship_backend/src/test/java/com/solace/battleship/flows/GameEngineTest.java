@@ -1,10 +1,7 @@
 package com.solace.battleship.flows;
 
 import com.solace.battleship.engine.GameEngine;
-import com.solace.battleship.events.GameStart;
-import com.solace.battleship.events.JoinResult;
-import com.solace.battleship.events.PlayerJoined;
-import com.solace.battleship.events.PlayerName;
+import com.solace.battleship.events.*;
 import org.junit.Test;
 
 import static junit.framework.TestCase.*;
@@ -94,5 +91,33 @@ public class GameEngineTest {
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }
+
+    @Test
+    public void testPlayerJoinAfterGameStart(){
+        String sessionId="0xFFFF";
+        PlayerJoined request1 = new PlayerJoined();
+        request1.setPlayerName(PlayerName.Player1);
+        request1.setPlayerNickname("TK");
+        request1.setSessionId(sessionId);
+        PlayerJoined request2 = new PlayerJoined();
+        request2.setPlayerName(PlayerName.Player2);
+        request2.setPlayerNickname("TK");
+        request2.setSessionId(sessionId);
+
+        GameStart gameStart = new GameStart();
+        gameStart.setPlayerJoined(request1);
+        gameStart.setPlayerJoined(request2);
+
+        JoinResult joinResult1 = new JoinResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult2 = new JoinResult(PlayerName.Player2,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult3 = new JoinResult(PlayerName.Player1, false, GameEngine.GAME_ALREADY_STARTED_ERROR);
+
+        assertEquals(gameEngine.requestToJoinGame(request1),joinResult1);
+        assertEquals(gameEngine.requestToJoinGame(request2),joinResult2);
+        assertTrue(gameEngine.canGameStart(sessionId));
+        assertEquals(gameEngine.getGameStartAndStartGame(sessionId),gameStart);
+        assertEquals(gameEngine.requestToJoinGame(request1),joinResult3);
+    }
+
 
 }
