@@ -8,6 +8,7 @@ import java.util.Objects;
  * @author Andrew Roberts, Thomas Kunnumpurath
  */
 public class JoinResult {
+
     private PlayerName playerName;
     private boolean success;
     private String message;

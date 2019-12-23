@@ -17,6 +17,11 @@ public class GameEngine implements IGameEngine {
 
     private final Map<String, GameSession> gameSessionMap = new HashMap<>();
 
+    public static final String GAME_ALREADY_STARTED_ERROR = "Game has already started!";
+    public static final String PLAYER_JOIN_SUCCESS = "Player has joined the game successfully!";
+    public static final String PLAYER_ALREADY_JOINED_ERROR="Player has already joined the game!";
+
+
     @Override
     public JoinResult requestToJoinGame(PlayerJoined request) {
         String returnMessage = "";
@@ -25,14 +30,14 @@ public class GameEngine implements IGameEngine {
         gameSessionMap.putIfAbsent(request.getSessionId(), new GameSession(request.getSessionId()));
         GameSession session = gameSessionMap.get(request.getSessionId());
         if (session.getGameState() != GameState.WAITING_FOR_JOIN) {
-            returnMessage = "Game has already started";
+            returnMessage = GAME_ALREADY_STARTED_ERROR;
             joinRequestResult = false;
         } else {
             joinRequestResult = session.getGameStart().setPlayerJoined(request);
             if (joinRequestResult) {
-                returnMessage = "Player has joined the game successfully!";
+                returnMessage = PLAYER_JOIN_SUCCESS;
             } else {
-                returnMessage = "Played has already joined the game!";
+                returnMessage = PLAYER_ALREADY_JOINED_ERROR;
             }
         }
         return new JoinResult(request.getPlayerName(), joinRequestResult, returnMessage);
