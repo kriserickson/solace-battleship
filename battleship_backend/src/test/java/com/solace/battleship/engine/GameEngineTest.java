@@ -51,7 +51,8 @@ public class GameEngineTest {
         request.setBoard(board);
         request.setSessionId(sessionId);
 
-        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        /* GOT STUCK HERE */
+        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player1,true,GameEngine.BOARD_SET_SUCCESS);
 
         assertEquals(gameEngine.requestToSetBoard(request),boardSetResult);
         assertFalse(gameEngine.canGameStart(sessionId));
