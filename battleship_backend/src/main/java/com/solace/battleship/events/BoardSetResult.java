@@ -3,7 +3,7 @@ package com.solace.battleship.events;
 import java.util.Objects;
 
 /**
- * The Result of a BoardSetEvent request
+ * The Result of a BoardSetRequest request
  * 
  * @author Andrew Roberts, Thomas Kunnumpurath
  */

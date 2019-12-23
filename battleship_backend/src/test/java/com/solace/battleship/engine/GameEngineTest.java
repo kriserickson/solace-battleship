@@ -1,4 +1,4 @@
-package com.solace.battleship.flows;
+package com.solace.battleship.engine;
 
 import com.solace.battleship.engine.GameEngine;
 import com.solace.battleship.events.*;
@@ -37,6 +37,23 @@ public class GameEngineTest {
         JoinResult joinResult = new JoinResult(PlayerName.Player2,true,GameEngine.PLAYER_JOIN_SUCCESS);
 
         assertEquals(gameEngine.requestToJoinGame(request),joinResult);
+        assertFalse(gameEngine.canGameStart(sessionId));
+        assertNull(gameEngine.getGameStartAndStartGame(sessionId));
+    }
+
+    @Test
+    public void testRequestToSetBoardPlayer1(){
+        String sessionId="0xFFFF";
+        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
+
+        BoardSetRequest request = new BoardSetRequest();
+        request.setPlayerName(PlayerName.Player1);
+        request.setBoard(board);
+        request.setSessionId(sessionId);
+
+        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
+
+        assertEquals(gameEngine.requestToSetBoard(request),boardSetResult);
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }

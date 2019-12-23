@@ -2,8 +2,7 @@ package com.solace.battleship.engine;
 
 import java.util.Objects;
 
-import com.solace.battleship.events.GameStart;
-import com.solace.battleship.events.Player;
+import com.solace.battleship.events.*;
 
 /**
  * Object represents a game's session
@@ -11,9 +10,11 @@ import com.solace.battleship.events.Player;
 public class GameSession {
 
     private GameState gameState;
+    private final String sessionId;
 
     private GameStart gameStart;
-    private final String sessionId;
+    private PrivateBoardCellState[][] player1Board;
+    private PrivateBoardCellState[][] player2Board;
     private int player1Score;
     private int player2Score;
     private Player player1;
@@ -34,6 +35,40 @@ public class GameSession {
     public void setGameStart(GameStart gameStart) {
         this.gameStart = gameStart;
     }
+
+    public PrivateBoardCellState[][] getPlayer1Board() {
+        return player1Board;
+    }
+
+    public void setPlayer1Board(PrivateBoardCellState[][] player1Board) {
+        this.player1Board = player1Board;
+    }
+
+    public PrivateBoardCellState[][] getPlayer2Board() {
+        return player2Board;
+    }
+
+    public void setPlayer2Board(PrivateBoardCellState[][] player2Board) {
+        this.player2Board = player2Board;
+    }
+
+    /**
+     * Function to set a player's board state based on provided PlayerName
+     *
+     * @param request a request to set a players board
+     * @return The result of a board set request
+     */
+    public boolean setBoard(BoardSetRequest request) {
+        if(request.getPlayerName().equals(PlayerName.Player1) && this.getPlayer1() == null){
+            this.setPlayer1Board(request.getBoard());
+            return true;
+        } else if(request.getPlayerName().equals(PlayerName.Player2) && this.getPlayer2() == null){
+            this.setPlayer2Board(request.getBoard());
+            return true;
+        }
+        return false; // error
+    }
+
 
     public Player getPlayer1() {
         return player1;

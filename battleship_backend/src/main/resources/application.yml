@@ -7,6 +7,10 @@ spring:
           destination: JOIN-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solaceBroker
+        board_set_request:
+          destination: BOARD-SET-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solaceBroker
       binders:
         solaceBroker:
           type: solace
@@ -25,6 +29,9 @@ spring:
           join_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+          board_set_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
 logging:
   level:
     root: INFO
