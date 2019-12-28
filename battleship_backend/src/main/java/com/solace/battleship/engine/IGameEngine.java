@@ -1,4 +1,5 @@
 package com.solace.battleship.engine;
+
 import com.solace.battleship.events.*;
 
 /**
@@ -17,14 +18,6 @@ public interface IGameEngine {
      * @return The result of a Join request
      */
     public JoinResult requestToJoinGame(PlayerJoined request);
-
-    /**
-     * Function to request setting ships on a board
-     *
-     * @param request   A board set request
-     * @return The result of a board set request
-     */
-    public BoardSetResult requestToSetBoard(BoardSetRequest request);
 
     /**
      * Function to check if a game can start

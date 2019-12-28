@@ -17,12 +17,8 @@ public class GameEngine implements IGameEngine {
 
     public static final String GAME_ALREADY_STARTED_ERROR = "Game has already started!";
     public static final String SESSION_DOES_NOT_EXIST_ERROR = "Your session has either expired or a server error has occured.";
-    public static final String BOARD_SET_SUCCESS = "Board has been set!";
-    public static final String BOARD_SET_SERVER_ERROR = "Something has gone wrong on the server, this is not your fault.";
-    public static final String BOARD_ALREADY_SET_ERROR = "Board has already been set!";
     public static final String PLAYER_JOIN_SUCCESS = "Player has joined the game successfully!";
-    public static final String PLAYER_ALREADY_JOINED_ERROR="Player has already joined the game!";
-
+    public static final String PLAYER_ALREADY_JOINED_ERROR = "Player has already joined the game!";
 
     @Override
     public JoinResult requestToJoinGame(PlayerJoined request) {
@@ -43,33 +39,6 @@ public class GameEngine implements IGameEngine {
             }
         }
         return new JoinResult(request.getPlayerName(), joinRequestResult, returnMessage);
-    }
-
-    @Override
-    public BoardSetResult requestToSetBoard(BoardSetRequest request) {
-        String returnMessage = "";
-        boolean boardSetRequestResult;
-
-        GameSession session = gameSessionMap.get(request.getSessionId());
-        if(session.equals(null)) {
-            returnMessage = SESSION_DOES_NOT_EXIST_ERROR;
-            boardSetRequestResult = false;
-        }
-        else if (session.getGameState() != GameState.WAITING_FOR_BOARD_SET) {
-            returnMessage = BOARD_ALREADY_SET_ERROR;
-            boardSetRequestResult = false;
-        }
-        else {
-            boardSetRequestResult = session.setBoard(request);
-            if (boardSetRequestResult) {
-                returnMessage = BOARD_SET_SUCCESS;
-            } else {
-                returnMessage = BOARD_SET_SERVER_ERROR;
-            }
-        }
-
-        return new BoardSetResult(request.getPlayerName(), boardSetRequestResult, returnMessage);
-
     }
 
     @Override

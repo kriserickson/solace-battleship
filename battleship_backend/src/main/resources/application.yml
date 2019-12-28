@@ -1,26 +1,18 @@
 spring:
   cloud:
     stream:
-      default-binder: solaceBroker
+      default-binder: solace_cloud
       bindings:
         join_request:
           destination: JOIN-REQUESTS
           group: SOLACE-BATTLESHIP
-          binder: solaceBroker
-        board_set_request:
-          destination: BOARD-SET-REQUESTS
-          group: SOLACE-BATTLESHIP
-          binder: solaceBroker
+          binder: solace_cloud
       binders:
-        solaceBroker:
+        solace_cloud:
           type: solace
           environment:
             solace:
               java:
-                host: tcp://localhost:55555
-                msgVpn: default
-                clientUsername: default
-                clientPassword: default
                 connectRetries: 3
                 connectRetriesPerHost: 0
                 reconnectRetries: 3
@@ -29,9 +21,6 @@ spring:
           join_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
-          board_set_request:
-            consumer:
-              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
 logging:
   level:
     root: INFO
