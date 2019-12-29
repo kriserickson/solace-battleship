@@ -26,18 +26,6 @@ import org.springframework.messaging.support.MessageBuilder;
 @EnableBinding(JoinRequestBinding.class)
 public class JoinProcessor {
 
-    @Autowired
-    private BinderAwareChannelResolver resolver;
-
-    @StreamListener(JoinRequestBinding.INPUT)
-    public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
-
-    }
-
-    private static final <T> Message<T> message(T val) {
-        return MessageBuilder.withPayload(val).build();
-    }
-
     /*
      * Custom Processor Binding Interface to allow for multiple outputs
      */
