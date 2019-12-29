@@ -32,18 +32,8 @@ public class JoinProcessor {
     @Autowired
     private IGameEngine gameEngine;
 
-    // We define an INPUT to receive data from and dynamically specify the reply to
-    // destination depending on the header and state of the game enginer
     @StreamListener(JoinRequestBinding.INPUT)
     public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
-        JoinResult result = gameEngine.requestToJoinGame(joinRequest);
-        resolver.resolveDestination(replyTo).send(message(result));
-
-        if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
-                    .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
-        }
 
     }
 

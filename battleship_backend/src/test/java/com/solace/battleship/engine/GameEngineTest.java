@@ -11,57 +11,39 @@ public class GameEngineTest {
     GameEngine gameEngine = new GameEngine();
 
     @Test
-    public void testRequestToJoinGamePlayer1(){
-        String sessionId="0xFFFF";
+    public void testRequestToJoinGamePlayer1() {
+        String sessionId = "0xFFFF";
 
         PlayerJoined request = new PlayerJoined();
         request.setPlayerName(PlayerName.Player1);
         request.setPlayerNickname("TK");
         request.setSessionId(sessionId);
 
-        JoinResult joinResult = new JoinResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult = new JoinResult(PlayerName.Player1, true, GameEngine.PLAYER_JOIN_SUCCESS);
 
-        assertEquals(gameEngine.requestToJoinGame(request),joinResult);
+        assertEquals(gameEngine.requestToJoinGame(request), joinResult);
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }
 
     @Test
-    public void testRequestToJoinGamePlayer2(){
-        String sessionId="0xFFFF";
+    public void testRequestToJoinGamePlayer2() {
+        String sessionId = "0xFFFF";
         PlayerJoined request = new PlayerJoined();
         request.setPlayerName(PlayerName.Player2);
         request.setPlayerNickname("TK");
         request.setSessionId(sessionId);
 
-        JoinResult joinResult = new JoinResult(PlayerName.Player2,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult = new JoinResult(PlayerName.Player2, true, GameEngine.PLAYER_JOIN_SUCCESS);
 
-        assertEquals(gameEngine.requestToJoinGame(request),joinResult);
+        assertEquals(gameEngine.requestToJoinGame(request), joinResult);
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }
 
     @Test
-    public void testRequestToSetBoardPlayer1(){
-        String sessionId="0xFFFF";
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
-
-        BoardSetRequest request = new BoardSetRequest();
-        request.setPlayerName(PlayerName.Player1);
-        request.setBoard(board);
-        request.setSessionId(sessionId);
-
-        /* GOT STUCK HERE */
-        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player1,true,GameEngine.BOARD_SET_SUCCESS);
-
-        assertEquals(gameEngine.requestToSetBoard(request),boardSetResult);
-        assertFalse(gameEngine.canGameStart(sessionId));
-        assertNull(gameEngine.getGameStartAndStartGame(sessionId));
-    }
-
-    @Test
-    public void testBothPlayersJoined(){
-        String sessionId="0xFFFF";
+    public void testBothPlayersJoined() {
+        String sessionId = "0xFFFF";
         PlayerJoined request1 = new PlayerJoined();
         request1.setPlayerName(PlayerName.Player1);
         request1.setPlayerNickname("TK");
@@ -75,44 +57,43 @@ public class GameEngineTest {
         gameStart.setPlayerJoined(request1);
         gameStart.setPlayerJoined(request2);
 
-        JoinResult joinResult1 = new JoinResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
-        JoinResult joinResult2 = new JoinResult(PlayerName.Player2,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult1 = new JoinResult(PlayerName.Player1, true, GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult2 = new JoinResult(PlayerName.Player2, true, GameEngine.PLAYER_JOIN_SUCCESS);
 
-        assertEquals(gameEngine.requestToJoinGame(request1),joinResult1);
-        assertEquals(gameEngine.requestToJoinGame(request2),joinResult2);
+        assertEquals(gameEngine.requestToJoinGame(request1), joinResult1);
+        assertEquals(gameEngine.requestToJoinGame(request2), joinResult2);
         assertTrue(gameEngine.canGameStart(sessionId));
-        assertEquals(gameEngine.getGameStartAndStartGame(sessionId),gameStart);
+        assertEquals(gameEngine.getGameStartAndStartGame(sessionId), gameStart);
     }
 
     @Test
-    public void testDuplicateJoinMessage(){
-        String sessionId="0xFFFF";
+    public void testDuplicateJoinMessage() {
+        String sessionId = "0xFFFF";
 
         PlayerJoined request = new PlayerJoined();
         request.setPlayerName(PlayerName.Player1);
         request.setPlayerNickname("TK");
         request.setSessionId(sessionId);
 
-        JoinResult joinResult = new JoinResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
-        JoinResult joinResultBad = new JoinResult(PlayerName.Player1,false,GameEngine.PLAYER_ALREADY_JOINED_ERROR);
+        JoinResult joinResult = new JoinResult(PlayerName.Player1, true, GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResultBad = new JoinResult(PlayerName.Player1, false, GameEngine.PLAYER_ALREADY_JOINED_ERROR);
 
-
-        assertEquals(gameEngine.requestToJoinGame(request),joinResult);
-        assertEquals(gameEngine.requestToJoinGame(request),joinResultBad);
+        assertEquals(gameEngine.requestToJoinGame(request), joinResult);
+        assertEquals(gameEngine.requestToJoinGame(request), joinResultBad);
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }
 
     @Test
-    public void testInvalidSession(){
-        String sessionId="0xFFFF";
+    public void testInvalidSession() {
+        String sessionId = "0xFFFF";
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }
 
     @Test
-    public void testPlayerJoinAfterGameStart(){
-        String sessionId="0xFFFF";
+    public void testPlayerJoinAfterGameStart() {
+        String sessionId = "0xFFFF";
         PlayerJoined request1 = new PlayerJoined();
         request1.setPlayerName(PlayerName.Player1);
         request1.setPlayerNickname("TK");
@@ -126,16 +107,15 @@ public class GameEngineTest {
         gameStart.setPlayerJoined(request1);
         gameStart.setPlayerJoined(request2);
 
-        JoinResult joinResult1 = new JoinResult(PlayerName.Player1,true,GameEngine.PLAYER_JOIN_SUCCESS);
-        JoinResult joinResult2 = new JoinResult(PlayerName.Player2,true,GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult1 = new JoinResult(PlayerName.Player1, true, GameEngine.PLAYER_JOIN_SUCCESS);
+        JoinResult joinResult2 = new JoinResult(PlayerName.Player2, true, GameEngine.PLAYER_JOIN_SUCCESS);
         JoinResult joinResult3 = new JoinResult(PlayerName.Player1, false, GameEngine.GAME_ALREADY_STARTED_ERROR);
 
-        assertEquals(gameEngine.requestToJoinGame(request1),joinResult1);
-        assertEquals(gameEngine.requestToJoinGame(request2),joinResult2);
+        assertEquals(gameEngine.requestToJoinGame(request1), joinResult1);
+        assertEquals(gameEngine.requestToJoinGame(request2), joinResult2);
         assertTrue(gameEngine.canGameStart(sessionId));
-        assertEquals(gameEngine.getGameStartAndStartGame(sessionId),gameStart);
-        assertEquals(gameEngine.requestToJoinGame(request1),joinResult3);
+        assertEquals(gameEngine.getGameStartAndStartGame(sessionId), gameStart);
+        assertEquals(gameEngine.requestToJoinGame(request1), joinResult3);
     }
-
 
 }
