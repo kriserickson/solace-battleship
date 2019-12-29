@@ -35,7 +35,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Welcome!" duration="0">
+      <google-codelab-step label="Welcome!" duration="5">
         <p>Hello and welcome to this course on Advanced Messaging Fundamentals with Solace!</p>
 <p>The target audience for this workshop is someone who has taken the <a href="https://www.udemy.com/course/fundamentals-of-solace-development/" target="_blank">Fundamentals Of Solace Development Udemy Course</a> and is interested in learning about more advanced messaging concepts in Solace.</p>
 <h2 is-upgraded>Course Structure</h2>
@@ -120,7 +120,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Lesson 1 - Connect and Publish" duration="10">
+      <google-codelab-step label="Lesson 1 - Connect and Publish" duration="20">
         <h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Overview of the <code>battleship_frontend</code> code structure</li>
@@ -435,7 +435,7 @@ this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.play
 
       </google-codelab-step>
     
-      <google-codelab-step label="Lesson 3 - Match and Game Over Pages" duration="10">
+      <google-codelab-step label="Lesson 3 - Match and Game Over Pages" duration="15">
         <h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Subscribe to MOVE-REQUEST and MATCH-START events</li>
@@ -563,12 +563,7 @@ if (this.scoreMap[shipHitOwner] == 0) {
 
       </google-codelab-step>
     
-      <google-codelab-step label="Section 2 Intro Videos" duration="0">
-        
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Lesson 4 - Enabling Multiple Sessions" duration="0">
+      <google-codelab-step label="Lesson 4 - Enabling Multiple Sessions" duration="10">
         <h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Append a session id (a random hex-string) to the Global Topic Prefix</li>
@@ -621,7 +616,7 @@ this.topicHelper.prefix = this.topicHelper.prefix + &#34;/&#34; + params.session
 
       </google-codelab-step>
     
-      <google-codelab-step label="Lesson 5 - Creating a Battleship Dashboard" duration="0">
+      <google-codelab-step label="Lesson 5 - Creating a Battleship Dashboard" duration="5">
         <h2 is-upgraded>Objectives</h2>
 <ul>
 <li>The benefits of doing request/reply over an event broker</li>
@@ -668,7 +663,7 @@ this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, msg =&g
 
       </google-codelab-step>
     
-      <google-codelab-step label="Lesson 6 - Creating a Spring Cloud Stream server skeleton for the battleship backend" duration="0">
+      <google-codelab-step label="Lesson 6 - Creating a Spring Cloud Stream server skeleton for the battleship backend" duration="20">
         <h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Understand why it is important to move state management to serverside</li>
@@ -733,7 +728,7 @@ INFO 8296 --- [  restartedMain] c.s.s.c.s.b.p.SolaceQueueProvisioner     : Creat
 
       </google-codelab-step>
     
-      <google-codelab-step label="Lesson 7 - Implementing a Join Request Handler in the Spring Cloud Stream server" duration="0">
+      <google-codelab-step label="Lesson 7 - Implementing a Join Request Handler in the Spring Cloud Stream server" duration="10">
         <h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Add a topic subscription to the Join-Request Queue via Spring Cloud Stream</li>
@@ -988,7 +983,7 @@ SOLACE/BATTLESHIP/*/BOARD/SET/*
 
       </google-codelab-step>
     
-      <google-codelab-step label="Extra Content - Solace Client Wrapper" duration="3">
+      <google-codelab-step label="Extra Content - Solace Client Wrapper" duration="15">
         <p>In this course we&#39;ll be using <code>solace-client.ts</code> to interact with the Solace Event Broker. This client is a custom wrapper around Solace&#39;s JavaScript client that is written in TypeScript and includes topic dispatch functionality, i.e. the ability to map events to different callbacks based on the event&#39;s topic. Examples of Solace&#39;s standard JavaScript client can be found <a href="https://github.com/SolaceSamples/solace-samples-javascript" target="_blank">here</a>.</p>
 <p>This section of the Codelab is entirely optional. If you&#39;re interested in learning more about the lifecycle of a Solace client, read on. Otherwise, feel free to skip this section and jump to Lesson 1.</p>
 <h2 is-upgraded>Connect Logic</h2>

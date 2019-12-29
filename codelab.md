@@ -1,6 +1,6 @@
 author: Solace SE Team
 summary: Build Battleship, a popular board game, and learn advanced messaging techniques
-id: Advanced Messaging Fundamentals with Solace
+id: codelab
 tags: udemy,advanced-fundamentals
 categories: Java,Spring,Javascript
 environments: Web
@@ -19,6 +19,8 @@ analytics account: UA-3921398-10
 [Who is Solace](https://www.youtube.com/watch?v=Lfyvps9QjSg)
 
 ## Welcome!
+
+Duration: 0:05:00
 
 Hello and welcome to this course on Advanced Messaging Fundamentals with Solace!
 
@@ -144,7 +146,7 @@ cd battleship
 
 ## Lesson 1 - Connect and Publish
 
-Duration: 0:10:00
+Duration: 0:20:00
 
 ### Objectives
 
@@ -563,7 +565,7 @@ To see the completed code for this section, sync the following branch [battleshi
 
 ## Lesson 3 - Match and Game Over Pages
 
-Duration: 0:10:00
+Duration: 0:15:00
 
 ### Objectives
 
@@ -732,9 +734,9 @@ To see the completed code for this section, sync the following branch [battleshi
 
 [Summary](https://www.youtube.com/watch?v=2cYGDxG6j2c)
 
-## Section 2 Intro Videos
-
 ## Lesson 4 - Enabling Multiple Sessions
+
+Duration: 0:10:00
 
 ### Objectives
 
@@ -824,6 +826,8 @@ To see the completed code for this section, sync the following branch [battleshi
 
 ## Lesson 5 - Creating a Battleship Dashboard
 
+Duration: 0:05:00
+
 ### Objectives
 
 - The benefits of doing request/reply over an event broker
@@ -896,6 +900,8 @@ To see the completed code for this section, sync the following branch [battleshi
 
 
 ## Lesson 6 - Creating a Spring Cloud Stream server skeleton for the battleship backend
+
+Duration: 0:20:00
 
 ### Objectives
 
@@ -1003,6 +1009,8 @@ In this lesson you learned about considerations to be made when building distrib
 Be sure to commit the changes you made to this branch by running `git commit -m "lesson6"`
 
 ## Lesson 7 - Implementing a Join Request Handler in the Spring Cloud Stream server
+
+Duration: 0:10:00
 
 ### Objectives
 
@@ -1352,7 +1360,7 @@ To see the completed code for this section, sync the following branch [battleshi
 
 ## Extra Content - Solace Client Wrapper
 
-Duration: 0:03:00
+Duration: 0:15:00
 
 In this course we'll be using `solace-client.ts` to interact with the Solace Event Broker. This client is a custom wrapper around Solace's JavaScript client that is written in TypeScript and includes topic dispatch functionality, i.e. the ability to map events to different callbacks based on the event's topic. Examples of Solace's standard JavaScript client can be found [here](https://github.com/SolaceSamples/solace-samples-javascript).
 
