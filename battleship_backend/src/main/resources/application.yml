@@ -20,6 +20,7 @@ spring:
         bindings:
           join_request:
             consumer:
+              #Subscription for the join request queue
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
 logging:
   level:
