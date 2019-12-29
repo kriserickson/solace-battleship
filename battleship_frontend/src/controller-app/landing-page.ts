@@ -33,36 +33,8 @@ export class LandingPage {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
       //Listener for join replies from the battleship-server
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`,
-        // join event handler callback
-        msg => {
-          if (msg.getBinaryAttachment()) {
-            // parse received event
-            let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
-            if (joinResult.success) {
-              // update client statuses
-              if (joinResult.playerName == "Player1") {
-                this.player1Status = "Player1 Joined!";
-              } else {
-                this.player2Status = "Player2 Joined!";
-              }
-            }
-          }
-        }
-      );
 
       //Listening for a GAME-START event from the battleship-server
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
-        // Game-Start event
-        msg => {
-          if (msg.getBinaryAttachment()) {
-            this.player1Status = "Waiting for Player1 to set the board";
-            this.player2Status = "Waiting for Player2 to set the board";
-          }
-        }
-      );
 
       //Listener for board set requests
       this.solaceClient.subscribe(
