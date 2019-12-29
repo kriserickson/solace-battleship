@@ -29,9 +29,6 @@ public class JoinProcessor {
     @Autowired
     private BinderAwareChannelResolver resolver;
 
-    @Autowired
-    private IGameEngine gameEngine;
-
     @StreamListener(JoinRequestBinding.INPUT)
     public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
 
