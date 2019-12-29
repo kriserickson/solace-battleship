@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2019-12-29T12:55:17-06:00",
+  "id": "codelab",
+  "duration": 43,
+  "title": "Battleship",
+  "summary": "Build Battleship, a popular board game, and learn advanced messaging techniques",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "java",
+    "spring",
+    "javascript"
+  ],
+  "tags": [
+    "advanced-fundamentals",
+    "udemy",
+    "web"
+  ],
+  "feedback": "http://github.com/solacese/battleship/issues",
+  "ga": "UA-3921398-10",
+  "url": "codelab"
+}
