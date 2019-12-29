@@ -22,7 +22,6 @@ import org.springframework.messaging.support.MessageBuilder;
  * 
  * @author Thomas Kunnumpurath
  */
-@SpringBootApplication
 @EnableBinding(JoinRequestBinding.class)
 public class JoinProcessor {
 
