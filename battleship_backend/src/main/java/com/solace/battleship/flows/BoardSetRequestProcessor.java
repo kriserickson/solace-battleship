@@ -1,10 +1,9 @@
 package com.solace.battleship.flows;
 
 import com.solace.battleship.engine.IGameEngine;
-import com.solace.battleship.events.JoinResult;
-import com.solace.battleship.events.PlayerJoined;
-import com.solace.battleship.flows.JoinProcessor.JoinRequestBinding;
-
+import com.solace.battleship.events.BoardSetRequest;
+import com.solace.battleship.events.BoardSetResult;
+import com.solace.battleship.flows.BoardSetRequestProcessor.BoardSetRequestBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -23,7 +22,7 @@ import org.springframework.messaging.support.MessageBuilder;
  * @author Thomas Kunnumpurath
  */
 @SpringBootApplication
-@EnableBinding(JoinRequestBinding.class)
+@EnableBinding(BoardSetRequestBinding.class)
 public class BoardSetRequestProcessor {
 
     @Autowired
@@ -34,15 +33,15 @@ public class BoardSetRequestProcessor {
 
     // We define an INPUT to receive data from and dynamically specify the reply to
     // destination depending on the header and state of the game enginer
-    @StreamListener(JoinRequestBinding.INPUT)
-    public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
+    @StreamListener(BoardSetRequestBinding.INPUT)
+    public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
         // Pass the request to the game engine to join the game
-        JoinResult result = gameEngine.requestToJoinGame(joinRequest);
+        BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
         resolver.resolveDestination(replyTo).send(message(result));
 
-        if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
-                    .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
+        if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
+            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/GAME-START/CONTROLLER")
+                    .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
         }
 
     }
@@ -54,10 +53,10 @@ public class BoardSetRequestProcessor {
     /*
      * Custom Processor Binding Interface to allow for multiple outputs
      */
-    public interface JoinRequestBinding {
-        String INPUT = "join_request";
+    public interface BoardSetRequestBinding {
+        String INPUT = "board_set_request";
 
         @Input
-        SubscribableChannel join_request();
+        SubscribableChannel board_set_request();
     }
 }

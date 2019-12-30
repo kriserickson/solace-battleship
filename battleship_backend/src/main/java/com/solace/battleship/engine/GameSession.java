@@ -9,21 +9,22 @@ import com.solace.battleship.events.*;
  */
 public class GameSession {
 
-    private GameState gameState;
     private final String sessionId;
-
+    private GameState gameState;
     private GameStart gameStart;
-    private PrivateBoardCellState[][] player1Board;
-    private PrivateBoardCellState[][] player2Board;
-    private int player1Score;
-    private int player2Score;
+    private MatchStart matchStart;
     private Player player1;
     private Player player2;
+    private int player1Score;
+    private int player2Score;
 
     public GameSession(String sessionId) {
         this.sessionId = sessionId;
         this.gameState = GameState.WAITING_FOR_JOIN;
         this.gameStart = new GameStart();
+        this.matchStart = new MatchStart();
+        this.player1 = new Player();
+        this.player2 = new Player();
         this.player1Score = 5;
         this.player2Score = 5;
     }
@@ -36,20 +37,28 @@ public class GameSession {
         this.gameStart = gameStart;
     }
 
+    public MatchStart getMatchStart() {
+        return matchStart;
+    }
+
+    public void setMatchStart(MatchStart matchStart) {
+        this.matchStart = matchStart;
+    }
+
     public PrivateBoardCellState[][] getPlayer1Board() {
-        return player1Board;
+        return player1.getInternalBoardState();
     }
 
     public void setPlayer1Board(PrivateBoardCellState[][] player1Board) {
-        this.player1Board = player1Board;
+        this.player1.setInternalBoardState(player1Board);
     }
 
     public PrivateBoardCellState[][] getPlayer2Board() {
-        return player2Board;
+        return player2.getInternalBoardState();
     }
 
     public void setPlayer2Board(PrivateBoardCellState[][] player2Board) {
-        this.player2Board = player2Board;
+        this.player2.setInternalBoardState(player2Board);
     }
 
     /**
@@ -59,10 +68,10 @@ public class GameSession {
      * @return The result of a board set request
      */
     public boolean setBoard(BoardSetRequest request) {
-        if(request.getPlayerName().equals(PlayerName.Player1) && this.getPlayer1() == null){
+        if(request.getPlayerName().equals(PlayerName.Player1) && this.getPlayer1().getInternalBoardState() == null){ // == null check should change
             this.setPlayer1Board(request.getBoard());
             return true;
-        } else if(request.getPlayerName().equals(PlayerName.Player2) && this.getPlayer2() == null){
+        } else if(request.getPlayerName().equals(PlayerName.Player2) && this.getPlayer2().getInternalBoardState() == null){
             this.setPlayer2Board(request.getBoard());
             return true;
         }

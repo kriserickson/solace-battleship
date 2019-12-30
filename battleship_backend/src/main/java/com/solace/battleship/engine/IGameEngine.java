@@ -19,6 +19,22 @@ public interface IGameEngine {
     public JoinResult requestToJoinGame(PlayerJoined request);
 
     /**
+     * Function to check if a game can start
+     *
+     * @param sessionId
+     * @return true if both players have joined
+     */
+    public boolean canGameStart(String sessionId);
+
+    /**
+     * Function to get the GameStart event
+     *
+     * @param sessionId
+     * @return a GameStart event object
+     */
+    public GameStart getGameStartAndStartGame(String sessionId);
+
+    /**
      * Function to request setting ships on a board
      *
      * @param request   A board set request
@@ -27,18 +43,18 @@ public interface IGameEngine {
     public BoardSetResult requestToSetBoard(BoardSetRequest request);
 
     /**
-     * Function to check if a game can start
-     * 
+     * Function to check if the match can start
+     *
      * @param sessionId
-     * @return true if both players have joined
+     * @return true if both players have set their ships
      */
-    public boolean canGameStart(String sessionId);
+    public boolean canMatchStart(String sessionId);
 
     /**
-     * Function to get the GameStart event
-     * 
+     * Function to get the MatchStart event
+     *
      * @param sessionId
      * @return a GameStart event object
      */
-    public GameStart getGameStartAndStartGame(String sessionId);
+    public MatchStart getMatchStartAndStartMatch(String sessionId);
 }

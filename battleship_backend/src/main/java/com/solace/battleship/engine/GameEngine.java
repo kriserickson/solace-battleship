@@ -46,6 +46,30 @@ public class GameEngine implements IGameEngine {
     }
 
     @Override
+    public boolean canGameStart(String sessionId) {
+        GameSession session = gameSessionMap.get(sessionId);
+
+        if (session != null && session.getGameState() == GameState.WAITING_FOR_JOIN) {
+            return session.getGameStart().getPlayer1() != null && session.getGameStart().getPlayer2() != null;
+        }
+
+        return false;
+    }
+
+    @Override
+    public GameStart getGameStartAndStartGame(String sessionId) {
+        GameSession session = gameSessionMap.get(sessionId);
+
+        if (canGameStart(sessionId)) {
+            session.setGameState(GameState.WAITING_FOR_BOARD_SET);
+            return session.getGameStart();
+        }
+
+        return null;
+    }
+
+
+    @Override
     public BoardSetResult requestToSetBoard(BoardSetRequest request) {
         String returnMessage = "";
         boolean boardSetRequestResult;
@@ -68,28 +92,35 @@ public class GameEngine implements IGameEngine {
             }
         }
 
+        if(request.getPlayerName() == PlayerName.Player1) {
+            session.getMatchStart().setPlayer1Board(new BoardSetResult(request.getPlayerName(), boardSetRequestResult, returnMessage));
+        }
+        else if (request.getPlayerName() == PlayerName.Player2) {
+            session.getMatchStart().setPlayer2Board(new BoardSetResult(request.getPlayerName(), boardSetRequestResult, returnMessage));
+        }
+
         return new BoardSetResult(request.getPlayerName(), boardSetRequestResult, returnMessage);
 
     }
 
     @Override
-    public boolean canGameStart(String sessionId) {
+    public boolean canMatchStart(String sessionId){
         GameSession session = gameSessionMap.get(sessionId);
 
-        if (session != null && session.getGameState() == GameState.WAITING_FOR_JOIN) {
-            return session.getGameStart().getPlayer1() != null && session.getGameStart().getPlayer2() != null;
+        if (session != null && session.getGameState() == GameState.WAITING_FOR_BOARD_SET) {
+            return session.getMatchStart().getPlayer1Board() != null && session.getMatchStart().getPlayer2Board() != null;
         }
 
         return false;
     }
 
     @Override
-    public GameStart getGameStartAndStartGame(String sessionId) {
+    public MatchStart getMatchStartAndStartMatch(String sessionId){
         GameSession session = gameSessionMap.get(sessionId);
 
-        if (canGameStart(sessionId)) {
-            session.setGameState(GameState.WAITING_FOR_BOARD_SET);
-            return session.getGameStart();
+        if (canMatchStart(sessionId)) {
+            session.setGameState(GameState.PLAYER1_TURN);
+            return session.getMatchStart();
         }
 
         return null;

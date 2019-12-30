@@ -10,6 +10,7 @@ public class GameEngineTest {
 
     GameEngine gameEngine = new GameEngine();
 
+    // join request
     @Test
     public void testRequestToJoinGamePlayer1(){
         String sessionId="0xFFFF";
@@ -37,24 +38,6 @@ public class GameEngineTest {
         JoinResult joinResult = new JoinResult(PlayerName.Player2,true,GameEngine.PLAYER_JOIN_SUCCESS);
 
         assertEquals(gameEngine.requestToJoinGame(request),joinResult);
-        assertFalse(gameEngine.canGameStart(sessionId));
-        assertNull(gameEngine.getGameStartAndStartGame(sessionId));
-    }
-
-    @Test
-    public void testRequestToSetBoardPlayer1(){
-        String sessionId="0xFFFF";
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
-
-        BoardSetRequest request = new BoardSetRequest();
-        request.setPlayerName(PlayerName.Player1);
-        request.setBoard(board);
-        request.setSessionId(sessionId);
-
-        /* GOT STUCK HERE */
-        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player1,true,GameEngine.BOARD_SET_SUCCESS);
-
-        assertEquals(gameEngine.requestToSetBoard(request),boardSetResult);
         assertFalse(gameEngine.canGameStart(sessionId));
         assertNull(gameEngine.getGameStartAndStartGame(sessionId));
     }
@@ -137,5 +120,103 @@ public class GameEngineTest {
         assertEquals(gameEngine.requestToJoinGame(request1),joinResult3);
     }
 
+
+    // board set requests
+    @Test
+    public void testRequestToSetBoardPlayer1(){
+        /** setup board */
+        String sessionId="0xFFFF";
+        PlayerJoined request1 = new PlayerJoined();
+        request1.setPlayerName(PlayerName.Player1);
+        request1.setPlayerNickname("ANDREW");
+        request1.setSessionId(sessionId);
+        PlayerJoined request2 = new PlayerJoined();
+        request2.setPlayerName(PlayerName.Player2);
+        request2.setPlayerNickname("ANDREW");
+        request2.setSessionId(sessionId);
+        gameEngine.requestToJoinGame(request1);
+        gameEngine.requestToJoinGame(request2);
+        gameEngine.getGameStartAndStartGame(sessionId);
+        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
+        // form request
+        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
+        BoardSetRequest boardSetRequest = new BoardSetRequest();
+        boardSetRequest.setPlayerName(PlayerName.Player1);
+        boardSetRequest.setBoard(board);
+        boardSetRequest.setSessionId(sessionId);
+        // mock successful response
+        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player1,true,GameEngine.BOARD_SET_SUCCESS);
+        // check that the request works
+        assertEquals(gameEngine.requestToSetBoard(boardSetRequest),boardSetResult);
+        assertFalse(gameEngine.canMatchStart(sessionId));
+        assertNull(gameEngine.getMatchStartAndStartMatch(sessionId));
+    }
+
+    @Test
+    public void testRequestToSetBoardPlayer2(){
+        /** setup board */
+        String sessionId="0xFFFF";
+        PlayerJoined request1 = new PlayerJoined();
+        request1.setPlayerName(PlayerName.Player1);
+        request1.setPlayerNickname("ANDREW");
+        request1.setSessionId(sessionId);
+        PlayerJoined request2 = new PlayerJoined();
+        request2.setPlayerName(PlayerName.Player2);
+        request2.setPlayerNickname("ANDREW");
+        request2.setSessionId(sessionId);
+        gameEngine.requestToJoinGame(request1);
+        gameEngine.requestToJoinGame(request2);
+        gameEngine.getGameStartAndStartGame(sessionId);
+        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
+        // form request
+        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
+        BoardSetRequest boardSetRequest = new BoardSetRequest();
+        boardSetRequest.setPlayerName(PlayerName.Player2);
+        boardSetRequest.setBoard(board);
+        boardSetRequest.setSessionId(sessionId);
+        // mock successful response
+        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.Player2,true,GameEngine.BOARD_SET_SUCCESS);
+        // check that the request works
+        assertEquals(gameEngine.requestToSetBoard(boardSetRequest),boardSetResult);
+        assertFalse(gameEngine.canMatchStart(sessionId));
+        assertNull(gameEngine.getMatchStartAndStartMatch(sessionId));
+    }
+
+    @Test
+    public void testBothPlayersSetBoards(){
+        /** setup board */
+        String sessionId="0xFFFF";
+        PlayerJoined request1 = new PlayerJoined();
+        request1.setPlayerName(PlayerName.Player1);
+        request1.setPlayerNickname("ANDREW");
+        request1.setSessionId(sessionId);
+        PlayerJoined request2 = new PlayerJoined();
+        request2.setPlayerName(PlayerName.Player2);
+        request2.setPlayerNickname("ANDREW");
+        request2.setSessionId(sessionId);
+        gameEngine.requestToJoinGame(request1);
+        gameEngine.requestToJoinGame(request2);
+        gameEngine.getGameStartAndStartGame(sessionId);
+        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
+        // form request
+        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
+        BoardSetRequest boardSetRequest1 = new BoardSetRequest();
+        boardSetRequest1.setPlayerName(PlayerName.Player1);
+        boardSetRequest1.setBoard(board);
+        boardSetRequest1.setSessionId(sessionId);
+        BoardSetRequest boardSetRequest2 = new BoardSetRequest();
+        boardSetRequest2.setPlayerName(PlayerName.Player2);
+        boardSetRequest2.setBoard(board);
+        boardSetRequest2.setSessionId(sessionId);
+        // mock successful responses
+        BoardSetResult boardSetResult1 = new BoardSetResult(PlayerName.Player1,true,GameEngine.BOARD_SET_SUCCESS);
+        BoardSetResult boardSetResult2 = new BoardSetResult(PlayerName.Player2,true,GameEngine.BOARD_SET_SUCCESS);
+        // mock MatchStart
+        // check that the request works
+        assertEquals(gameEngine.requestToSetBoard(boardSetRequest1),boardSetResult1);
+        assertEquals(gameEngine.requestToSetBoard(boardSetRequest2),boardSetResult2);
+        assertTrue(gameEngine.canMatchStart(sessionId));
+        assertNotNull(gameEngine.getMatchStartAndStartMatch(sessionId));
+    }
 
 }
