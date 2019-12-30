@@ -27,34 +27,23 @@
                   environment="web"
                   feedback-link="http://github.com/solacese/battleship/issues">
     
-      <google-codelab-step label="Welcome Videos" duration="0">
-        <p><a href="https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e" target="_blank">Welcome</a></p>
-<p><a href="https://www.youtube.com/watch?v=6fwuwwt31rY" target="_blank">Why Messaging</a></p>
-<p><a href="https://www.youtube.com/watch?v=Lfyvps9QjSg" target="_blank">Who is Solace</a></p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Welcome!" duration="5">
+      <google-codelab-step label="Welcome!" duration="15">
         <p>Hello and welcome to this course on Advanced Messaging Fundamentals with Solace!</p>
-<p>The target audience for this workshop is someone who has taken the <a href="https://www.udemy.com/course/fundamentals-of-solace-development/" target="_blank">Fundamentals Of Solace Development Udemy Course</a> and is interested in learning about more advanced messaging concepts in Solace.</p>
+<p>The target audience for this workshop is for someone who is interested in learning about more advanced messaging concepts in Solace.</p>
 <h2 is-upgraded>Course Structure</h2>
-<p>This course is broken into two components: a <strong>Udemy video</strong> and this <strong>Codelab</strong>.</p>
+<p>This course is broken into two components: <strong>Udemy videos</strong> and this <strong>Codelab</strong>.</p>
 <ul>
-<li><strong>Udemy</strong>: focuses on the theory and fundamentals being covered,</li>
+<li><strong>Udemy videos</strong>: focuses on the theory and fundamentals being covered,</li>
 <li><strong>Codelab</strong>: applies the covered theory and fundamentals to an example application</li>
 </ul>
 <p>There will definitely be some overlap between the Udemy video and this Codelab. The best way to consume this course is to watch the Udemy videos first and then get your hands dirty by typing out the code snippets found in this Codelab in the applicable sections of the example application. If videos aren&#39;t your thing, that&#39;s okay — you&#39;ll be able to complete this Codelab without watching the Udemy video.</p>
 <p>Each lesson progressively builds in more functionality to the application.</p>
 <p>All the code used in this Codelab can be found in <a href="https://github.com/solacese/battleship" target="_blank">this GitHub repository</a>.</p>
 <p>The repository is split up into branches that correspond to the lessons. Each lesson has two corresponding branches: one branch that accompanies the copy and paste sections of the Codelab, and one solutions branch. E.g. battleship-lesson-1, and battleship-lesson-1-solution. If you want to build a version of the game before completing its corresponding lesson, <code>git checkout</code> the <code>battleship-lesson-*-solution</code> branch of your choosing.</p>
-<p>This Codelab will assume that the following topics are understood:</p>
-<ul>
-<li><a href="https://docs.solace.com/PubSub-Basics/Understanding-Topics.htm" target="_blank">Topics, topic hierarchies, and wildcarding</a></li>
-<li><a href="https://docs.solace.com/PubSub-ConceptMaps/Component-Maps.htm#SMF" target="_blank">Sessions, Subscriptions, Flows, and Solace Object Hierarchy</a></li>
-<li><a href="https://docs.solace.com/PubSub-Basics/Core-Concepts-Message-Models.htm" target="_blank">Message Exchange Patterns</a></li>
-</ul>
-<p>These links are cherry-picked from our docs site, which is a rich resource you can use to learn about messaging and event driven architecture.</p>
+<h2 is-upgraded>Udemy Videos</h2>
+<p><a href="https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e" target="_blank">Welcome</a></p>
+<p><a href="https://www.youtube.com/watch?v=6fwuwwt31rY" target="_blank">Why Messaging</a></p>
+<p><a href="https://www.youtube.com/watch?v=Lfyvps9QjSg" target="_blank">Who is Solace</a></p>
 <h2 is-upgraded>What We&#39;ll Be Building</h2>
 <p>Our goal is to build a working version of Battleship.</p>
 <ul>
@@ -112,15 +101,11 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Section 1 Intro Videos" duration="0">
-        <p><a href="https://www.youtube.com/watch?v=MJPj3s4dGYo" target="_blank">Section 1 Overview</a></p>
-<p><a href="https://youtu.be/_SUcEu-Mg0o?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e" target="_blank">Solace Topics</a></p>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Lesson 1 - Connect and Publish" duration="20">
-        <h2 is-upgraded>Objectives</h2>
+        <h2 is-upgraded>Udemy Videos</h2>
+<p><a href="https://www.youtube.com/watch?v=MJPj3s4dGYo" target="_blank">Section 1 Overview</a></p>
+<p><a href="https://youtu.be/_SUcEu-Mg0o?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e" target="_blank">Solace Topics</a></p>
+<h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Overview of the <code>battleship_frontend</code> code structure</li>
 <li>Connect to a Solace PubSub+ Event Broker provisioned in the Cloud from the Landing Page</li>
@@ -259,14 +244,10 @@ this.solaceClient
 
       </google-codelab-step>
     
-      <google-codelab-step label="Lesson 2 - Video" duration="0">
-        <p><a href="https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e" target="_blank">Topic Dispatch</a></p>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Lesson 2 - Setting Up Subscriptions and Transitioning Page States" duration="20">
-        <h2 is-upgraded>Objectives</h2>
+        <h2 is-upgraded>Udemy Videos</h2>
+<p><a href="https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e" target="_blank">Topic Dispatch</a><a href="https://www.youtube.com/watch?v=yQUwWIY9mi4" target="_blank">Request Reply</a></p>
+<h2 is-upgraded>Objectives</h2>
 <ul>
 <li>Setting up a replier to the join request</li>
 <li>Transition between page states</li>
@@ -424,12 +405,6 @@ this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.play
 <p>Be sure to commit the changes you made to this branch by running <code>git commit -m &#34;lesson2&#34;</code></p>
 <p>To see the completed code for this section, sync the following branch <a href="https://github.com/solacese/battleship/blob/battleship-lesson-2-subscribe-and-page-transitions-solution/" target="_blank">battleship-lesson-2-subscribe-and-page-transitions-solution</a> using the command:</p>
 <p><code>git checkout battleship-lesson-2-subscribe-and-page-transitions-solution</code></p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Lesson 3 Video" duration="0">
-        <p><a href="https://www.youtube.com/watch?v=yQUwWIY9mi4" target="_blank">Request Reply</a></p>
 
 
       </google-codelab-step>
@@ -648,22 +623,12 @@ this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, msg =&g
 <p>And your game activity will be reflected in real time!</p>
 <p>You can optionally also run the <code>now</code> command again in the battleship_frontend directory to update your deployment to ZEIT.</p>
 <h2 is-upgraded>Summary</h2>
+<p><a href="https://www.youtube.com/watch?v=2cYGDxG6j2c" target="_blank">Udemy Summary Video</a></p>
 <p>In this lesson you learned about the benefits of doing a request-reply interaction over Solace. You were able to add an additional widget that listend to all player reply events without interrupting your critical path. You essentially are able to spin up additional microservices that tap events in realtime ‘for free&#39;.</p>
 <p>Be sure to commit the changes you made to this branch by running <code>git commit -m &#34;lesson5&#34;</code></p>
 <p>To see the completed code for this section, sync the following branch <a href="https://github.com/solacese/battleship/blob/battleship-lesson-5-building-a-dashboard-solution" target="_blank">battleship-lesson-5-building-a-dashboard-solution</a> using the command:</p>
 <p><code>git checkout battleship-lesson-5-building-a-dashboard-solution</code></p>
 
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Section 1 Summary" duration="0">
-        <p><a href="https://www.youtube.com/watch?v=2cYGDxG6j2c" target="_blank">Summary</a></p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Section 2 Overview" duration="0">
-        
 
       </google-codelab-step>
     

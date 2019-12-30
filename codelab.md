@@ -10,27 +10,19 @@ analytics account: UA-3921398-10
 
 # Battleship
 
-## Welcome Videos
-
-[Welcome](https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
-
-[Why Messaging](https://www.youtube.com/watch?v=6fwuwwt31rY)
-
-[Who is Solace](https://www.youtube.com/watch?v=Lfyvps9QjSg)
-
 ## Welcome!
 
-Duration: 0:05:00
+Duration: 0:15:00
 
 Hello and welcome to this course on Advanced Messaging Fundamentals with Solace!
 
-The target audience for this workshop is someone who has taken the [Fundamentals Of Solace Development Udemy Course](https://www.udemy.com/course/fundamentals-of-solace-development/) and is interested in learning about more advanced messaging concepts in Solace.
+The target audience for this workshop is for someone who is interested in learning about more advanced messaging concepts in Solace.
 
 ### Course Structure
 
-This course is broken into two components: a **Udemy video** and this **Codelab**.
+This course is broken into two components: **Udemy videos** and this **Codelab**.
 
-- **Udemy**: focuses on the theory and fundamentals being covered,
+- **Udemy videos**: focuses on the theory and fundamentals being covered,
 - **Codelab**: applies the covered theory and fundamentals to an example application
 
 There will definitely be some overlap between the Udemy video and this Codelab. The best way to consume this course is to watch the Udemy videos first and then get your hands dirty by typing out the code snippets found in this Codelab in the applicable sections of the example application. If videos aren't your thing, that's okay — you'll be able to complete this Codelab without watching the Udemy video.
@@ -41,13 +33,13 @@ All the code used in this Codelab can be found in [this GitHub repository](https
 
 The repository is split up into branches that correspond to the lessons. Each lesson has two corresponding branches: one branch that accompanies the copy and paste sections of the Codelab, and one solutions branch. E.g. battleship-lesson-1, and battleship-lesson-1-solution. If you want to build a version of the game before completing its corresponding lesson, `git checkout` the `battleship-lesson-*-solution` branch of your choosing.
 
-This Codelab will assume that the following topics are understood:
+### Udemy Videos
 
-- [Topics, topic hierarchies, and wildcarding](https://docs.solace.com/PubSub-Basics/Understanding-Topics.htm)
-- [Sessions, Subscriptions, Flows, and Solace Object Hierarchy](https://docs.solace.com/PubSub-ConceptMaps/Component-Maps.htm#SMF)
-- [Message Exchange Patterns](https://docs.solace.com/PubSub-Basics/Core-Concepts-Message-Models.htm)
+[Welcome](https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
 
-These links are cherry-picked from our docs site, which is a rich resource you can use to learn about messaging and event driven architecture.
+[Why Messaging](https://www.youtube.com/watch?v=6fwuwwt31rY)
+
+[Who is Solace](https://www.youtube.com/watch?v=Lfyvps9QjSg)
 
 ### What We'll Be Building
 
@@ -137,15 +129,15 @@ Your working directory for the course will then be
 cd battleship
 ```
 
-## Section 1 Intro Videos
+## Lesson 1 - Connect and Publish
+
+Duration: 0:20:00
+
+### Udemy Videos
 
 [Section 1 Overview](https://www.youtube.com/watch?v=MJPj3s4dGYo)
 
 [Solace Topics](https://youtu.be/_SUcEu-Mg0o?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
-
-## Lesson 1 - Connect and Publish
-
-Duration: 0:20:00
 
 ### Objectives
 
@@ -352,13 +344,14 @@ To see the solutions to this excercise, sync the following branch [battleship-le
 
 ---
 
-## Lesson 2 - Video
-
-[Topic Dispatch](https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
-
 ## Lesson 2 - Setting Up Subscriptions and Transitioning Page States
 
 Duration: 0:20:00
+
+### Udemy Videos
+
+[Topic Dispatch](https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
+[Request Reply](https://www.youtube.com/watch?v=yQUwWIY9mi4)
 
 ### Objectives
 
@@ -557,10 +550,6 @@ Be sure to commit the changes you made to this branch by running `git commit -m 
 To see the completed code for this section, sync the following branch [battleship-lesson-2-subscribe-and-page-transitions-solution](https://github.com/solacese/battleship/blob/battleship-lesson-2-subscribe-and-page-transitions-solution/) using the command:
 
 `git checkout battleship-lesson-2-subscribe-and-page-transitions-solution`
-
-## Lesson 3 Video
-
-[Request Reply](https://www.youtube.com/watch?v=yQUwWIY9mi4)
 
 ## Lesson 3 - Match and Game Over Pages
 
@@ -885,6 +874,8 @@ You can optionally also run the `now` command again in the battleship_frontend d
 
 ### Summary
 
+[Udemy Summary Video](https://www.youtube.com/watch?v=2cYGDxG6j2c)
+
 In this lesson you learned about the benefits of doing a request-reply interaction over Solace. You were able to add an additional widget that listend to all player reply events without interrupting your critical path. You essentially are able to spin up additional microservices that tap events in realtime 'for free'.
 
 Be sure to commit the changes you made to this branch by running `git commit -m "lesson5"`
@@ -892,12 +883,6 @@ Be sure to commit the changes you made to this branch by running `git commit -m 
 To see the completed code for this section, sync the following branch [battleship-lesson-5-building-a-dashboard-solution](https://github.com/solacese/battleship/blob/battleship-lesson-5-building-a-dashboard-solution) using the command:
 
 `git checkout battleship-lesson-5-building-a-dashboard-solution`
-
-## Section 1 Summary
-
-[Summary](https://www.youtube.com/watch?v=2cYGDxG6j2c)
-
-## Section 2 Overview
 
 ## Lesson 6 - Creating a Spring Cloud Stream server skeleton for the battleship backend
 
