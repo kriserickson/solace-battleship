@@ -35,11 +35,11 @@ The repository is split up into branches that correspond to the lessons. Each le
 
 ### Udemy Videos
 
-[Welcome](https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
+- [Welcome](https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
 
-[Why Messaging](https://www.youtube.com/watch?v=6fwuwwt31rY)
+- [Why Messaging](https://www.youtube.com/watch?v=6fwuwwt31rY)
 
-[Who is Solace](https://www.youtube.com/watch?v=Lfyvps9QjSg)
+- [Who is Solace](https://www.youtube.com/watch?v=Lfyvps9QjSg)
 
 ### What We'll Be Building
 
@@ -135,9 +135,9 @@ Duration: 0:20:00
 
 ### Udemy Videos
 
-[Section 1 Overview](https://www.youtube.com/watch?v=MJPj3s4dGYo)
+- [Section 1 Overview](https://www.youtube.com/watch?v=MJPj3s4dGYo)
 
-[Solace Topics](https://youtu.be/_SUcEu-Mg0o?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
+- [Solace Topics](https://youtu.be/_SUcEu-Mg0o?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
 
 ### Objectives
 
@@ -350,8 +350,8 @@ Duration: 0:20:00
 
 ### Udemy Videos
 
-[Topic Dispatch](https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
-[Request Reply](https://www.youtube.com/watch?v=yQUwWIY9mi4)
+- [Topic Dispatch](https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
+- [Request Reply](https://www.youtube.com/watch?v=yQUwWIY9mi4)
 
 ### Objectives
 
