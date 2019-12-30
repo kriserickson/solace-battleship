@@ -53,9 +53,8 @@ These links are cherry-picked from our docs site, which is a rich resource you c
 
 Our goal is to build a working version of Battleship.
 
-- We'll start by building a simple version of Battleship
-- Then, we'll add a dashboard for our game and add in security mechanisms
-- And finally, we'll separate our game logic into a Spring Cloud Streams powered backend application
+- We'll start by building battleship implemented entirely on the client side
+- And then, we'll separate our game logic into a Spring Cloud Stream powered backend application
 
 By the end of this Codelab, you should have a high level understanding of how to build a secure application that handles session based interactions between multiple stateless clients. You'll see how you can quickly build single-purpose microservices to handle events, and how you can manage distributed applications that share a common state.
 
@@ -730,10 +729,6 @@ To see the completed code for this section, sync the following branch [battleshi
 
 `git checkout battleship-lesson-3-match-and-game-over-solution`
 
-## Section 1 Summary Video
-
-[Summary](https://www.youtube.com/watch?v=2cYGDxG6j2c)
-
 ## Lesson 4 - Enabling Multiple Sessions
 
 Duration: 0:10:00
@@ -898,6 +893,11 @@ To see the completed code for this section, sync the following branch [battleshi
 
 `git checkout battleship-lesson-5-building-a-dashboard-solution`
 
+## Section 1 Summary
+
+[Summary](https://www.youtube.com/watch?v=2cYGDxG6j2c)
+
+## Section 2 Overview
 
 ## Lesson 6 - Creating a Spring Cloud Stream server skeleton for the battleship backend
 
