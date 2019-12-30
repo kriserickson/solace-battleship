@@ -58,9 +58,8 @@
 <h2 is-upgraded>What We&#39;ll Be Building</h2>
 <p>Our goal is to build a working version of Battleship.</p>
 <ul>
-<li>We&#39;ll start by building a simple version of Battleship</li>
-<li>Then, we&#39;ll add a dashboard for our game and add in security mechanisms</li>
-<li>And finally, we&#39;ll separate our game logic into a Spring Cloud Streams powered backend application</li>
+<li>We&#39;ll start by building battleship implemented entirely on the client side</li>
+<li>And then, we&#39;ll separate our game logic into a Spring Cloud Stream powered backend application</li>
 </ul>
 <p>By the end of this Codelab, you should have a high level understanding of how to build a secure application that handles session based interactions between multiple stateless clients. You&#39;ll see how you can quickly build single-purpose microservices to handle events, and how you can manage distributed applications that share a common state.</p>
 <h3 is-upgraded>Battleship 101</h3>
@@ -557,12 +556,6 @@ if (this.scoreMap[shipHitOwner] == 0) {
 
       </google-codelab-step>
     
-      <google-codelab-step label="Section 1 Summary Video" duration="0">
-        <p><a href="https://www.youtube.com/watch?v=2cYGDxG6j2c" target="_blank">Summary</a></p>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Lesson 4 - Enabling Multiple Sessions" duration="10">
         <h2 is-upgraded>Objectives</h2>
 <ul>
@@ -660,6 +653,17 @@ this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, msg =&g
 <p>To see the completed code for this section, sync the following branch <a href="https://github.com/solacese/battleship/blob/battleship-lesson-5-building-a-dashboard-solution" target="_blank">battleship-lesson-5-building-a-dashboard-solution</a> using the command:</p>
 <p><code>git checkout battleship-lesson-5-building-a-dashboard-solution</code></p>
 
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Section 1 Summary" duration="0">
+        <p><a href="https://www.youtube.com/watch?v=2cYGDxG6j2c" target="_blank">Summary</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Section 2 Overview" duration="0">
+        
 
       </google-codelab-step>
     
