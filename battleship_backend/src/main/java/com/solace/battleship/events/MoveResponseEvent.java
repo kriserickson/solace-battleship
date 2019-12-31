@@ -12,7 +12,12 @@ public class MoveResponseEvent {
     private PlayerName player;
     private KnownBoardCellState[][] playerBoard;
     private Move move;
-    private PrivateBoardCellState[][] moveResult;
+    private PrivateBoardCellState moveResult;
+    private String sessionId;
+
+    public MoveResponseEvent(){
+
+    }
 
     public PlayerName getPlayer() {
         return player;
@@ -38,12 +43,21 @@ public class MoveResponseEvent {
         this.move = move;
     }
 
-    public PrivateBoardCellState[][] getMoveResult() {
+    public PrivateBoardCellState getMoveResult() {
         return moveResult;
     }
 
-    public void setMoveResult(final PrivateBoardCellState[][] moveResult) {
+    public void setMoveResult(final PrivateBoardCellState moveResult) {
         this.moveResult = moveResult;
+    }
+
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     @Override

@@ -29,6 +29,18 @@ public class GameSession {
         this.player2Score = 5;
     }
 
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
     public GameStart getGameStart() {
         return gameStart;
     }
@@ -78,6 +90,88 @@ public class GameSession {
         return false; // error
     }
 
+    /**
+     * Function to make a move, will update known public board
+     *
+     * @param request a request to set a players board
+     * @return The result of a move, i.e. "ship" or "empty"
+     */
+    public MoveResponseEvent makeMove(Move request) {
+        MoveResponseEvent response = new MoveResponseEvent();
+        response.setSessionId(request.getSessionId());
+        response.setPlayer(request.getPlayer());
+        response.setMove(request);
+
+        if((request.getPlayer() == PlayerName.Player1) && (this.getGameState() != GameState.PLAYER1_TURN)) {
+            // I don't know if we want to implement error classes too ...
+            response.setPlayerBoard(null);
+            response.setMoveResult(PrivateBoardCellState.empty);
+            return response;
+        }
+        if((request.getPlayer() == PlayerName.Player2) && (this.getGameState() != GameState.PLAYER2_TURN)) {
+            // I don't know if we want to implement error classes too ...
+            response.setPlayerBoard(null);
+            response.setMoveResult(PrivateBoardCellState.empty);
+            return response;
+        }
+
+        if(request.getPlayer().equals(PlayerName.Player1)){
+            PrivateBoardCellState moveResult = this.getPlayer2Board()[request.getX()][request.getY()];
+            // if the move results in a hit
+            if(moveResult == PrivateBoardCellState.ship) {
+                // update the score
+                this.decrementPlayer2Score();
+                // update player's public board state with new move
+                KnownBoardCellState[][] updatedBoard = this.getPlayer2().getPublicBoardState();
+                updatedBoard[request.getX()][request.getY()] = KnownBoardCellState.hit;
+                this.getPlayer2().setPublicBoardState(updatedBoard);
+                // update player turn
+                this.setGameState(GameState.PLAYER2_TURN);
+                // format response
+                response.setPlayerBoard(updatedBoard);
+                response.setMoveResult(moveResult);
+            } else {  // move was a miss
+                // update player's public board state with new move
+                KnownBoardCellState[][] updatedBoard = this.getPlayer2().getPublicBoardState();
+                updatedBoard[request.getX()][request.getY()] = KnownBoardCellState.miss;
+                this.getPlayer2().setPublicBoardState(updatedBoard);
+                // update player turn
+                this.setGameState(GameState.PLAYER2_TURN);
+                // format response
+                response.setPlayerBoard(updatedBoard);
+                response.setMoveResult(moveResult);
+            }
+        }
+        else {
+            PrivateBoardCellState moveResult = this.getPlayer1Board()[request.getX()][request.getY()];
+            // if the move results in a hit
+            if(moveResult == PrivateBoardCellState.ship) {
+                // update the score
+                this.decrementPlayer1Score();
+                // update player's public board state with new move
+                KnownBoardCellState[][] updatedBoard = this.getPlayer1().getPublicBoardState();
+                updatedBoard[request.getX()][request.getY()] = KnownBoardCellState.hit;
+                this.getPlayer1().setPublicBoardState(updatedBoard);
+                // update player turn
+                this.setGameState(GameState.PLAYER1_TURN);
+                // format response
+                response.setPlayerBoard(updatedBoard);
+                response.setMoveResult(moveResult);
+            } else {  // move was a miss
+                // update player's public board state with new move
+                KnownBoardCellState[][] updatedBoard = this.getPlayer1().getPublicBoardState();
+                updatedBoard[request.getX()][request.getY()] = KnownBoardCellState.miss;
+                this.getPlayer1().setPublicBoardState(updatedBoard);
+                // update player turn
+                this.setGameState(GameState.PLAYER1_TURN);
+                // format response
+                response.setPlayerBoard(updatedBoard);
+                response.setMoveResult(moveResult);
+            }
+        }
+        return response;
+    }
+
 
     public Player getPlayer1() {
         return player1;
@@ -85,18 +179,6 @@ public class GameSession {
 
     public void setPlayer1(Player player1) {
         this.player1 = player1;
-    }
-
-    public GameState getGameState() {
-        return this.gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-    public String getSessionId() {
-        return this.sessionId;
     }
 
     public int getPlayer1Score() {
@@ -107,12 +189,22 @@ public class GameSession {
         this.player1Score = player1Score;
     }
 
+    public void decrementPlayer1Score() {
+        int newScore = this.player1Score - 1;
+        this.player1Score = newScore;
+    }
+
     public int getPlayer2Score() {
         return this.player2Score;
     }
 
     public void setPlayer2Score(int player2Score) {
         this.player2Score = player2Score;
+    }
+
+    public void decrementPlayer2Score() {
+        int newScore = this.player2Score - 1;
+        this.player2Score = newScore;
     }
 
     public Player getPlayer2() {

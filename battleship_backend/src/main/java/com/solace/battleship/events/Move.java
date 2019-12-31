@@ -12,6 +12,15 @@ public class Move {
     private PlayerName player;
     private int x;
     private int y;
+    private String sessionId;
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     public PlayerName getPlayer() {
         return player;

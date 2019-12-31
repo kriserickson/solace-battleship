@@ -3,7 +3,9 @@ package com.solace.battleship.flows;
 import com.solace.battleship.engine.IGameEngine;
 import com.solace.battleship.events.BoardSetRequest;
 import com.solace.battleship.events.BoardSetResult;
-import com.solace.battleship.flows.BoardSetRequestProcessor.BoardSetRequestBinding;
+import com.solace.battleship.events.Move;
+import com.solace.battleship.events.MoveResponseEvent;
+import com.solace.battleship.flows.MoveRequestProcessor.MoveRequestBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -16,14 +18,14 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.MessageBuilder;
 
 /**
- * This Spring Cloud Stream processor handles board set requests for the Battleship
+ * This Spring Cloud Stream processor handles move requests for the Battleship
  * Game
  *
  * @author Andrew Roberts
  */
 @SpringBootApplication
-@EnableBinding(BoardSetRequestBinding.class)
-public class BoardSetRequestProcessor {
+@EnableBinding(MoveRequestBinding.class)
+public class MoveRequestProcessor {
 
     @Autowired
     private BinderAwareChannelResolver resolver;
@@ -33,15 +35,15 @@ public class BoardSetRequestProcessor {
 
     // We define an INPUT to receive data from and dynamically specify the reply to
     // destination depending on the header and state of the game enginer
-    @StreamListener(BoardSetRequestBinding.INPUT)
-    public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
+    @StreamListener(MoveRequestBinding.INPUT)
+    public void handle(Move moveRequest, @Header("reply-to") String replyTo) {
         // Pass the request to the game engine to join the game
-        BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
+        MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
         resolver.resolveDestination(replyTo).send(message(result));
 
-        if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/GAME-START/CONTROLLER")
-                    .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
+        if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
+            resolver.resolveDestination("SOLACE/BATTLESHIP/" + moveRequest.getSessionId() + "/MATCH-END/CONTROLLER")
+                    .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
         }
 
     }
@@ -53,8 +55,8 @@ public class BoardSetRequestProcessor {
     /*
      * Custom Processor Binding Interface to allow for multiple outputs
      */
-    public interface BoardSetRequestBinding {
-        String INPUT = "board_set_request";
+    public interface MoveRequestBinding {
+        String INPUT = "move_request";
 
         @Input
         SubscribableChannel board_set_request();
