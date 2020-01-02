@@ -56,6 +56,7 @@ public class Player {
     }
 
     public Player() {
+        this.publicBoardState = new KnownBoardCellState[5][5];
     }
 
     public Player(PlayerName name, String nickname, PrivateBoardCellState[][] internalBoardState,

@@ -149,6 +149,7 @@ public class GameEngine implements IGameEngine {
         if(this.shouldMatchEnd(sessionId)){
             session.setGameState(GameState.GAME_OVER);
             MatchEnd finalScore = new MatchEnd();
+            finalScore.setSessionId(sessionId);
             finalScore.setPlayer1Score(session.getPlayer1Score());
             finalScore.setPlayer2Score(session.getPlayer2Score());
             return finalScore;

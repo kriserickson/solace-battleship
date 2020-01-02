@@ -1,5 +1,6 @@
 package com.solace.battleship.events;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -69,7 +70,7 @@ public class MoveResponseEvent {
         }
         MoveResponseEvent moveResponseEvent = (MoveResponseEvent) o;
         return Objects.equals(player, moveResponseEvent.player)
-                && Objects.equals(playerBoard, moveResponseEvent.playerBoard)
+                && Arrays.deepEquals(playerBoard, moveResponseEvent.playerBoard) // arrays deep equals!  figured it out
                 && Objects.equals(move, moveResponseEvent.move)
                 && Objects.equals(moveResult, moveResponseEvent.moveResult);
     }
