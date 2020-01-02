@@ -23,7 +23,6 @@ public class GameEngine implements IGameEngine {
     public static final String BOARD_SET_SERVER_ERROR = "Something has gone wrong on the server, this is not your fault.";
     public static final String BOARD_ALREADY_SET_ERROR = "Board has already been set!";
 
-
     @Override
     public JoinResult requestToJoinGame(PlayerJoined request) {
         String returnMessage = "";

@@ -40,7 +40,7 @@ public class BoardSetRequestProcessor {
         resolver.resolveDestination(replyTo).send(message(result));
 
         if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/GAME-START/CONTROLLER")
+            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
                     .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
         }
 

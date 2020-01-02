@@ -59,6 +59,6 @@ public class MoveRequestProcessor {
         String INPUT = "move_request";
 
         @Input
-        SubscribableChannel board_set_request();
+        SubscribableChannel move_request();
     }
 }
