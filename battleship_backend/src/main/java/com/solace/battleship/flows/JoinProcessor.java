@@ -19,7 +19,7 @@ import org.springframework.messaging.support.MessageBuilder;
 /**
  * This Spring Cloud Stream processor handles join-requests for the Battleship
  * Game
- * 
+ *
  * @author Thomas Kunnumpurath
  */
 @SpringBootApplication

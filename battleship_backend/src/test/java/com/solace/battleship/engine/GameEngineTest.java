@@ -5,12 +5,12 @@ import com.solace.battleship.events.*;
 import org.junit.Test;
 
 import static junit.framework.TestCase.*;
-
 public class GameEngineTest {
 
     GameEngine gameEngine = new GameEngine();
 
-    // join request
+    // join requests
+
     @Test
     public void testRequestToJoinGamePlayer1(){
         String sessionId="0xFFFF";
@@ -120,8 +120,8 @@ public class GameEngineTest {
         assertEquals(gameEngine.requestToJoinGame(request1),joinResult3);
     }
 
-
     // board set requests
+
     @Test
     public void testRequestToSetBoardPlayer1(){
         /** setup board */
@@ -183,7 +183,7 @@ public class GameEngineTest {
     }
 
     @Test
-    public void testBothPlayersSetBoards(){
+    public void testBothPlayersSetBoard(){
         /** setup board */
         String sessionId="0xFFFF";
         PlayerJoined request1 = new PlayerJoined();
@@ -198,7 +198,7 @@ public class GameEngineTest {
         gameEngine.requestToJoinGame(request2);
         gameEngine.getGameStartAndStartGame(sessionId);
         /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
-        // form request
+        // form board set requests
         PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
         BoardSetRequest boardSetRequest1 = new BoardSetRequest();
         boardSetRequest1.setPlayerName(PlayerName.Player1);
@@ -208,15 +208,17 @@ public class GameEngineTest {
         boardSetRequest2.setPlayerName(PlayerName.Player2);
         boardSetRequest2.setBoard(board);
         boardSetRequest2.setSessionId(sessionId);
-        // mock successful responses
+        // mock successful response
         BoardSetResult boardSetResult1 = new BoardSetResult(PlayerName.Player1,true,GameEngine.BOARD_SET_SUCCESS);
         BoardSetResult boardSetResult2 = new BoardSetResult(PlayerName.Player2,true,GameEngine.BOARD_SET_SUCCESS);
-        // mock MatchStart
-        // check that the request works
+        MatchStart matchStart = new MatchStart();
+        matchStart.setPlayer1Board(boardSetResult1);
+        matchStart.setPlayer2Board(boardSetResult2);
+        // check that the set board request works
         assertEquals(gameEngine.requestToSetBoard(boardSetRequest1),boardSetResult1);
         assertEquals(gameEngine.requestToSetBoard(boardSetRequest2),boardSetResult2);
+        // check that the match starts properly
         assertTrue(gameEngine.canMatchStart(sessionId));
-        assertNotNull(gameEngine.getMatchStartAndStartMatch(sessionId));
+        assertEquals(gameEngine.getMatchStartAndStartMatch(sessionId), matchStart);
     }
-
 }

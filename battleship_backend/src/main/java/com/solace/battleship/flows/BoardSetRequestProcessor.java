@@ -16,10 +16,10 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.MessageBuilder;
 
 /**
- * This Spring Cloud Stream processor handles join-requests for the Battleship
+ * This Spring Cloud Stream processor handles board set requests for the Battleship
  * Game
  *
- * @author Thomas Kunnumpurath
+ * @author Andrew Roberts
  */
 @SpringBootApplication
 @EnableBinding(BoardSetRequestBinding.class)
@@ -40,7 +40,7 @@ public class BoardSetRequestProcessor {
         resolver.resolveDestination(replyTo).send(message(result));
 
         if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/GAME-START/CONTROLLER")
+            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
                     .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
         }
 
