@@ -39,6 +39,8 @@ public class MoveRequestProcessorTest {
     @MockBean
     private IGameEngine gameEngine;
 
+    private static final String sessionId="0xFFFF";
+
     @Before
     public void setup(){
         MessageChannel mockChannel = Mockito.mock(MessageChannel.class);
@@ -49,34 +51,6 @@ public class MoveRequestProcessorTest {
     @Test
     public void testPlayer1MoveMiss(){
         /** setup board */
-        String sessionId="0xFFFF";
-        // join game
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
-        // set boards
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
-        BoardSetRequest boardSetRequest1 = new BoardSetRequest();
-        boardSetRequest1.setPlayerName(PlayerName.Player1);
-        boardSetRequest1.setBoard(board);
-        boardSetRequest1.setSessionId(sessionId);
-        BoardSetRequest boardSetRequest2 = new BoardSetRequest();
-        boardSetRequest2.setPlayerName(PlayerName.Player2);
-        boardSetRequest2.setBoard(board);
-        boardSetRequest2.setSessionId(sessionId);
-        gameEngine.requestToSetBoard(boardSetRequest1);
-        gameEngine.requestToSetBoard(boardSetRequest2);
-        // start the match
-        gameEngine.getMatchStartAndStartMatch(sessionId);
-        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // form move request
         Move moveRequest = new Move(PlayerName.Player1,1, 1);
         moveRequest.setSessionId(sessionId);
@@ -100,35 +74,6 @@ public class MoveRequestProcessorTest {
 
     @Test
     public void testPlayer2MoveMiss(){
-        /** setup board */
-        String sessionId="0xFFFF";
-        // join game
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
-        // set boards
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
-        BoardSetRequest boardSetRequest1 = new BoardSetRequest();
-        boardSetRequest1.setPlayerName(PlayerName.Player1);
-        boardSetRequest1.setBoard(board);
-        boardSetRequest1.setSessionId(sessionId);
-        BoardSetRequest boardSetRequest2 = new BoardSetRequest();
-        boardSetRequest2.setPlayerName(PlayerName.Player2);
-        boardSetRequest2.setBoard(board);
-        boardSetRequest2.setSessionId(sessionId);
-        gameEngine.requestToSetBoard(boardSetRequest1);
-        gameEngine.requestToSetBoard(boardSetRequest2);
-        // start the match
-        gameEngine.getMatchStartAndStartMatch(sessionId);
-        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // form move request
         Move moveRequest = new Move(PlayerName.Player2,1, 1);
         moveRequest.setSessionId(sessionId);
@@ -152,35 +97,6 @@ public class MoveRequestProcessorTest {
 
     @Test
     public void testPlayer1MoveHit(){
-        /** setup board */
-        String sessionId="0xFFFF";
-        // join game
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
-        // set boards
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
-        BoardSetRequest boardSetRequest1 = new BoardSetRequest();
-        boardSetRequest1.setPlayerName(PlayerName.Player1);
-        boardSetRequest1.setBoard(board);
-        boardSetRequest1.setSessionId(sessionId);
-        BoardSetRequest boardSetRequest2 = new BoardSetRequest();
-        boardSetRequest2.setPlayerName(PlayerName.Player2);
-        boardSetRequest2.setBoard(board);
-        boardSetRequest2.setSessionId(sessionId);
-        gameEngine.requestToSetBoard(boardSetRequest1);
-        gameEngine.requestToSetBoard(boardSetRequest2);
-        // start the match
-        gameEngine.getMatchStartAndStartMatch(sessionId);
-        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // form move request
         Move moveRequest = new Move(PlayerName.Player1,0, 4);
         moveRequest.setSessionId(sessionId);
@@ -204,35 +120,6 @@ public class MoveRequestProcessorTest {
 
     @Test
     public void testPlayer2MoveHit(){
-        /** setup board */
-        String sessionId="0xFFFF";
-        // join game
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
-        // set boards
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
-        BoardSetRequest boardSetRequest1 = new BoardSetRequest();
-        boardSetRequest1.setPlayerName(PlayerName.Player1);
-        boardSetRequest1.setBoard(board);
-        boardSetRequest1.setSessionId(sessionId);
-        BoardSetRequest boardSetRequest2 = new BoardSetRequest();
-        boardSetRequest2.setPlayerName(PlayerName.Player2);
-        boardSetRequest2.setBoard(board);
-        boardSetRequest2.setSessionId(sessionId);
-        gameEngine.requestToSetBoard(boardSetRequest1);
-        gameEngine.requestToSetBoard(boardSetRequest2);
-        // start the match
-        gameEngine.getMatchStartAndStartMatch(sessionId);
-        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // form move request
         Move moveRequest = new Move(PlayerName.Player2,0, 4);
         moveRequest.setSessionId(sessionId);
@@ -255,34 +142,6 @@ public class MoveRequestProcessorTest {
 
     @Test
     public void testCompleteGame() {
-        /** setup board */
-        String sessionId = "0xFFFF";
-        // join game
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
-        // set boards
-        PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.ship}, {PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.ship}, {PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.ship}, {PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.ship}, {PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.ship}};
-        BoardSetRequest boardSetRequest1 = new BoardSetRequest();
-        boardSetRequest1.setPlayerName(PlayerName.Player1);
-        boardSetRequest1.setBoard(board);
-        boardSetRequest1.setSessionId(sessionId);
-        BoardSetRequest boardSetRequest2 = new BoardSetRequest();
-        boardSetRequest2.setPlayerName(PlayerName.Player2);
-        boardSetRequest2.setBoard(board);
-        boardSetRequest2.setSessionId(sessionId);
-        gameEngine.requestToSetBoard(boardSetRequest1);
-        gameEngine.requestToSetBoard(boardSetRequest2);
-        // start the match
-        gameEngine.getMatchStartAndStartMatch(sessionId);
         // make moves
         // Player 1 moves are correct
         Move moveRequestPlayer1_1 = new Move(PlayerName.Player1, 0, 4);

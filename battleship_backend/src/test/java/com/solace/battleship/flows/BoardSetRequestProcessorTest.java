@@ -36,6 +36,8 @@ public class BoardSetRequestProcessorTest {
     @MockBean
     private IGameEngine gameEngine;
 
+    private static final String sessionId = "0xFFFF";
+
     @Before
     public void setup(){
         MessageChannel mockChannel = Mockito.mock(MessageChannel.class);
@@ -45,20 +47,6 @@ public class BoardSetRequestProcessorTest {
 
     @Test
     public void testPlayer1SetBoard(){
-        /** setup game */
-        String sessionId="0xFFFF";
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
-        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // form request
         PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
         BoardSetRequest boardSetRequest = new BoardSetRequest();
@@ -77,19 +65,6 @@ public class BoardSetRequestProcessorTest {
 
     @Test
     public void testPlayer2SetBoard(){
-        /** setup game */
-        String sessionId="0xFFFF";
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
         /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // form request
         PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
@@ -109,19 +84,6 @@ public class BoardSetRequestProcessorTest {
 
     @Test
     public void testBothPlayersSetBoards(){
-        /** setup game */
-        String sessionId="0xFFFF";
-        PlayerJoined request1 = new PlayerJoined();
-        request1.setPlayerName(PlayerName.Player1);
-        request1.setPlayerNickname("ANDREW");
-        request1.setSessionId(sessionId);
-        PlayerJoined request2 = new PlayerJoined();
-        request2.setPlayerName(PlayerName.Player2);
-        request2.setPlayerNickname("ANDREW");
-        request2.setSessionId(sessionId);
-        gameEngine.requestToJoinGame(request1);
-        gameEngine.requestToJoinGame(request2);
-        gameEngine.getGameStartAndStartGame(sessionId);
         /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
         // BOARD SET
         PrivateBoardCellState[][] board = {{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship},{PrivateBoardCellState.empty, PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.empty,PrivateBoardCellState.ship}};
