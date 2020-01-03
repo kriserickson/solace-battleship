@@ -5,7 +5,6 @@ import com.solace.battleship.events.BoardSetRequest;
 import com.solace.battleship.events.BoardSetResult;
 import com.solace.battleship.flows.BoardSetRequestProcessor.BoardSetRequestBinding;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -16,12 +15,11 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.MessageBuilder;
 
 /**
- * This Spring Cloud Stream processor handles join-requests for the Battleship
- * Game
+ * This Spring Cloud Stream processor handles board-set requests for the
+ * Battleship Game Game
  *
  * @author Thomas Kunnumpurath
  */
-@SpringBootApplication
 @EnableBinding(BoardSetRequestBinding.class)
 public class BoardSetRequestProcessor {
 
@@ -35,12 +33,13 @@ public class BoardSetRequestProcessor {
     // destination depending on the header and state of the game enginer
     @StreamListener(BoardSetRequestBinding.INPUT)
     public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
+        // Pass the request to the game engine to set the board
         BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
         resolver.resolveDestination(replyTo).send(message(result));
-
         if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/GAME-START/CONTROLLER")
+            // If both players have set the ships, then send a match-start message
+            resolver.resolveDestination(
+                    "SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
                     .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
         }
 
