@@ -7,13 +7,13 @@ import { SolaceClient } from "common/solace-client";
 
 //Construct that holds the player's scores
 class ScoreMap {
-  Player1: number;
-  Player2: number;
+  player1: number;
+  player2: number;
 }
 
 class MoveResultMap {
-  Player1: MoveResponseEvent;
-  Player2: MoveResponseEvent;
+  player1: MoveResponseEvent;
+  player2: MoveResponseEvent;
 }
 
 @inject(SolaceClient, TopicHelper, GameParams, Router, GameStart, EventAggregator)
@@ -24,8 +24,8 @@ export class Dashboard {
   private turnMessage: string;
 
   constructor(private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameParams: GameParams, private router: Router, private gameStart: GameStart, private ea: EventAggregator) {
-    this.scoreMap.Player1 = gameParams.allowedShips;
-    this.scoreMap.Player2 = gameParams.allowedShips;
+    this.scoreMap.player1 = gameParams.allowedShips;
+    this.scoreMap.player2 = gameParams.allowedShips;
     this.turnMessage = "Player1's Turn";
   }
 
@@ -42,7 +42,7 @@ export class Dashboard {
         this.action = "hit";
         this.scoreMap[imr.player] -= 1;
         if (this.scoreMap[imr.player] == 0) {
-          this.router.navigateToRoute("game-over", { msg: `${imr.player == "Player1" ? "Player2" : "Player1"} WINS!!!!` });
+          this.router.navigateToRoute("game-over", { msg: `${imr.player == "player1" ? "Player2" : "Player1"} WINS!!!!` });
         }
       } else {
         this.action = "miss";

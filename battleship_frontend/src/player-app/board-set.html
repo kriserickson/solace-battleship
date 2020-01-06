@@ -1,6 +1,7 @@
 <template>
+  <require from="../common/camel-case"></require>
   <div class="flex-column justify__center align__center w-100 h-100">
-    <div class="board__playerHeader">${player.name} (${player.nickname})</div>
+    <div class="board__playerHeader">${player.name | camelCase} (${player.nickname})</div>
     <br />
     <br />
     <label show.bind="(gameParams.allowedShips - placedShips) != 0">

@@ -59,16 +59,15 @@ public class GameSession {
      * @return The result of a board set request
      */
     public boolean setBoard(BoardSetRequest request) {
-        if(request.getPlayerName().equals(PlayerName.Player1) && this.getPlayer1() == null){
+        if (request.getPlayerName().equals(PlayerName.player1) && this.getPlayer1() == null) {
             this.setPlayer1Board(request.getBoard());
             return true;
-        } else if(request.getPlayerName().equals(PlayerName.Player2) && this.getPlayer2() == null){
+        } else if (request.getPlayerName().equals(PlayerName.player2) && this.getPlayer2() == null) {
             this.setPlayer2Board(request.getBoard());
             return true;
         }
         return false; // error
     }
-
 
     public Player getPlayer1() {
         return player1;

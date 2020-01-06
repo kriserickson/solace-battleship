@@ -6,5 +6,5 @@ package com.solace.battleship.events;
  * @author Andrew Roberts, Thomas Kunnumpurath
  */
 public enum PlayerName {
-    Player1, Player2;
+    player1, player2;
 }

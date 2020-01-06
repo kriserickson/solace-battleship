@@ -42,7 +42,7 @@ export class LandingPage {
             let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
             if (joinResult.success) {
               // update client statuses
-              if (joinResult.playerName == "Player1") {
+              if (joinResult.playerName == "player1") {
                 this.player1Status = "Player1 Joined!";
               } else {
                 this.player2Status = "Player2 Joined!";
@@ -58,6 +58,11 @@ export class LandingPage {
         // Game-Start event
         msg => {
           if (msg.getBinaryAttachment()) {
+            let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+            this.gameStart.player1 = gsObj.player1;
+            this.gameStart.player2 = gsObj.player2;
+            console.log("GameStart object:");
+            console.log(this.gameStart);
             this.player1Status = "Waiting for Player1 to set the board";
             this.player2Status = "Waiting for Player2 to set the board";
           }
@@ -74,7 +79,7 @@ export class LandingPage {
           let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
           boardSetResult.playerName = boardSetEvent.playerName;
           //Set the response object appropriately
-          if (boardSetEvent.playerName == "Player1") {
+          if (boardSetEvent.playerName == "player1") {
             if (this.player1Status === "Player1 Board Set!") {
               boardSetResult.message = "Board already set by Player1";
               boardSetResult.success = false;
