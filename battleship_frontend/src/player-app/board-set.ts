@@ -78,6 +78,7 @@ export class BoardSet {
       let boardsetEvent: BoardSetEvent = new BoardSetEvent();
       boardsetEvent.playerName = this.player.name;
       boardsetEvent.shipsSet = this.placedShips;
+      boardsetEvent.sessionId = this.player.sessionId;
       //Send the request to set the board
       this.solaceClient
         .sendRequest(

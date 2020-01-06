@@ -73,7 +73,7 @@ public class GameEngine implements IGameEngine {
     boolean boardSetRequestResult;
 
     GameSession session = gameSessionMap.get(request.getSessionId());
-    if (session.equals(null)) {
+    if (session == null) {
       returnMessage = SESSION_DOES_NOT_EXIST_ERROR;
       boardSetRequestResult = false;
     } else if (session.getGameState() != GameState.WAITING_FOR_BOARD_SET) {

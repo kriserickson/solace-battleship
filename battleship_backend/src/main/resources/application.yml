@@ -7,6 +7,10 @@ spring:
           destination: JOIN-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
+        board_set_request:
+          destination: BOARD-SET-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
       binders:
         solace_cloud:
           type: solace
@@ -21,13 +25,16 @@ spring:
           join_request:
             consumer:
               #Subscription for the join request queue
-              #queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
-              
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+          board_set_request:
+            consumer:
+              #Subscription for the board set request queue
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
 logging:
   level:
     root: INFO
     com.solacesystems.jcsmp: INFO
     org.springframework: INFO
-    
+
 server:
   port: 8094
