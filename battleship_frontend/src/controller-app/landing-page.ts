@@ -61,8 +61,6 @@ export class LandingPage {
             let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
             this.gameStart.player1 = gsObj.player1;
             this.gameStart.player2 = gsObj.player2;
-            console.log("GameStart object:");
-            console.log(this.gameStart);
             this.player1Status = "Waiting for Player1 to set the board";
             this.player2Status = "Waiting for Player2 to set the board";
           }
