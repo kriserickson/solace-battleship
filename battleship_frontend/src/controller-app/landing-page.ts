@@ -32,7 +32,7 @@ export class LandingPage {
   activate(params, routeConfig) {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
-      //Listener for join replies
+      //Listener for join replies from the battleship-server
       this.solaceClient.subscribe(
         `${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`,
         // join event handler callback
@@ -52,7 +52,7 @@ export class LandingPage {
         }
       );
 
-      //Listening for a GAME-START event
+      //Listening for a GAME-START event from the battleship-server
       this.solaceClient.subscribe(
         `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
         // Game-Start event

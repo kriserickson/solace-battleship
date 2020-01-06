@@ -13,8 +13,6 @@ public class GameStart {
     private PlayerJoined Player2;
 
     public GameStart() {
-        this.Player1 = null;
-        this.Player2 = null;
     }
 
     public boolean setPlayerJoined(PlayerJoined request) {

@@ -12,11 +12,6 @@ public class MatchStart {
     private BoardSetResult player1Board;
     private BoardSetResult player2Board;
 
-    public MatchStart(){
-        this.player1Board = null;
-        this.player2Board = null;
-    }
-
     public BoardSetResult getPlayer2Board() {
         return player2Board;
     }
@@ -33,6 +28,20 @@ public class MatchStart {
         this.player1Board = player1Board;
     }
 
+    public MatchStart(BoardSetResult player1Board, BoardSetResult player2Board) {
+        this.player1Board = player1Board;
+        this.player2Board = player2Board;
+    }
+
+    public MatchStart player1Board(BoardSetResult player1Board) {
+        this.player1Board = player1Board;
+        return this;
+    }
+
+    public MatchStart player2Board(BoardSetResult player2Board) {
+        this.player2Board = player2Board;
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {
