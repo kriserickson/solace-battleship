@@ -1288,7 +1288,7 @@ Now navigate to [http://localhost:12345](http://localhost:12345), the game shoul
 
 ![Lesson 9 Summary](assets/lesson-09-summary.png)
 
-In this final lesson of the course, you implemented another message handler in Spring Cloud Stream using the same patter we used in lessons 7 and 8. Lessons 7-9 should show you how building applications using event-driven architecture allows you to build microservices in a decoupled manner. Instead of modifying a single orchestrating "backend service," we're able to add flow processors that act independently.
+In this final lesson of the course, you implemented another message handler in Spring Cloud Stream using the same patter we used in lessons 7 and 8. Lessons 7-9 show you how building applications using event-driven architecture allows you to build microservices in a decoupled manner. Instead of modifying a single orchestrating "backend service," we're able to add flow processors that act independently.
 
 Additionally, you modified the client-side controller app further so that it is not responsible for any game state. Instead, it is able to derive the match's state from events it receives from our more secure Spring Cloud Stream backend application. Better yet, we were able to implement this transition without a major overhaul of our client application because it was built using event-driven architecture and a message broker instead of tightly coupled REST microservices exposed via an API.
 
