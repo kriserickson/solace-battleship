@@ -26,7 +26,8 @@ export class PlayerQr {
    * Aurelia function that is called when the page is loaded
    */
   attached() {
-    this.status = `Waiting for ${this.player} to join...`;
+    if (this.player == "player1") this.status = `Waiting for Player1 to join...`;
+    else this.status = `Waiting for Player2 to join...`;
     this.playerJoinUrl = `http://${location.host}/join/${this.sessionId}/${this.player}`;
     this.playerQRUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(this.playerJoinUrl)}&amp;size=200x200&amp;color=00CB95&amp;bgcolor=333333`;
   }

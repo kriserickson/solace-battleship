@@ -9,8 +9,8 @@ type PAGE_STATE = "TURN_PLAYER1" | "TURN_PLAYER2";
 
 //Construct that holds the player's scores
 class ScoreMap {
-  Player1: number;
-  Player2: number;
+  player1: number;
+  player2: number;
 }
 
 /**
@@ -23,15 +23,15 @@ export class Match {
   //Map of the score
   private scoreMap: ScoreMap = new ScoreMap();
 
-  private pageState: PlayerName = "Player1";
+  private pageState: PlayerName = "player1";
 
   private enemyBoard: KnownBoardCellState[][] = [];
 
   private turnMessage: string;
 
   constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper, private gameStart: GameStart) {
-    this.scoreMap["Player1"] = this.gameParams.allowedShips;
-    this.scoreMap["Player2"] = this.gameParams.allowedShips;
+    this.scoreMap["player1"] = this.gameParams.allowedShips;
+    this.scoreMap["player2"] = this.gameParams.allowedShips;
     for (let i = 0; i < gameParams.gameboardDimensions; i++) {
       this.enemyBoard[i] = [];
       for (let j = 0; j < gameParams.gameboardDimensions; j++) {
@@ -75,9 +75,9 @@ export class Match {
    * Function to rotate the turn page's message
    */
   rotateTurnMessage() {
-    if ((this.player.name == "Player1" && this.pageState == "Player1") || (this.player.name == "Player2" && this.pageState == "Player2")) {
+    if ((this.player.name == "player1" && this.pageState == "player1") || (this.player.name == "player2" && this.pageState == "player2")) {
       this.turnMessage = "YOUR TURN";
-    } else if (this.player.name == "Player1" && this.pageState == "Player2") {
+    } else if (this.player.name == "player1" && this.pageState == "player2") {
       this.turnMessage = "PLAYER2'S TURN";
     } else {
       this.turnMessage = "PLAYER1'S TURN";
@@ -85,7 +85,7 @@ export class Match {
   }
 
   attached() {
-    if (this.player.name == "Player1") {
+    if (this.player.name == "player1") {
       this.turnMessage = "YOUR TURN";
     } else {
       this.turnMessage = `PLAYER1'S TURN`;
@@ -113,12 +113,12 @@ export class Match {
           //Update the approrpaite score/icons based on the move response
           if (moveResponseEvent.moveResult == "ship") {
             this.enemyBoard[move.x][move.y] = "hit";
-            this.shipHit(this.player.name == "Player1" ? "Player2" : "Player1");
+            this.shipHit(this.player.name == "player1" ? "player2" : "player1");
           } else {
             this.enemyBoard[move.x][move.y] = "miss";
           }
           //Change the page state
-          this.pageState = this.player.name == "Player1" ? "Player2" : "Player1";
+          this.pageState = this.player.name == "player1" ? "player2" : "player1";
           //Rotate the turn message
           this.rotateTurnMessage();
         })

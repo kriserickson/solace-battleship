@@ -46,7 +46,7 @@ export class LandingPage {
           let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
           boardSetResult.playerName = boardSetEvent.playerName;
           //Set the response object appropriately
-          if (boardSetEvent.playerName == "Player1") {
+          if (boardSetEvent.playerName == "player1") {
             if (this.player1Status === "Player1 Board Set!") {
               boardSetResult.message = "Board already set by Player1";
               boardSetResult.success = false;
