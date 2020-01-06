@@ -1,8 +1,9 @@
 <template>
+  <require from="../common/camel-case"></require>
   <div class="game-board-${player}">
     <canvas ref="battleshipCanvas" width="600" height="410"></canvas>
   </div>
   <div class="game-board-title-${player}">
-    ${player}
+    ${player | camelCase}
   </div>
 </template>

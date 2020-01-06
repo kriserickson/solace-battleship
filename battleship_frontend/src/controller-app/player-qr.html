@@ -1,5 +1,6 @@
 <template>
-  <div class="join-scree_${player}-title">${player}</div>
+  <require from="../common/camel-case"></require>
+  <div class="join-screen_${player}-title">${player | camelCase}</div>
   <div class="join-screen__${player}-qr">
     <a href="${playerJoinUrl}" target="_blank"><img class="margin-top-10px" src="${playerQRUrl}" height="200px" width="200px"/></a>
   </div>

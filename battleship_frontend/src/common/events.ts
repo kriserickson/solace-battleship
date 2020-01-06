@@ -14,7 +14,7 @@ export class TopicHelper {
   }
 }
 
-export type PlayerName = "Player1" | "Player2";
+export type PlayerName = "player1" | "player2";
 /**
  * Object that represents the player in a game
  * name: name of the player
@@ -33,7 +33,7 @@ export class Player {
   isTurn: boolean;
 
   getOtherPlayerNameForTopic(): string {
-    if (this.name == "Player1") return "PLAYER2";
+    if (this.name == "player1") return "PLAYER2";
     else return "PLAYER1";
   }
 
@@ -59,8 +59,8 @@ export class PlayerJoined {
  * player2: The PlayerJoined object for the start of the game
  */
 export class GameStart {
-  Player1: PlayerJoined;
-  Player2: PlayerJoined;
+  player1: PlayerJoined;
+  player2: PlayerJoined;
   sessionId: string;
 }
 

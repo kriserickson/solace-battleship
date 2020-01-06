@@ -88,10 +88,10 @@ public class GameEngine implements IGameEngine {
       }
     }
 
-    if (request.getPlayerName() == PlayerName.Player1) {
+    if (request.getPlayerName() == PlayerName.player1) {
       session.getMatchStart()
           .setPlayer1Board(new BoardSetResult(request.getPlayerName(), boardSetRequestResult, returnMessage));
-    } else if (request.getPlayerName() == PlayerName.Player2) {
+    } else if (request.getPlayerName() == PlayerName.player2) {
       session.getMatchStart()
           .setPlayer2Board(new BoardSetResult(request.getPlayerName(), boardSetRequestResult, returnMessage));
     }

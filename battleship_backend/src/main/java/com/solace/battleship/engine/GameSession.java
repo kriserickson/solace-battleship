@@ -71,10 +71,10 @@ public class GameSession {
    * @return The result of a board set request
    */
   public boolean setBoard(BoardSetRequest request) {
-    if (request.getPlayerName().equals(PlayerName.Player1) && this.getPlayer1().getInternalBoardState() == null) {
+    if (request.getPlayerName().equals(PlayerName.player1) && this.getPlayer1().getInternalBoardState() == null) {
       this.setPlayer1Board(request.getBoard());
       return true;
-    } else if (request.getPlayerName().equals(PlayerName.Player2)
+    } else if (request.getPlayerName().equals(PlayerName.player2)
         && this.getPlayer2().getInternalBoardState() == null) {
       this.setPlayer2Board(request.getBoard());
       return true;

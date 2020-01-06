@@ -38,7 +38,6 @@ export class BoardSet {
 
     //SET THE SUBSCRIPTION FOR THE MATCH START
     this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
-      console.log(msg);
       this.router.navigateToRoute("match");
     });
   }
