@@ -1219,61 +1219,61 @@ To see the completed code for this section, sync the following branch [battleshi
 
 `git checkout battleship-lesson-8-implement-a-board-set-request-handler-in-scs-solution`
 
-## Lesson 9 - Implementing a Board Set Handler in the Spring Cloud Stream server
+## Lesson 9 - Implementing a Move Request Handler in the Spring Cloud Stream server
 
 ### Objectives
 
-- Add a topic subscription to the Board Set Request Queue via Spring Cloud Stream
-- Implement the Board Set Request logic in the Spring Cloud Stream server
-- Make changes to the frontend controller-app to subscribe to the replies to the Board Set Requests in order to display game state
+- Add a topic subscription to the Move Request Queue via Spring Cloud Stream
+- Implement the Move Request logic in the Spring Cloud Stream server
+- Make changes to the frontend controller-app to subscribe to the replies to the Move Requests in order to display game state
 
 ### Github Branch
 
-Sync the following branch [battleship-lesson-8-implement-a-board-set-request-handler-in-scs](https://github.com/solacese/battleship/tree/battleship-lesson-8-implement-a-board-set-request-handler-in-scs) using the following command:
+Sync the following branch [battleship-lesson-9-implement-match-logic-in-scs](https://github.com/solacese/battleship/tree/battleship-lesson-9-implement-match-logic-in-scs) using the following command:
 
-`git checkout battleship-lesson-8-implement-a-board-set-request-handler-in-scs`
+`git checkout battleship-lesson-9-implement-match-logic-in-scs`
 
 Positive
 : REMINDER: Make sure the "au run watch" script you setup in the previous sections is still running. If not goto battleship_frontend/ and type the following command: `au run watch` .This will auto watch any changes to your files and automatically reload the page at http://localhost:12345 to pick up any changes
 
-### Add the Board Set Request topic subscription to the BOARD-SET-REQUEST queue
+### Add the Move Request topic subscription to the MOVE-REQUEST queue
 
-In the previous section, you established connectivity to your local Solace PubSub+ broker and saw a queue was automatically created. You now will enable a subscription to your queue so that it attracts Board Set Requests from Player1 and Player2.
+In the previous section, you established connectivity to your local Solace PubSub+ broker and saw a queue was automatically created. You now will enable a subscription to your queue so that it attracts Move Requests from Player1 and Player2.
 
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and uncommenting the following comment:
 
 ```yml
-# queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
+# queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
 ```
 
-Now all Board Set Requests will end up in the BOARD-SET-REQUEST queue.
+Now all Move Requests will end up in the MOVE-REQUEST queue.
 
-### Implement the Board Set Request logic in the Spring Cloud Stream server
+### Implement the Move Request logic in the Spring Cloud Stream server
 
-Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\BoardSetRequestProcessor.java` and add a function to handle BoardSetRequests in the BoardSetRequestProcessor class:
+Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\MoveRequestProcessor.java` and add a function to handle MoveRequests in the MoveRequestProcessor class:
 
 ```java
   // We define an INPUT to receive data from and dynamically specify the reply to
-  // destination depending on the header and state of the game engine
-  @StreamListener(BoardSetRequestBinding.INPUT)
-  public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
+  // destination depending on the header and state of the game enginer
+  @StreamListener(MoveRequestBinding.INPUT)
+  public void handle(Move moveRequest, @Header("reply-to") String replyTo) {
       // Pass the request to the game engine to join the game
-      BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
+      MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
       resolver.resolveDestination(replyTo).send(message(result));
 
-      if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-          resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
-                  .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
+      if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
+          resolver.resolveDestination("SOLACE/BATTLESHIP/" + moveRequest.getSessionId() + "/MATCH-END/CONTROLLER")
+                  .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
       }
 
   }
 ```
 
-### Modify the landing page to subscribe to the BoardSetReplies and MatchStart Events
+### Modify the match page to subscribe to MatchEnd events
 
-In the previous iteration of the application, the landing page would keep state of which player has set their board and respond with board set replies. The landing page would also broadcast a match start event when both players set their boards. Now that we have committed to lifting our game state to a backend server, for good reason, the landing page and board set pages will need to subscribe to the board set reply and match start topics so that game status can be reflected appropriately.
+Our application's state is almost completely managed by our backend server component. All that is left is to modify the match page to expect move requests to be handled by the Spring Cloud Stream server. What this means is that the match page will no longer handle Move Requests, and instead of using guards (if statements) to check whether the game should end, the match page should subscribe to the MATCH-END topic that the backend server will use to publish MatchEnd events.
 
-This can be accomplished by navigating to `battleship_frontend/src/controller_app/landing-page.ts` and adding the following in the `activate(...)` function:
+This can be accomplished by navigating to `battleship_frontend/src/controller_app/match.ts` and adding the following in the `activate(...)` function:
 
 ```typescript
 ```
@@ -1287,6 +1287,10 @@ Now navigate to [http://localhost:12345](http://localhost:12345), the game shoul
 ### Summary
 
 ![Lesson 9 Summary](assets/lesson-09-summary.png)
+
+In this final lesson of the course, you implemented another message handler in Spring Cloud Stream using the same patter we used in lessons 7 and 8. Lessons 7-9 should show you how building applications using event-driven architecture allows you to build microservices in a decoupled manner. Instead of modifying a single orchestrating "backend service," we're able to add flow processors that act independently.
+
+Additionally, you modified the client-side controller app further so that it is not responsible for any game state. Instead, it is able to derive the match's state from events it receives from our more secure Spring Cloud Stream backend application. Better yet, we were able to implement this transition without a major overhaul of our client application because it was built using event-driven architecture and a message broker instead of tightly coupled REST microservices exposed via an API.
 
 Be sure to commit the changes you made to this branch by running `git commit -m "lesson9"`
 
