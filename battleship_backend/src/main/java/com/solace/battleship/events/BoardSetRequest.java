@@ -13,9 +13,6 @@ public class BoardSetRequest {
     private PrivateBoardCellState[][] board;
     private String sessionId;
 
-    public BoardSetRequest(){
-
-    }
 
     public PlayerName getPlayerName() {
         return this.playerName;

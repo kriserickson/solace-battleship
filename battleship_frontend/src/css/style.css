@@ -612,11 +612,11 @@ html {
   margin-top: 100px;
 }
 
-.join-screen__Player1-title {
+.join-screen__player1-title {
   grid-area: player1-title;
 }
 
-.join-screen__Player2-title {
+.join-screen__player2-title {
   grid-area: player2-title;
 }
 
@@ -624,16 +624,16 @@ html {
   grid-area: player1-qr;
 }
 
-.join-screen__Player2-qr {
+.join-screen__player2-qr {
   grid-area: player2-qr;
 }
 
-.join-screen__Player1-wait {
+.join-screen__player1-wait {
   grid-area: player1-wait;
   padding-top: 25px;
 }
 
-.join-screen__Player2-wait {
+.join-screen__player2-wait {
   grid-area: player2-wait;
   padding-top: 25px;
 }

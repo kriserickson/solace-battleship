@@ -41,8 +41,8 @@ export class Join {
           // game start event handler callback
           msg => {
             let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-            this.gameStart.Player1 = gsObj.Player1;
-            this.gameStart.Player2 = gsObj.Player2;
+            this.gameStart.player1 = gsObj.player1;
+            this.gameStart.player2 = gsObj.player2;
             console.log("Game starting...");
             console.log(this.gameStart);
             this.router.navigateToRoute("board-set");

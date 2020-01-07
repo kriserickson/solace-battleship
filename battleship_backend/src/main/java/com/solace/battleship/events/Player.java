@@ -56,7 +56,13 @@ public class Player {
     }
 
     public Player() {
-        this.publicBoardState = new KnownBoardCellState[5][5];
+        KnownBoardCellState[][] tmpArray = new KnownBoardCellState[5][5];
+        for (int i = 0; i < tmpArray.length; i++) {
+            for (int j = 0; j < tmpArray.length; j++) {
+                tmpArray[i][j] = KnownBoardCellState.empty;
+            }
+        }
+        this.publicBoardState = tmpArray;
     }
 
     public Player(PlayerName name, String nickname, PrivateBoardCellState[][] internalBoardState,

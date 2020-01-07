@@ -14,7 +14,7 @@ export class TopicHelper {
   }
 }
 
-export type PlayerName = "Player1" | "Player2";
+export type PlayerName = "player1" | "player2";
 /**
  * Object that represents the player in a game
  * name: name of the player
@@ -33,7 +33,7 @@ export class Player {
   isTurn: boolean;
 
   getOtherPlayerNameForTopic(): string {
-    if (this.name == "Player1") return "PLAYER2";
+    if (this.name == "player1") return "PLAYER2";
     else return "PLAYER1";
   }
 
@@ -59,8 +59,8 @@ export class PlayerJoined {
  * player2: The PlayerJoined object for the start of the game
  */
 export class GameStart {
-  Player1: PlayerJoined;
-  Player2: PlayerJoined;
+  player1: PlayerJoined;
+  player2: PlayerJoined;
   sessionId: string;
 }
 
@@ -70,6 +70,11 @@ export type PrivateBoardCellState = "ship" | "empty";
 // Cell state for the opponent's board
 export type KnownBoardCellState = "hit" | "miss" | "empty";
 
+export class MatchEnd {
+  player1Score: number;
+  player2Score: number;
+  sessionId: String;
+}
 /**
  * Object that represents a players move response
  * Author: Thomas Kunnumpurath, Andrew Roberts
@@ -102,7 +107,7 @@ export class MoveResponseEvent {
 
 export class BoardSetEvent {
   playerName: PlayerName;
-  shipsSet: number;
+  board: PrivateBoardCellState[][];
   sessionId: string;
 }
 

@@ -9,19 +9,17 @@ import java.util.Objects;
  */
 public class GameStart {
 
-    private PlayerJoined Player1;
-    private PlayerJoined Player2;
+    private PlayerJoined player1;
+    private PlayerJoined player2;
 
     public GameStart() {
-        this.Player1 = null;
-        this.Player2 = null;
     }
 
     public boolean setPlayerJoined(PlayerJoined request) {
-        if (request.getPlayerName() == PlayerName.Player1 && getPlayer1() == null) {
+        if (request.getPlayerName() == PlayerName.player1 && getPlayer1() == null) {
             setPlayer1(request);
             return true;
-        } else if (request.getPlayerName() == PlayerName.Player2 && getPlayer2() == null) {
+        } else if (request.getPlayerName() == PlayerName.player2 && getPlayer2() == null) {
             setPlayer2(request);
             return true;
         }
@@ -29,19 +27,19 @@ public class GameStart {
     }
 
     public PlayerJoined getPlayer1() {
-        return Player1;
+        return this.player1;
     }
 
     public void setPlayer1(final PlayerJoined player1) {
-        Player1 = player1;
+        this.player1 = player1;
     }
 
     public PlayerJoined getPlayer2() {
-        return Player2;
+        return this.player2;
     }
 
     public void setPlayer2(final PlayerJoined player2) {
-        Player2 = player2;
+        this.player2 = player2;
     }
 
     @Override
@@ -52,12 +50,12 @@ public class GameStart {
             return false;
         }
         GameStart gameStart = (GameStart) o;
-        return Objects.equals(Player1, gameStart.Player1) && Objects.equals(Player2, gameStart.Player2);
+        return Objects.equals(this.player1, gameStart.player1) && Objects.equals(this.player2, gameStart.player2);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Player1, Player2);
+        return Objects.hash(player1, player2);
     }
 
     @Override

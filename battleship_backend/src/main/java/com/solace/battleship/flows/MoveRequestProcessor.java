@@ -1,8 +1,6 @@
 package com.solace.battleship.flows;
 
 import com.solace.battleship.engine.IGameEngine;
-import com.solace.battleship.events.BoardSetRequest;
-import com.solace.battleship.events.BoardSetResult;
 import com.solace.battleship.events.Move;
 import com.solace.battleship.events.MoveResponseEvent;
 import com.solace.battleship.flows.MoveRequestProcessor.MoveRequestBinding;
@@ -27,38 +25,38 @@ import org.springframework.messaging.support.MessageBuilder;
 @EnableBinding(MoveRequestBinding.class)
 public class MoveRequestProcessor {
 
-    @Autowired
-    private BinderAwareChannelResolver resolver;
+  @Autowired
+  private BinderAwareChannelResolver resolver;
 
-    @Autowired
-    private IGameEngine gameEngine;
+  @Autowired
+  private IGameEngine gameEngine;
 
-    // We define an INPUT to receive data from and dynamically specify the reply to
-    // destination depending on the header and state of the game enginer
-    @StreamListener(MoveRequestBinding.INPUT)
-    public void handle(Move moveRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
-        MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
-        resolver.resolveDestination(replyTo).send(message(result));
+  // We define an INPUT to receive data from and dynamically specify the reply to
+  // destination depending on the header and state of the game enginer
+  @StreamListener(MoveRequestBinding.INPUT)
+  public void handle(Move moveRequest, @Header("reply-to") String replyTo) {
+    // Pass the request to the game engine to join the game
+    MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
+    resolver.resolveDestination(replyTo).send(message(result));
 
-        if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + moveRequest.getSessionId() + "/MATCH-END/CONTROLLER")
-                    .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
-        }
-
+    if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
+      resolver.resolveDestination("SOLACE/BATTLESHIP/" + moveRequest.getSessionId() + "/MATCH-END/CONTROLLER")
+          .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
     }
 
-    private static final <T> Message<T> message(T val) {
-        return MessageBuilder.withPayload(val).build();
-    }
+  }
 
-    /*
-     * Custom Processor Binding Interface to allow for multiple outputs
-     */
-    public interface MoveRequestBinding {
-        String INPUT = "move_request";
+  private static final <T> Message<T> message(T val) {
+    return MessageBuilder.withPayload(val).build();
+  }
 
-        @Input
-        SubscribableChannel move_request();
-    }
+  /*
+   * Custom Processor Binding Interface to allow for multiple outputs
+   */
+  public interface MoveRequestBinding {
+    String INPUT = "move_request";
+
+    @Input
+    SubscribableChannel move_request();
+  }
 }

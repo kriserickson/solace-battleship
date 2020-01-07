@@ -32,7 +32,7 @@ export class LandingPage {
   activate(params, routeConfig) {
     // Connect to Solace
     this.solaceClient.connect().then(() => {
-      //Listener for join replies
+      //Listener for join replies from the battleship-server
       this.solaceClient.subscribe(
         `${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`,
         // join event handler callback
@@ -42,7 +42,7 @@ export class LandingPage {
             let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
             if (joinResult.success) {
               // update client statuses
-              if (joinResult.playerName == "Player1") {
+              if (joinResult.playerName == "player1") {
                 this.player1Status = "Player1 Joined!";
               } else {
                 this.player2Status = "Player2 Joined!";
@@ -52,70 +52,52 @@ export class LandingPage {
         }
       );
 
-      //Listening for a GAME-START event
+      //Listening for a GAME-START event from the battleship-server
       this.solaceClient.subscribe(
         `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
         // Game-Start event
         msg => {
           if (msg.getBinaryAttachment()) {
+            let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+            this.gameStart.player1 = gsObj.player1;
+            this.gameStart.player2 = gsObj.player2;
             this.player1Status = "Waiting for Player1 to set the board";
             this.player2Status = "Waiting for Player2 to set the board";
           }
         }
       );
 
-      //Listener for board set requests
+      //Listening for a BOARD-SET-REPLY events from the battleship-server
       this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`,
-        // board set event handler
+        `${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`,
+        // Game-Start event
         msg => {
-          let boardSetResult: BoardSetResult = new BoardSetResult();
-          // parse received message
-          let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
-          boardSetResult.playerName = boardSetEvent.playerName;
-          //Set the response object appropriately
-          if (boardSetEvent.playerName == "Player1") {
-            if (this.player1Status === "Player1 Board Set!") {
-              boardSetResult.message = "Board already set by Player1";
-              boardSetResult.success = false;
-            } else {
+          if (msg.getBinaryAttachment()) {
+            let boardSetResult: BoardSetResult = JSON.parse(msg.getBinaryAttachment());
+            if (boardSetResult.playerName == "player1") {
               this.player1Status = "Player1 Board Set!";
-              boardSetResult.message = "Board set!";
-              boardSetResult.success = true;
-              this.matchStartResult.player1Board = boardSetResult;
-
-              this.boardsSet++;
             }
           } else {
-            if (this.player2Status === "Player2 Board Set!") {
-              boardSetResult.message = "Board already set by Player2";
-              boardSetResult.success = false;
-            } else {
-              this.player2Status = "Player2 Board Set!";
-              boardSetResult.message = "Board set!";
-              boardSetResult.success = true;
-              this.matchStartResult.player2Board = boardSetResult;
-              this.boardsSet++;
-            }
-          }
-
-          //Send the reply
-          this.solaceClient.sendReply(msg, JSON.stringify(boardSetResult));
-
-          //If both boards have been set, publish a matchstart event and disconnect the landing page
-          if (this.boardsSet == 2) {
-            this.solaceClient.publish(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, JSON.stringify(this.matchStartResult));
-            this.router.navigateToRoute("dashboard");
+            this.player2Status = "Player2 Board Set!";
           }
         }
       );
+
+      //Listening for a MATCH-START event from the battleship-server
+      this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
+        this.router.navigateToRoute("dashboard");
+      });
     });
   }
 
   detached() {
     //Unsubscribe from the ../JOIN-REQUEST/* event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REQUEST/*`);
-    //Unsubscribe from the ../BOARD-SET-REQUEST/* event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`);
+    //Unsubscribe from the ../GAME-START/CONTROLLER event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`);
+    //Unsubscribe from the ../BOARD-SET-REPLY/*/CONTROLLER event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`);
+    //Unsubscribe from the ../MATCH-START/CONTROLLER event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`);
   }
 }

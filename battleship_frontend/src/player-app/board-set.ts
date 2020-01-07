@@ -38,7 +38,6 @@ export class BoardSet {
 
     //SET THE SUBSCRIPTION FOR THE MATCH START
     this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
-      console.log(msg);
       this.router.navigateToRoute("match");
     });
   }
@@ -78,7 +77,8 @@ export class BoardSet {
     if (this.placedShips == 5) {
       let boardsetEvent: BoardSetEvent = new BoardSetEvent();
       boardsetEvent.playerName = this.player.name;
-      boardsetEvent.shipsSet = this.placedShips;
+      boardsetEvent.board = this.player.internalBoardState;
+      boardsetEvent.sessionId = this.player.sessionId;
       //Send the request to set the board
       this.solaceClient
         .sendRequest(
