@@ -35,10 +35,6 @@ public class MoveRequestProcessor extends AbstractRequestProcessor<Move> {
     }
   }
 
-  private static final <T> Message<T> message(T val) {
-    return MessageBuilder.withPayload(val).build();
-  }
-
   /*
    * Custom Processor Binding Interface to allow for multiple outputs
    */
