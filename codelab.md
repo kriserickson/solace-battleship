@@ -998,7 +998,7 @@ Next copy, `battleship_backend/src/main/resources/application-template.propertie
 ```
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.host= //SMF Uri
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.msgVpn= //Message VPN
- spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientUsername= //Username
+spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientUsername= //Username
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientPassword= //Password
 
 ```
@@ -1173,17 +1173,18 @@ Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\BoardS
 
 ```java
   // We define an INPUT to receive data from and dynamically specify the reply to
-  // destination depending on the header and state of the game engine
+  // destination depending on the header and state of the game enginer
   @StreamListener(BoardSetRequestBinding.INPUT)
   public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
-      // Pass the request to the game engine to join the game
-      BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
-      resolver.resolveDestination(replyTo).send(message(result));
-
-      if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-          resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
-                  .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
-      }
+    // Pass the request to the game engine to join the game
+    BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
+    // Send the result of the BoardSetRequest to the replyTo destination retrieved from the message header
+    resolver.resolveDestination(replyTo).send(message(result));
+    // If the result was a succesful board set and if both player's have joined, then publish a Match Start Message
+    if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
+      resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
+          .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
+    }
 
   }
 ```
@@ -1195,6 +1196,31 @@ In the previous iteration of the application, the landing page would keep state 
 This can be accomplished by navigating to `battleship_frontend/src/controller_app/landing-page.ts` and adding the following in the `activate(...)` function:
 
 ```typescript
+//Listening for a BOARD-SET-REPLY events from the battleship-server
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`,
+  // Game-Start event
+  msg => {
+    if (msg.getBinaryAttachment()) {
+      let boardSetResult: BoardSetResult = JSON.parse(
+        msg.getBinaryAttachment()
+      );
+      if (boardSetResult.playerName == "player1") {
+        this.player1Status = "Player1 Board Set!";
+      }
+    } else {
+      this.player2Status = "Player2 Board Set!";
+    }
+  }
+);
+
+//Listening for a MATCH-START event from the battleship-server
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/MATCH-START/CONTROLLER`,
+  msg => {
+    this.router.navigateToRoute("dashboard");
+  }
+);
 ```
 
 ### Running the application
@@ -1276,6 +1302,24 @@ Our application's state is almost completely managed by our backend server compo
 This can be accomplished by navigating to `battleship_frontend/src/controller_app/match.ts` and adding the following in the `activate(...)` function:
 
 ```typescript
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
+  // game start event handler callback
+  msg => {
+    let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+    matchEndObj.player1Score = this.scoreMap.player1;
+    matchEndObj.player2Score = this.scoreMap.player2;
+    console.log(matchEndObj);
+    if (this.player.name == "player1" && this.scoreMap.player1 == 0) {
+      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+    }
+    if (this.player.name == "player2" && this.scoreMap.player2 == 0) {
+      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+    } else {
+      this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
+    }
+  }
+);
 ```
 
 ### Running the application
