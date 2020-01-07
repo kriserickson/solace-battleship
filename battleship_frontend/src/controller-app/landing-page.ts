@@ -1,6 +1,12 @@
 import { BoardSetResult } from "./../common/events";
 import { JoinResult } from "../common/events";
-import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent, MatchStart } from "../common/events";
+import {
+  PlayerJoined,
+  GameStart,
+  TopicHelper,
+  BoardSetEvent,
+  MatchStart
+} from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -19,7 +25,12 @@ export class LandingPage {
   //Generate a session-id for the game (a random hex string)
   sessionId: string = Math.floor(Math.random() * 16777215).toString(16);
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {
+  constructor(
+    private router: Router,
+    private solaceClient: SolaceClient,
+    private topicHelper: TopicHelper,
+    private gameStart: GameStart
+  ) {
     //Append a session-id for the global topic prefix
     this.topicHelper.prefix = this.topicHelper.prefix + "/" + this.sessionId;
   }
@@ -68,25 +79,6 @@ export class LandingPage {
       );
 
       //Listening for a BOARD-SET-REPLY events from the battleship-server
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`,
-        // Game-Start event
-        msg => {
-          if (msg.getBinaryAttachment()) {
-            let boardSetResult: BoardSetResult = JSON.parse(msg.getBinaryAttachment());
-            if (boardSetResult.playerName == "player1") {
-              this.player1Status = "Player1 Board Set!";
-            }
-          } else {
-            this.player2Status = "Player2 Board Set!";
-          }
-        }
-      );
-
-      //Listening for a MATCH-START event from the battleship-server
-      this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
-        this.router.navigateToRoute("dashboard");
-      });
     });
   }
 
@@ -94,10 +86,16 @@ export class LandingPage {
     //Unsubscribe from the ../JOIN-REQUEST/* event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REQUEST/*`);
     //Unsubscribe from the ../GAME-START/CONTROLLER event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`);
+    this.solaceClient.unsubscribe(
+      `${this.topicHelper.prefix}/GAME-START/CONTROLLER`
+    );
     //Unsubscribe from the ../BOARD-SET-REPLY/*/CONTROLLER event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`);
+    this.solaceClient.unsubscribe(
+      `${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`
+    );
     //Unsubscribe from the ../MATCH-START/CONTROLLER event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`);
+    this.solaceClient.unsubscribe(
+      `${this.topicHelper.prefix}/MATCH-START/CONTROLLER`
+    );
   }
 }
