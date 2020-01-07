@@ -20,20 +20,8 @@ import org.springframework.messaging.handler.annotation.Header;
 @EnableBinding(MoveRequestBinding.class)
 public class MoveRequestProcessor extends AbstractRequestProcessor<Move> {
 
-    // We define an INPUT to receive data from and dynamically specify the reply to
-    // destination depending on the header and state of the game engine
-    @StreamListener(MoveRequestBinding.INPUT)
-    public void handle(Move moveRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to make a move
-        MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
-        resolver.resolveDestination(replyTo).send(message(result));
-        // Send the result of the BoardSetRequest to the replyTo destination retrieved from
-        // the message header
-        if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + moveRequest.getSessionId() + "/MATCH-END/CONTROLLER")
-                    .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
-        }
-    }
+  // We define an INPUT to receive data from and dynamically specify the reply to
+  // destination depending on the header and state of the game engine
 
   private static final <T> Message<T> message(T val) {
     return MessageBuilder.withPayload(val).build();
