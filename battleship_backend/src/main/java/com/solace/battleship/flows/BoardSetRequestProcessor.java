@@ -25,9 +25,11 @@ public class BoardSetRequestProcessor extends AbstractRequestProcessor<BoardSetR
   public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
     // Pass the request to the game engine to join the game
     BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
-    // Send the result of the BoardSetRequest to the replyTo destination retrieved from the message header
+    // Send the result of the BoardSetRequest to the replyTo destination retrieved
+    // from the message header
     resolver.resolveDestination(replyTo).send(message(result));
-    // If the result was a succesful board set and if both player's have joined, then publish a Match Start Message
+    // If the result was a succesful board set and if both player's have joined,
+    // then publish a Match Start Message
     if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
       resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
           .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));

@@ -20,29 +20,31 @@ import org.springframework.messaging.handler.annotation.Header;
 @EnableBinding(JoinRequestBinding.class)
 public class JoinProcessor extends AbstractRequestProcessor<PlayerJoined> {
 
-    // We define an INPUT to receive data from and dynamically specify the reply to
-    // destination depending on the header and state of the game engine
-    @StreamListener(JoinRequestBinding.INPUT)
-    public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
-        JoinResult result = gameEngine.requestToJoinGame(joinRequest);
-        // Send the result of the JoinRequest to the replyTo destination retrieved from the message header
-        resolver.resolveDestination(replyTo).send(message(result));
-        // If the result was a successful join and if both player's have joined, then publish a game start message
-        if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
-                    .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
-        }
-
+  // We define an INPUT to receive data from and dynamically specify the reply to
+  // destination depending on the header and state of the game engine
+  @StreamListener(JoinRequestBinding.INPUT)
+  public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
+    // Pass the request to the game engine to join the game
+    JoinResult result = gameEngine.requestToJoinGame(joinRequest);
+    // Send the result of the JoinRequest to the replyTo destination retrieved from
+    // the message header
+    resolver.resolveDestination(replyTo).send(message(result));
+    // If the result was a successful join and if both player's have joined, then
+    // publish a game start message
+    if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
+      resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
+          .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
     }
 
-    /*
-     * Custom Processor Binding Interface to allow for multiple outputs
-     */
-    public interface JoinRequestBinding {
-        String INPUT = "join_request";
+  }
 
-        @Input
-        SubscribableChannel join_request();
-    }
+  /*
+   * Custom Processor Binding Interface to allow for multiple outputs
+   */
+  public interface JoinRequestBinding {
+    String INPUT = "join_request";
+
+    @Input
+    SubscribableChannel join_request();
+  }
 }
