@@ -1,0 +1,48 @@
+spring:
+  cloud:
+    stream:
+      default-binder: solace_cloud
+      bindings:
+        join_request:
+          destination: JOIN-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        board_set_request:
+          destination: BOARD-SET-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        move_request:
+          destination: MOVE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+      binders:
+        solace_cloud:
+          type: solace
+          environment:
+            solace:
+              java:
+                connectRetries: 3
+                connectRetriesPerHost: 0
+                reconnectRetries: 3
+      solace:
+        bindings:
+          join_request:
+            consumer:
+              #Subscription for the join request queue
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+          board_set_request:
+            consumer:
+              #Subscription for the board set request queue
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
+          move_request:
+            consumer:
+              #Subscription for the move request queue
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
+logging:
+  level:
+    root: INFO
+    com.solacesystems.jcsmp: INFO
+    org.springframework: INFO
+
+server:
+  port: 8094

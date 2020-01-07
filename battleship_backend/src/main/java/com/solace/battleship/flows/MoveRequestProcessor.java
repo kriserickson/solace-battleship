@@ -23,9 +23,6 @@ public class MoveRequestProcessor extends AbstractRequestProcessor<Move> {
   // We define an INPUT to receive data from and dynamically specify the reply to
   // destination depending on the header and state of the game engine
 
-  private static final <T> Message<T> message(T val) {
-    return MessageBuilder.withPayload(val).build();
-  }
 
   /*
    * Custom Processor Binding Interface to allow for multiple outputs
