@@ -1048,8 +1048,8 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and remove the # from the `queueAdditonalSubscriptions` property so that the section below the comment looks like the following:
 
 ```yml
-#Subscription for the join request queue
-queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+#Subscription for the move request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
 ```
 
 Negative
@@ -1063,22 +1063,22 @@ Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\JoinPr
 
 ```java
 // We define an INPUT to receive data from and dynamically specify the reply to destination depending on the header and state of the game engine
-    @StreamListener(JoinRequestBinding.INPUT)
-    public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
-        JoinResult result = gameEngine.requestToJoinGame(joinRequest);
-        // Send the result of the JoinRequest to the replyTo destination retrieved from
-        // the message header
-        resolver.resolveDestination(replyTo).send(message(result));
+@StreamListener(JoinRequestBinding.INPUT)
+public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
+    // Pass the request to the game engine to join the game
+    JoinResult result = gameEngine.requestToJoinGame(joinRequest);
+    // Send the result of the JoinRequest to the replyTo destination retrieved from
+    // the message header
+    resolver.resolveDestination(replyTo).send(message(result));
 
-        // If the result was a succesful join and if both player's have joined, then
-        // publish a game start message
-        if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
-                    .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
-        }
-
+    // If the result was a succesful join and if both player's have joined, then
+    // publish a game start message
+    if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
+        resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
+                .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
     }
+
+}
 ```
 
 ### Modify the landing page to subscribe to the JoinReplies and Game Start events
@@ -1126,7 +1126,7 @@ this.solaceClient.subscribe(
 
 ### Running the application
 
-Run either `mvnw.cmd spring-boot:run` if on Windows or `mvnw spring-boot:run` from the battleship_backend folder.
+Run either `mvnw.cmd spring-boot:run` if on Windows or `chmod +x mvnw & ./mvnw spring-boot:run` from the battleship_backend folder.
 
 Now navigate to [http://localhost:12345](http://localhost:12345), the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.
 
@@ -1170,6 +1170,9 @@ This is accomplished by navigating to `battleship_backend\src\main\resources\app
 ```yml
 # queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
 ```
+
+Negative
+: Ensure that you just remove the # and not affect the tabs/whitespace precluding the # as the YML file depends on whitespacing in order for it to be parsed properly.
 
 Now all Board Set Requests will end up in the BOARD-SET-REQUEST queue.
 
@@ -1231,7 +1234,7 @@ this.solaceClient.subscribe(
 
 ### Running the application
 
-Run either `mvnw.cmd spring-boot:run` if on Windows or `mvnw spring-boot:run` from the battleship_backend folder.
+Run either `mvnw.cmd spring-boot:run` if on Windows or `chmod +x mvnw & ./mvnw spring-boot:run` from the battleship_backend folder.
 
 Now navigate to [http://localhost:12345](http://localhost:12345), the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.
 
@@ -1330,7 +1333,7 @@ this.solaceClient.subscribe(
 
 ### Running the application
 
-Run either `mvnw.cmd spring-boot:run` if on Windows or `mvnw spring-boot:run` from the battleship_backend folder.
+Run either `mvnw.cmd spring-boot:run` if on Windows or `chmod +x mvnw & ./mvnw spring-boot:run` from the battleship_backend folder.
 
 Now navigate to [http://localhost:12345](http://localhost:12345), the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.
 
