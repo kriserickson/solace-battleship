@@ -210,12 +210,8 @@ this.solaceClient
 <p class="image-container"><img alt="Publish a Join Event" title="Publish a Join Event" src="img\c152ef1c8007c4ce.png"></p>
 <p>Navigate to <code>battleship_frontend/src/player-app/join.ts</code> and enter the following code below the comment <code>//Publish a join request and change the pageState to waiting if the join request succeeded</code>:</p>
 <pre><code>//Publish a join request and change the pageState to waiting if the join request succeeded
-let topicName: string = `${
-  this.topicHelper.prefix
-}/JOIN-REQUEST/${this.player.getPlayerNameForTopic()}`;
-let replyTopic: string = `${
-  this.topicHelper.prefix
-}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER}`;
+let topicName: string = `${this.topicHelper.prefix}/JOIN-REQUEST/${this.player.getPlayerNameForTopic()}`;
+let replyTopic: string = `${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER}`;
 this.solaceClient
   .sendRequest(topicName, JSON.stringify(playerJoined), replyTopic)
   .then((msg: any) =&gt; {
@@ -299,10 +295,7 @@ this.solaceClient.subscribe(
         this.solaceClient.sendReply(msg, JSON.stringify(result));
 
         if (this.gameStart.Player1 &amp;&amp; this.gameStart.Player2) {
-          this.solaceClient.publish(
-            `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
-            JSON.stringify(this.gameStart)
-          );
+          this.solaceClient.publish(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`, JSON.stringify(this.gameStart));
           this.player1Status = &#34;Waiting for Player1 to set board..&#34;;
           this.player2Status = &#34;Waiting for Player2 to set board..&#34;;
         }
@@ -333,14 +326,8 @@ this.solaceClient.subscribe(
 <p>The code above establishes a subscription to the <code>SOLACE/BATTLESHIP/GAME-START/CONTROLLER</code> topic and navigates to the Board Set Page once the event was received.</p>
 <p>Once the page has transitioned to the Board Set Page, you also want to unsubscribe from the <code>SOLACE/BATTLESHIP/GAME-START/CONTROLLER</code> event so that the page doesn&#39;t trigger further callbacks. In the <code>detached()</code> function, add the following code:</p>
 <pre><code>//Unsubscribe from the &lt;PREFIX&gt;/GAME-START and &lt;PREFIX&gt;&gt;/JOIN-REPLY/[PLAYER1 or PLAYER2]
-this.solaceClient.unsubscribe(
-  `${this.topicHelper.prefix}/GAME-START/CONTROLLER`
-);
-this.solaceClient.unsubscribe(
-  `${
-    this.topicHelper.prefix
-  }/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`
-);
+this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`);
+this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
 </code></pre>
 <h2 is-upgraded>Publishing BOARD SET events from the Board Set Page</h2>
 <p class="image-container"><img alt="Publish BOARD SET events" src="img\4898d2bb1fa03736.png"></p>
@@ -447,13 +434,10 @@ this.solaceClient.unsubscribe(
 <p>We need to include a mechanism to start the match once both players have finished setting their boards. This is done by listening to the match start events from the controller page.</p>
 <p>Insert the following code snippet under the <code>//subscribe to the match start event</code> comment in the <code>constructor(...)</code> function under <code>player_app/board-set.ts</code></p>
 <pre><code>//Set the subscription for the match start
-this.solaceClient.subscribe(
-  `${this.topicHelper.prefix}/MATCH-START/CONTROLLER`,
-  msg =&gt; {
-    console.log(msg);
-    this.router.navigateToRoute(&#34;match&#34;);
-  }
-);
+this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg =&gt; {
+  console.log(msg);
+  this.router.navigateToRoute(&#34;match&#34;);
+});
 </code></pre>
 <h2 is-upgraded>Subscribe the Match Page to MOVE Events</h2>
 <p>Navigate to <a href="http://localhost:12345" target="_blank">http://locahost:12345</a>, click on both of the two qr-codes, fill out a name for each player, and kick off the match.</p>
@@ -465,39 +449,32 @@ this.solaceClient.subscribe(
 <p class="image-container"><img alt="Subscribe to Match-Request" title="Subscribe" src="img\9b9333ac1bc69270.png"></p>
 <p>Insert this code snippet in the <code>constructor</code> method of <code>src/player-app/match.ts</code> as instructed by the comments in that file:</p>
 <pre><code>// subscribe to the other player&#39;s moves here
-this.solaceClient.subscribe(
-  `${
-    this.topicHelper.prefix
-  }/MOVE-REQUEST/${this.player.getOtherPlayerNameForTopic()}`,
-  msg =&gt; {
-    //De-serialize the received message into a move object
-    let move: Move = JSON.parse(msg.getBinaryAttachment());
-    //Create a Response object
-    let moveResponseEvent: MoveResponseEvent = new MoveResponseEvent();
-    //Set the move of the response object to the Move that was requested
-    moveResponseEvent.move = move;
-    //Set the board of the moveResponse to the current player&#39;s public board state
-    moveResponseEvent.playerBoard = this.player.publicBoardState;
-    //Set the Player of the move response event the name of the player
-    moveResponseEvent.player = this.player.name;
-    //Check the player&#39;s internal board state to find the corresponding
-    moveResponseEvent.moveResult = this.player.internalBoardState[move.x][
-      move.y
-    ];
-    //Send the reply for the move request
-    this.solaceClient.sendReply(msg, JSON.stringify(moveResponseEvent));
-    //Check the move result and make changes to the score if appropriate and the corresponding icons
-    if (this.player.internalBoardState[move.x][move.y] == &#34;ship&#34;) {
-      this.shipHit(this.player.name);
-      this.player.publicBoardState[move.x][move.y] = &#34;hit&#34;;
-    } else {
-      this.player.publicBoardState[move.x][move.y] = &#34;miss&#34;;
-    }
-
-    this.pageState = this.player.name;
-    this.rotateTurnMessage();
+this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getOtherPlayerNameForTopic()}`, msg =&gt; {
+  //De-serialize the received message into a move object
+  let move: Move = JSON.parse(msg.getBinaryAttachment());
+  //Create a Response object
+  let moveResponseEvent: MoveResponseEvent = new MoveResponseEvent();
+  //Set the move of the response object to the Move that was requested
+  moveResponseEvent.move = move;
+  //Set the board of the moveResponse to the current player&#39;s public board state
+  moveResponseEvent.playerBoard = this.player.publicBoardState;
+  //Set the Player of the move response event the name of the player
+  moveResponseEvent.player = this.player.name;
+  //Check the player&#39;s internal board state to find the corresponding
+  moveResponseEvent.moveResult = this.player.internalBoardState[move.x][move.y];
+  //Send the reply for the move request
+  this.solaceClient.sendReply(msg, JSON.stringify(moveResponseEvent));
+  //Check the move result and make changes to the score if appropriate and the corresponding icons
+  if (this.player.internalBoardState[move.x][move.y] == &#34;ship&#34;) {
+    this.shipHit(this.player.name);
+    this.player.publicBoardState[move.x][move.y] = &#34;hit&#34;;
+  } else {
+    this.player.publicBoardState[move.x][move.y] = &#34;miss&#34;;
   }
-);
+
+  this.pageState = this.player.name;
+  this.rotateTurnMessage();
+});
 </code></pre>
 <h2 is-upgraded>Publish a Move Request Event</h2>
 <p>Even after you add in the subscription logic, if you try to make a move nothing will happen. What gives?<br>Well, we need to <strong>publish</strong> a MOVE event when a player selects a cell from their board.</p>
@@ -507,19 +484,13 @@ this.solaceClient.subscribe(
 <pre><code>//Send the Move Request
 this.solaceClient
   .sendRequest(
-    `${
-      this.topicHelper.prefix
-    }/MOVE-REQUEST/${this.player.getPlayerNameForTopic()}`,
+    `${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getPlayerNameForTopic()}`,
     JSON.stringify(move),
-    `${
-      this.topicHelper.prefix
-    }/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`
+    `${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`
   )
   .then((msg: any) =&gt; {
     //De-serialize the move response into a moveResponseEvent object
-    let moveResponseEvent: MoveResponseEvent = JSON.parse(
-      msg.getBinaryAttachment()
-    );
+    let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
     //Update the current player&#39;s enemy board&#39;s state
     this.enemyBoard = moveResponseEvent.playerBoard;
     //Update the approrpaite score/icons based on the move response
@@ -649,15 +620,10 @@ SOLACE/BATTLESHIP/*/MOVE-REPLY/*/*
 <p class="image-container"><img alt="Lesson-05-dashboard-subscribe" src="img\27435743b2c250b8.png"></p>
 <p>Navigate to the <code>battleship_frontend\controller-app\dashboard.ts</code> and add the following subscription to the <code>constructor(...)</code> function:</p>
 <pre><code>//Subscribe to all MOVE-REPLYs from Player1 and Player2 to propogate in the dashboard
-this.solaceClient.subscribe(
-  `${this.topicHelper.prefix}/MOVE-REPLY/*/*`,
-  msg =&gt; {
-    let moveResponseEvent: MoveResponseEvent = JSON.parse(
-      msg.getBinaryAttachment()
-    );
-    this.moveResultMap[moveResponseEvent.player] = moveResponseEvent;
-  }
-);
+this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, msg =&gt; {
+  let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
+  this.moveResultMap[moveResponseEvent.player] = moveResponseEvent;
+});
 </code></pre>
 <p>The code above will listen to the move reply messages for both players and kick off an animation based on the player activity. Once you begin the match, your dashboard will transition into the following screen:</p>
 <p class="image-container"><img alt="Lesson-05-dashboard" src="img\df76e0985840cded.png"></p>
@@ -753,8 +719,8 @@ INFO 8296 --- [  restartedMain] c.s.s.c.s.b.p.SolaceQueueProvisioner     : Creat
 <h2 is-upgraded>Add the join request topic subscription to the JOIN-REQUEST queue</h2>
 <p>In the previous section, you established connectivity to your local Solace PubSub+ broker and saw a queue was automatically created. You now will enable a subscription to your queue so that it attracts join requests from Player1 and Player2.</p>
 <p>This is accomplished by navigating to <code>battleship_backend\src\main\resources\application.yml</code> and remove the # from the <code>queueAdditonalSubscriptions</code> property so that the section below the comment looks like the following:</p>
-<pre><code>              #Subscription for the join request queue
-              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+<pre><code>#Subscription for the join request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
 </code></pre>
 <aside class="warning"><p>Ensure that you just remove the # and not affect the tabs/whitespace precluding the # as the YML file depends on whitespacing in order for it to be parsed properly.</p>
 </aside>
@@ -802,20 +768,20 @@ this.solaceClient.subscribe(
   }
 );
 
- //Listening for a GAME-START event from the battleship-server
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
-        // Game-Start event
-        msg =&gt; {
-          if (msg.getBinaryAttachment()) {
-            let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-            this.gameStart.player1 = gsObj.player1;
-            this.gameStart.player2 = gsObj.player2;
-            this.player1Status = &#34;Waiting for Player1 to set the board&#34;;
-            this.player2Status = &#34;Waiting for Player2 to set the board&#34;;
-          }
-        }
-      );
+//Listening for a GAME-START event from the battleship-server
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
+  // Game-Start event
+  msg =&gt; {
+    if (msg.getBinaryAttachment()) {
+      let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+      this.gameStart.player1 = gsObj.player1;
+      this.gameStart.player2 = gsObj.player2;
+      this.player1Status = &#34;Waiting for Player1 to set the board&#34;;
+      this.player2Status = &#34;Waiting for Player2 to set the board&#34;;
+    }
+  }
+);
 </code></pre>
 <h2 is-upgraded>Running the application</h2>
 <p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>mvnw spring-boot:run</code> from the battleship_backend folder.</p>
@@ -855,7 +821,7 @@ this.solaceClient.subscribe(
   // destination depending on the header and state of the game engine
   @StreamListener(BoardSetRequestBinding.INPUT)
   public void handle(BoardSetRequest boardSetRequest, @Header(&#34;reply-to&#34;) String replyTo) {
-      // Pass the request to the game engine to join the game
+      // Pass the request to the game engine set the board
       BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
       resolver.resolveDestination(replyTo).send(message(result));
 
@@ -906,10 +872,10 @@ this.solaceClient.subscribe(
 <h2 is-upgraded>Implement the Move Request logic in the Spring Cloud Stream server</h2>
 <p>Navigate to <code>battleship_backend\src\main\java\com\solace\battleship\flows\MoveRequestProcessor.java</code> and add a function to handle MoveRequests in the MoveRequestProcessor class:</p>
 <pre><code>  // We define an INPUT to receive data from and dynamically specify the reply to
-  // destination depending on the header and state of the game enginer
+  // destination depending on the header and state of the game engine
   @StreamListener(MoveRequestBinding.INPUT)
   public void handle(Move moveRequest, @Header(&#34;reply-to&#34;) String replyTo) {
-      // Pass the request to the game engine to join the game
+      // Pass the request to the game engine to make a move
       MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
       resolver.resolveDestination(replyTo).send(message(result));
 
@@ -1178,17 +1144,11 @@ this.session.on(solace.SessionEventCode.SUBSCRIPTION_OK, sessionEvent =&gt; {
     if (this.topicSubscriptions.get(sessionEvent.correlationKey).isSubscribed) {
       //Remove the topic from the map
       this.topicSubscriptions.delete(sessionEvent.correlationKey);
-      this.log(
-        `Successfully unsubscribed from topic: ${sessionEvent.correlationKey}`
-      );
+      this.log(`Successfully unsubscribed from topic: ${sessionEvent.correlationKey}`);
     } else {
       //Otherwise, this is a callback for subscribing
-      this.topicSubscriptions.get(
-        sessionEvent.correlationKey
-      ).isSubscribed = true;
-      this.log(
-        `Successfully subscribed to topic: ${sessionEvent.correlationKey}`
-      );
+      this.topicSubscriptions.get(sessionEvent.correlationKey).isSubscribed = true;
+      this.log(`Successfully subscribed to topic: ${sessionEvent.correlationKey}`);
     }
   }
 });
@@ -1220,10 +1180,7 @@ this.session.on(solace.SessionEventCode.MESSAGE, message =&gt; {
         if (regexdSub.split(&#34;/&#34;).length != topicName.split(&#34;/&#34;).length) return;
       }
       //Proceed with the message callback for the topic subscription if the subscription is active
-      if (
-        this.topicSubscriptions.get(sub).isSubscribed &amp;&amp;
-        this.topicSubscriptions.get(sub).callback != null
-      ) {
+      if (this.topicSubscriptions.get(sub).isSubscribed &amp;&amp; this.topicSubscriptions.get(sub).callback != null) {
         console.log(`Got callback for ${sub}`);
       }
       this.topicSubscriptions.get(sub).callback(message);
