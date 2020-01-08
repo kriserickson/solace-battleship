@@ -21,15 +21,17 @@ import org.springframework.messaging.handler.annotation.Header;
 public class BoardSetRequestProcessor extends AbstractRequestProcessor<BoardSetRequest> {
 
     // We define an INPUT to receive data from and dynamically specify the reply to
-    // destination depending on the header and state of the game enginer
+    // destination depending on the header and state of the game engine
     @StreamListener(BoardSetRequestBinding.INPUT)
     public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
+        // Pass the request to the game engine to set the board
         BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
-        // Send the result of the BoardSetRequest to the replyTo destination retrieved from
+        // Send the result of the BoardSetRequest to the replyTo destination retrieved
+        // from
         // the message header
         resolver.resolveDestination(replyTo).send(message(result));
-        // If the result was a succesful board set and if both player's have joined, then
+        // If the result was a succesful board set and if both player's have joined,
+        // then
         // publish a Match Start Message
         if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
             resolver.resolveDestination(
@@ -38,6 +40,7 @@ public class BoardSetRequestProcessor extends AbstractRequestProcessor<BoardSetR
         }
 
     }
+
     /*
      * Custom Processor Binding Interface to allow for multiple outputs
      */
