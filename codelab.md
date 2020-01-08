@@ -1004,7 +1004,7 @@ spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientPassword=
 ```
 
 Once you entered in the credentials, navigate to `battleship_backend` and type the following command:
-`.\mvnw.cmd spring-boot:run` if under windows, otherwise run `.\mvnw spring-boot:run`.
+`.\mvnw.cmd spring-boot:run` if under windows, otherwise run `./mvnw spring-boot:run`.
 
 This will kickoff a process to download all dependent libraries, run unit tests, launch a Spring Boot Server, and create associated Queues, and also create a filewatcher to detect any changes upon succesful compilation.
 
@@ -1048,14 +1048,14 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and remove the # from the `queueAdditonalSubscriptions` property so that the section below the comment looks like the following:
 
 ```yml
-              #Subscription for the join request queue
-              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+#Subscription for the join request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
 ```
 
 Negative
 : Ensure that you just remove the # and not affect the tabs/whitespace precluding the # as the YML file depends on whitespacing in order for it to be parsed properly.
 
-Now all join requests for all sessions (indicated by the first '*') and Player 1 or Player 2 (indicated by the second '*') will end up in the JOIN-REQUEST queue.
+Now all join requests for all sessions (indicated by the first '_') and Player 1 or Player 2 (indicated by the second '_') will end up in the JOIN-REQUEST queue.
 
 ### Add the join request handling logic
 
@@ -1108,20 +1108,20 @@ this.solaceClient.subscribe(
   }
 );
 
- //Listening for a GAME-START event from the battleship-server
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
-        // Game-Start event
-        msg => {
-          if (msg.getBinaryAttachment()) {
-            let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-            this.gameStart.player1 = gsObj.player1;
-            this.gameStart.player2 = gsObj.player2;
-            this.player1Status = "Waiting for Player1 to set the board";
-            this.player2Status = "Waiting for Player2 to set the board";
-          }
-        }
-      );
+//Listening for a GAME-START event from the battleship-server
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
+  // Game-Start event
+  msg => {
+    if (msg.getBinaryAttachment()) {
+      let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+      this.gameStart.player1 = gsObj.player1;
+      this.gameStart.player2 = gsObj.player2;
+      this.player1Status = "Waiting for Player1 to set the board";
+      this.player2Status = "Waiting for Player2 to set the board";
+    }
+  }
+);
 ```
 
 ### Running the application
@@ -1243,7 +1243,7 @@ In this lesson, you implemented another message handler in our Spring Cloud Stre
 
 Additionally, we modified the client-side controller app further so that it is no longer responsible for responding to board set requests. Instead of responding to the board set requests, all the client-side controller app has to do is listen for board set reponses.
 
-Now, the only state left on the client side application is the match flow. In the next lesson we'll finish up lifting this state into our
+Now, the only state left on the client side application is the match flow. In the next lesson we'll finish up lifting this state into our SCS application.
 
 Be sure to commit the changes you made to this branch by running `git commit -m "lesson8"`
 
