@@ -964,13 +964,13 @@ Next copy, `battleship_backend/src/main/resources/application-template.propertie
 ```
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.host= //SMF Uri
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.msgVpn= //Message VPN
- spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientUsername= //Username
+spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientUsername= //Username
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientPassword= //Password
 
 ```
 
 Once you entered in the credentials, navigate to `battleship_backend` and type the following command:
-`.\mvnw.cmd spring-boot:run` if under windows, otherwise run `.\mvnw spring-boot:run`.
+`.\mvnw.cmd spring-boot:run` if under windows, otherwise run `chmod +x mvnw & ./mvnw spring-boot:run`.
 
 This will kickoff a process to download all dependent libraries, run unit tests, launch a Spring Boot Server, and create associated Queues, and also create a filewatcher to detect any changes upon succesful compilation.
 
@@ -1029,22 +1029,22 @@ Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\JoinPr
 
 ```java
 // We define an INPUT to receive data from and dynamically specify the reply to destination depending on the header and state of the game engine
-    @StreamListener(JoinRequestBinding.INPUT)
-    public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
-        // Pass the request to the game engine to join the game
-        JoinResult result = gameEngine.requestToJoinGame(joinRequest);
-        // Send the result of the JoinRequest to the replyTo destination retrieved from
-        // the message header
-        resolver.resolveDestination(replyTo).send(message(result));
+@StreamListener(JoinRequestBinding.INPUT)
+public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
+    // Pass the request to the game engine to join the game
+    JoinResult result = gameEngine.requestToJoinGame(joinRequest);
+    // Send the result of the JoinRequest to the replyTo destination retrieved from
+    // the message header
+    resolver.resolveDestination(replyTo).send(message(result));
 
-        // If the result was a succesful join and if both player's have joined, then
-        // publish a game start message
-        if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
-            resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
-                    .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
-        }
-
+    // If the result was a succesful join and if both player's have joined, then
+    // publish a game start message
+    if (result.isSuccess() && gameEngine.canGameStart(joinRequest.getSessionId())) {
+        resolver.resolveDestination("SOLACE/BATTLESHIP/" + joinRequest.getSessionId() + "/GAME-START/CONTROLLER")
+                .send(message(gameEngine.getGameStartAndStartGame(joinRequest.getSessionId())));
     }
+
+}
 ```
 
 ### Modify the landing page to subscribe to the JoinReplies and Game Start events
@@ -1092,7 +1092,7 @@ this.solaceClient.subscribe(
 
 ### Running the application
 
-Run either `mvnw.cmd spring-boot:run` if on Windows or `mvnw spring-boot:run` from the battleship_backend folder.
+Run either `mvnw.cmd spring-boot:run` if on Windows or `chmod +x mvnw & ./mvnw spring-boot:run` from the battleship_backend folder.
 
 Now navigate to [http://localhost:12345](http://localhost:12345), the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.
 
@@ -1134,8 +1134,12 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and uncommenting the following comment:
 
 ```yml
-# queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
+#Subscription for the board set request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
 ```
+
+Negative
+: Ensure that you just remove the # and not affect the tabs/whitespace precluding the # as the YML file depends on whitespacing in order for it to be parsed properly.
 
 Now all Board Set Requests will end up in the BOARD-SET-REQUEST queue.
 
@@ -1145,17 +1149,18 @@ Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\BoardS
 
 ```java
   // We define an INPUT to receive data from and dynamically specify the reply to
-  // destination depending on the header and state of the game engine
+  // destination depending on the header and state of the game enginer
   @StreamListener(BoardSetRequestBinding.INPUT)
   public void handle(BoardSetRequest boardSetRequest, @Header("reply-to") String replyTo) {
-      // Pass the request to the game engine set the board
-      BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
-      resolver.resolveDestination(replyTo).send(message(result));
-
-      if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
-          resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
-                  .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
-      }
+    // Pass the request to the game engine set the board
+    BoardSetResult result = gameEngine.requestToSetBoard(boardSetRequest);
+    // Send the result of the BoardSetRequest to the replyTo destination retrieved from the message header
+    resolver.resolveDestination(replyTo).send(message(result));
+    // If the result was a succesful board set and if both player's have joined, then publish a Match Start Message
+    if (result.isSuccess() && gameEngine.canMatchStart(boardSetRequest.getSessionId())) {
+      resolver.resolveDestination("SOLACE/BATTLESHIP/" + boardSetRequest.getSessionId() + "/MATCH-START/CONTROLLER")
+          .send(message(gameEngine.getMatchStartAndStartMatch(boardSetRequest.getSessionId())));
+    }
 
   }
 ```
@@ -1167,11 +1172,31 @@ In the previous iteration of the application, the landing page would keep state 
 This can be accomplished by navigating to `battleship_frontend/src/controller_app/landing-page.ts` and adding the following in the `activate(...)` function:
 
 ```typescript
+//Listening for a BOARD-SET-REPLY events from the battleship-server
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/BOARD-SET-REPLY/*/CONTROLLER`,
+  // Game-Start event
+  msg => {
+    if (msg.getBinaryAttachment()) {
+      let boardSetResult: BoardSetResult = JSON.parse(msg.getBinaryAttachment());
+      if (boardSetResult.playerName == "player1") {
+        this.player1Status = "Player1 Board Set!";
+      }
+    } else {
+      this.player2Status = "Player2 Board Set!";
+    }
+  }
+);
+
+//Listening for a MATCH-START event from the battleship-server
+this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
+  this.router.navigateToRoute("dashboard");
+});
 ```
 
 ### Running the application
 
-Run either `mvnw.cmd spring-boot:run` if on Windows or `mvnw spring-boot:run` from the battleship_backend folder.
+Run either `mvnw.cmd spring-boot:run` if on Windows or `chmod +x mvnw & ./mvnw spring-boot:run` from the battleship_backend folder.
 
 Now navigate to [http://localhost:12345](http://localhost:12345), the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.
 
@@ -1183,7 +1208,7 @@ In this lesson, you implemented another message handler in our Spring Cloud Stre
 
 Additionally, we modified the client-side controller app further so that it is no longer responsible for responding to board set requests. Instead of responding to the board set requests, all the client-side controller app has to do is listen for board set reponses.
 
-Now, the only state left on the client side application is the match flow. In the next lesson we'll finish up lifting this state into our
+Now, the only state left on the client side application is the match flow. In the next lesson we'll finish up lifting this state into our SCS application.
 
 Be sure to commit the changes you made to this branch by running `git commit -m "lesson8"`
 
@@ -1215,8 +1240,12 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and uncommenting the following comment:
 
 ```yml
-# queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
+#Subscription for the move request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
 ```
+
+Negative
+: Ensure that you just remove the # and not affect the tabs/whitespace precluding the # as the YML file depends on whitespacing in order for it to be parsed properly.
 
 Now all Move Requests will end up in the MOVE-REQUEST queue.
 
@@ -1232,7 +1261,8 @@ Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\MoveRe
       // Pass the request to the game engine to make a move
       MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
       resolver.resolveDestination(replyTo).send(message(result));
-
+      // Send the result of the MoveRequest to the replyTo destination retrieved from
+      // the message header
       if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
           resolver.resolveDestination("SOLACE/BATTLESHIP/" + moveRequest.getSessionId() + "/MATCH-END/CONTROLLER")
                   .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
@@ -1248,11 +1278,29 @@ Our application's state is almost completely managed by our backend server compo
 This can be accomplished by navigating to `battleship_frontend/src/controller_app/match.ts` and adding the following in the `activate(...)` function:
 
 ```typescript
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
+  // game start event handler callback
+  msg => {
+    let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+    matchEndObj.player1Score = this.scoreMap.player1;
+    matchEndObj.player2Score = this.scoreMap.player2;
+    console.log(matchEndObj);
+    if (this.player.name == "player1" && this.scoreMap.player1 == 0) {
+      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+    }
+    if (this.player.name == "player2" && this.scoreMap.player2 == 0) {
+      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+    } else {
+      this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
+    }
+  }
+);
 ```
 
 ### Running the application
 
-Run either `mvnw.cmd spring-boot:run` if on Windows or `mvnw spring-boot:run` from the battleship_backend folder.
+Run either `mvnw.cmd spring-boot:run` if on Windows or `chmod +x mvnw & ./mvnw spring-boot:run` from the battleship_backend folder.
 
 Now navigate to [http://localhost:12345](http://localhost:12345), the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.
 
