@@ -1048,8 +1048,8 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and remove the # from the `queueAdditonalSubscriptions` property so that the section below the comment looks like the following:
 
 ```yml
-#Subscription for the move request queue
-queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
+#Subscription for the join request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
 ```
 
 Negative
@@ -1168,7 +1168,8 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and uncommenting the following comment:
 
 ```yml
-# queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
+#Subscription for the board set request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/BOARD-SET-REQUEST/*
 ```
 
 Negative
@@ -1278,8 +1279,12 @@ In the previous section, you established connectivity to your local Solace PubSu
 This is accomplished by navigating to `battleship_backend\src\main\resources\application.yml` and uncommenting the following comment:
 
 ```yml
-# queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
+#Subscription for the move request queue
+queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
 ```
+
+Negative
+: Ensure that you just remove the # and not affect the tabs/whitespace precluding the # as the YML file depends on whitespacing in order for it to be parsed properly.
 
 Now all Move Requests will end up in the MOVE-REQUEST queue.
 
