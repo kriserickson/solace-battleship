@@ -129,8 +129,6 @@ public class GameEngine implements IGameEngine {
     if (session == null) {
       return new MoveResponseEvent();
     }
-    MoveResponseEvent returnEvent = session.makeMove(request);
-    session.updateMove(request);
 
     return session.makeMove(request);
   }
@@ -162,5 +160,9 @@ public class GameEngine implements IGameEngine {
 
     // error
     return new MatchEnd();
+  }
+
+  public void updateBoard(MoveResponseEvent event){
+    gameSessionMap.get(event.getSessionId()).updateBoard(event);
   }
 }
