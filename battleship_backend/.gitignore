@@ -29,5 +29,7 @@ bin
 ### VS Code ###
 .vscode/
 
+
+
 ### Host details and credentials
 /src/main/resources/application.properties

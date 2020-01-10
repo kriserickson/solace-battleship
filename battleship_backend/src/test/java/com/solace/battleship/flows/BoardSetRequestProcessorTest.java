@@ -28,81 +28,80 @@ import com.solace.battleship.engine.IGameEngine;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BoardSetRequestProcessor.class)
 public class BoardSetRequestProcessorTest {
-
     @Autowired
-  private BoardSetRequestProcessor.BoardSetRequestBinding processor;
+    private BoardSetRequestProcessor.BoardSetRequestBinding processor;
 
-  @MockBean
-  private BinderAwareChannelResolver resolver;
+    @MockBean
+    private BinderAwareChannelResolver resolver;
 
-  @MockBean
-  private IGameEngine gameEngine;
+    @MockBean
+    private IGameEngine gameEngine;
 
-  private static final String sessionId = "0xFFFF";
+    private static final String sessionId = "0xFFFF";
 
-  @Before
-  public void setup() {
-    MessageChannel mockChannel = Mockito.mock(MessageChannel.class);
-    Mockito.when(mockChannel.send(any(Message.class))).thenReturn(true);
-    Mockito.when(resolver.resolveDestination(anyString())).thenReturn(mockChannel);
-  }
+    @Before
+    public void setup() {
+        MessageChannel mockChannel = Mockito.mock(MessageChannel.class);
+        Mockito.when(mockChannel.send(any(Message.class))).thenReturn(true);
+        Mockito.when(resolver.resolveDestination(anyString())).thenReturn(mockChannel);
+    }
 
-  @Test
-  public void testPlayer1SetBoard() {
-    // form request
-    PrivateBoardCellState[][] board = {
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship } };
-    BoardSetRequest boardSetRequest = new BoardSetRequest();
-    boardSetRequest.setPlayerName(PlayerName.player1);
-    boardSetRequest.setBoard(board);
-    boardSetRequest.setSessionId(sessionId);
-    // mock successful response
-    BoardSetResult boardSetResult = new BoardSetResult(PlayerName.player1, true, GameEngine.BOARD_SET_SUCCESS);
-    // run integration tests
-    Mockito.when(gameEngine.requestToSetBoard(boardSetRequest)).thenReturn(boardSetResult);
-    Message<BoardSetRequest> message = MessageBuilder.withPayload(boardSetRequest).setHeader("reply-to", "ReplyTopic")
-        .build();
-    processor.board_set_request().send(message);
-    verify(resolver.resolveDestination("ReplyTopic"), times(1)).send(any(Message.class));
-  }
+    @Test
+    public void testPlayer1SetBoard() {
+        // form request
+        PrivateBoardCellState[][] board = {
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship } };
+        BoardSetRequest boardSetRequest = new BoardSetRequest();
+        boardSetRequest.setPlayerName(PlayerName.player1);
+        boardSetRequest.setBoard(board);
+        boardSetRequest.setSessionId(sessionId);
+        // mock successful response
+        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.player1, true, GameEngine.BOARD_SET_SUCCESS);
+        // run integration tests
+        Mockito.when(gameEngine.requestToSetBoard(boardSetRequest)).thenReturn(boardSetResult);
+        Message<BoardSetRequest> message = MessageBuilder.withPayload(boardSetRequest)
+                .setHeader("reply-to", "ReplyTopic").build();
+        processor.board_set_request().send(message);
+        verify(resolver.resolveDestination("ReplyTopic"), times(1)).send(any(Message.class));
+    }
 
-  @Test
-  public void testPlayer2SetBoard() {
-    /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
-    // form request
-    PrivateBoardCellState[][] board = {
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship },
-        { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
-            PrivateBoardCellState.empty, PrivateBoardCellState.ship } };
-    BoardSetRequest boardSetRequest = new BoardSetRequest();
-    boardSetRequest.setPlayerName(PlayerName.player2);
-    boardSetRequest.setBoard(board);
-    boardSetRequest.setSessionId(sessionId);
-    // mock successful response
-    BoardSetResult boardSetResult = new BoardSetResult(PlayerName.player2, true, GameEngine.BOARD_SET_SUCCESS);
-    // run integration tests
-    Mockito.when(gameEngine.requestToSetBoard(boardSetRequest)).thenReturn(boardSetResult);
-    Message<BoardSetRequest> message = MessageBuilder.withPayload(boardSetRequest).setHeader("reply-to", "ReplyTopic")
-        .build();
-    processor.board_set_request().send(message);
-    verify(resolver.resolveDestination("ReplyTopic"), times(1)).send(any(Message.class));
-  }
+    @Test
+    public void testPlayer2SetBoard() {
+        /** -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ */
+        // form request
+        PrivateBoardCellState[][] board = {
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship },
+                { PrivateBoardCellState.empty, PrivateBoardCellState.empty, PrivateBoardCellState.empty,
+                        PrivateBoardCellState.empty, PrivateBoardCellState.ship } };
+        BoardSetRequest boardSetRequest = new BoardSetRequest();
+        boardSetRequest.setPlayerName(PlayerName.player2);
+        boardSetRequest.setBoard(board);
+        boardSetRequest.setSessionId(sessionId);
+        // mock successful response
+        BoardSetResult boardSetResult = new BoardSetResult(PlayerName.player2, true, GameEngine.BOARD_SET_SUCCESS);
+        // run integration tests
+        Mockito.when(gameEngine.requestToSetBoard(boardSetRequest)).thenReturn(boardSetResult);
+        Message<BoardSetRequest> message = MessageBuilder.withPayload(boardSetRequest)
+                .setHeader("reply-to", "ReplyTopic").build();
+        processor.board_set_request().send(message);
+        verify(resolver.resolveDestination("ReplyTopic"), times(1)).send(any(Message.class));
+    }
 
   @Test
   public void testBothPlayersSetBoards() {
@@ -151,7 +150,8 @@ public class BoardSetRequestProcessorTest {
     verify(resolver, times(1)).resolveDestination("ReplyTopic1");
     verify(resolver, times(1)).resolveDestination("ReplyTopic2");
     verify(resolver, times(1)).resolveDestination("SOLACE/BATTLESHIP/" + sessionId + "/MATCH-START/CONTROLLER");
-  }
+  }<<<<<<<HEAD
 
+    =======>>>>>>>battleship-lesson-9-implement-match-logic-in-scs-solution
 
 }

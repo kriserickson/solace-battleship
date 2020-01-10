@@ -158,7 +158,7 @@ export class SolaceClient {
               if (regexdSub.split("/").length != topicName.split("/").length) return;
             }
             //Proceed with the message callback for the topic subscription if the subscription is active
-            if (this.topicSubscriptions.get(sub).isSubscribed && this.topicSubscriptions.get(sub).callback != null) console.log(`Got callback for ${sub}`);
+            if (this.topicSubscriptions.get(sub) && this.topicSubscriptions.get(sub).isSubscribed && this.topicSubscriptions.get(sub).callback != null) console.log(`Got callback for ${sub}`);
             this.topicSubscriptions.get(sub).callback(message);
           }
         }

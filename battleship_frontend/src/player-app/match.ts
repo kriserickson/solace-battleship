@@ -51,7 +51,7 @@ export class Match {
         let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
         //Update the approrpaite score/icons based on the move response
         if (moveResponseEvent.moveResult == "ship") {
-          this.shipHit(moveResponseEvent.player == "player1" ? "player2" : "player1");
+          this.shipHit(moveResponseEvent.player);
         }
         //Change the page state
         this.pageState = this.pageState == "player1" ? "player2" : "player1";
@@ -61,6 +61,20 @@ export class Match {
     );
 
     //Subscribe to the MATCH-END event
+    this.solaceClient.subscribe(
+      `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
+      // game start event handler callback
+      msg => {
+        let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+        if (this.player.name == "player1" && matchEndObj.player1Score == 0) {
+          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+        } else if (this.player.name == "player2" && matchEndObj.player2Score == 0) {
+          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+        } else {
+          this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
+        }
+      }
+    );
   }
 
   /**
@@ -103,7 +117,6 @@ export class Match {
           let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
           //Update the current player's enemy board's state
           this.enemyBoard = moveResponseEvent.playerBoard;
-          //Update the approrpaite score/icons based on the move response
           if (moveResponseEvent.moveResult == "ship") {
             this.enemyBoard[move.x][move.y] = "hit";
             this.shipHit(this.player.name == "player1" ? "player2" : "player1");

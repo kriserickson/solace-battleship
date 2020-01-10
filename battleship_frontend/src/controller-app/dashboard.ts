@@ -47,7 +47,7 @@ export class Dashboard {
       } else {
         this.action = "miss";
       }
-      this.turnMessage = `${imr.player}'s Turn`;
+      this.turnMessage = `${imr.player == "player1" ? "Player1" : "Player2"}'s Turn`;
     });
   }
 
