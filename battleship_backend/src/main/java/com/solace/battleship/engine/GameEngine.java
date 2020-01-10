@@ -130,6 +130,9 @@ public class GameEngine implements IGameEngine {
       // I don't know if we want to implement error classes too .. seems unnecessary
       return new MoveResponseEvent();
     }
+    MoveResponseEvent returnEvent = session.makeMove(request);
+    session.updateMove(request);
+
     return session.makeMove(request);
   }
 
