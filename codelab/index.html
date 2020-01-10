@@ -902,16 +902,19 @@ queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
   // destination depending on the header and state of the game engine
   @StreamListener(MoveRequestBinding.INPUT)
   public void handle(Move moveRequest, @Header(&#34;reply-to&#34;) String replyTo) {
-      // Pass the request to the game engine to make a move
-      MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
-      resolver.resolveDestination(replyTo).send(message(result));
-      // Send the result of the MoveRequest to the replyTo destination retrieved from
-      // the message header
-      if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
-          resolver.resolveDestination(&#34;SOLACE/BATTLESHIP/&#34; + moveRequest.getSessionId() + &#34;/MATCH-END/CONTROLLER&#34;)
-                  .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
-      }
-
+      // Pass the request to make a move
+    MoveResponseEvent result = gameEngine.requestToMakeMove(moveRequest);
+    // Send the result of the MoveRequest to the replyTo destination retrieved from
+    // the message header
+    resolver.resolveDestination(replyTo).send(message(result));
+    //Update the board once the move has been made
+    gameEngine.updateBoard(result);
+    // If the match should be ended due to a score being 0, publish a match end
+    // message
+    if (gameEngine.shouldMatchEnd(moveRequest.getSessionId())) {
+      resolver.resolveDestination(&#34;SOLACE/BATTLESHIP/&#34; + moveRequest.getSessionId() + &#34;/MATCH-END/CONTROLLER&#34;)
+          .send(message(gameEngine.endMatch(moveRequest.getSessionId())));
+    }
   }
 </code></pre>
 <h2 is-upgraded>Modify the match page to subscribe to MatchEnd events</h2>
