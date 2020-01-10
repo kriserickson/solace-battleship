@@ -127,25 +127,18 @@ public class GameEngine implements IGameEngine {
   public MoveResponseEvent requestToMakeMove(Move request) {
     GameSession session = gameSessionMap.get(request.getSessionId());
     if (session == null) {
-      // I don't know if we want to implement error classes too .. seems unnecessary
       return new MoveResponseEvent();
     }
+    MoveResponseEvent returnEvent = session.makeMove(request);
+    session.updateMove(request);
 
-    MoveResponseEvent moveResponseEvent = session.makeMove(request);
-    return moveResponseEvent;
-  }
-
-
-  @Override
-  public void updateBoard(MoveResponseEvent event){
-    gameSessionMap.get(event.getSessionId()).updateBoard(event);
+    return session.makeMove(request);
   }
 
   @Override
   public boolean shouldMatchEnd(String sessionId) {
     GameSession session = gameSessionMap.get(sessionId);
     if (session == null) {
-      // I don't know if we want to implement error classes too .. seems unnecessary
       return false;
     }
     return (session.getPlayer1Score() == 0) || (session.getPlayer2Score() == 0);
