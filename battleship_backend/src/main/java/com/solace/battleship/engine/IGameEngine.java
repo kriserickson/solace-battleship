@@ -13,7 +13,6 @@ public interface IGameEngine {
   /**
    * Function to request for a game to be joined
    * 
-   * @param sessionId a unique identified for the game's session
    * @param request   A player join request
    * @return The result of a Join request
    */
@@ -82,4 +81,10 @@ public interface IGameEngine {
    * @return a MatchEnd object containing the final scores
    */
   public MatchEnd endMatch(String sessionId);
+
+  /**
+   * Function to update the board
+   * @param event
+   */
+  public void updateBoard(MoveResponseEvent event);
 }

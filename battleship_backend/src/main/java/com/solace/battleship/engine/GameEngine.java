@@ -130,7 +130,15 @@ public class GameEngine implements IGameEngine {
       // I don't know if we want to implement error classes too .. seems unnecessary
       return new MoveResponseEvent();
     }
-    return session.makeMove(request);
+
+    MoveResponseEvent moveResponseEvent = session.makeMove(request);
+    return moveResponseEvent;
+  }
+
+
+  @Override
+  public void updateBoard(MoveResponseEvent event){
+    gameSessionMap.get(event.getSessionId()).updateBoard(event);
   }
 
   @Override
@@ -147,7 +155,6 @@ public class GameEngine implements IGameEngine {
   public MatchEnd endMatch(String sessionId) {
     GameSession session = gameSessionMap.get(sessionId);
     if (session == null) {
-      // I don't know if we want to implement error classes too .. seems unnecessary
       return new MatchEnd();
     }
 

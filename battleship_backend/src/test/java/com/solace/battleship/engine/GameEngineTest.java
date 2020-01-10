@@ -284,15 +284,17 @@ public class GameEngineTest {
     // form move request
     Move moveRequest = new Move(PlayerName.player1, 1, 1);
     moveRequest.setSessionId(sessionId);
-    MoveResponseEvent moveReponse = new MoveResponseEvent();
     // mock successful MISS
-    KnownBoardCellState[][] boardWithMiss = new KnownBoardCellState[5][5];
-    boardWithMiss[moveRequest.getX()][moveRequest.getY()] = KnownBoardCellState.miss;
+    KnownBoardCellState[][] mockedBoard = {{KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty}};
     MoveResponseEvent mockedMissResponse = new MoveResponseEvent();
     mockedMissResponse.setSessionId(sessionId);
-    mockedMissResponse.setPlayer(PlayerName.player1);
+    mockedMissResponse.setPlayer(PlayerName.player2);
     mockedMissResponse.setMove(moveRequest);
-    mockedMissResponse.setPlayerBoard(boardWithMiss);
+    mockedMissResponse.setPlayerBoard(mockedBoard);
     mockedMissResponse.setMoveResult(PrivateBoardCellState.empty);
     assertEquals(gameEngine.requestToMakeMove(moveRequest), mockedMissResponse);
   }
@@ -345,15 +347,18 @@ public class GameEngineTest {
     // form move request
     Move moveRequest = new Move(PlayerName.player2, 1, 1);
     moveRequest.setSessionId(sessionId);
-    MoveResponseEvent moveReponse = new MoveResponseEvent();
     // mock successful MISS
-    KnownBoardCellState[][] boardWithMiss = new KnownBoardCellState[5][5];
-    boardWithMiss[moveRequest.getX()][moveRequest.getY()] = KnownBoardCellState.miss;
+    KnownBoardCellState[][] mockedBoard = {{KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty}};
+
     MoveResponseEvent mockedMissResponse = new MoveResponseEvent();
     mockedMissResponse.setSessionId(sessionId);
-    mockedMissResponse.setPlayer(PlayerName.player2);
+    mockedMissResponse.setPlayer(PlayerName.player1);
     mockedMissResponse.setMove(moveRequest);
-    mockedMissResponse.setPlayerBoard(boardWithMiss);
+    mockedMissResponse.setPlayerBoard(mockedBoard);
     mockedMissResponse.setMoveResult(PrivateBoardCellState.empty);
     // check response
     assertEquals(gameEngine.requestToMakeMove(moveRequest), mockedMissResponse);
@@ -408,9 +413,14 @@ public class GameEngineTest {
     boardWithHit[moveRequest.getX()][moveRequest.getY()] = KnownBoardCellState.hit;
     MoveResponseEvent mockedHitResponse = new MoveResponseEvent();
     mockedHitResponse.setSessionId(sessionId);
-    mockedHitResponse.setPlayer(PlayerName.player1);
+    mockedHitResponse.setPlayer(PlayerName.player2);
     mockedHitResponse.setMove(moveRequest);
-    mockedHitResponse.setPlayerBoard(boardWithHit);
+    KnownBoardCellState[][] mockedBoard = {{KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty}};
+    mockedHitResponse.setPlayerBoard(mockedBoard);
     mockedHitResponse.setMoveResult(PrivateBoardCellState.ship);
     assertEquals(gameEngine.requestToMakeMove(moveRequest), mockedHitResponse);
   }
@@ -464,14 +474,17 @@ public class GameEngineTest {
     Move moveRequest = new Move(PlayerName.player2, 0, 4); // there's a ship at 0,4 1,4 2,4 3,4 4,4
     moveRequest.setSessionId(sessionId);
     // mock board if successful hit
-    KnownBoardCellState[][] boardWithHit = new KnownBoardCellState[5][5];
-    boardWithHit[moveRequest.getX()][moveRequest.getY()] = KnownBoardCellState.hit;
+    KnownBoardCellState[][] mockedBoard = {{KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty},
+            {KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty,KnownBoardCellState.empty}};
     // mock move response event
     MoveResponseEvent mockedHitResponse = new MoveResponseEvent();
     mockedHitResponse.setSessionId(sessionId);
-    mockedHitResponse.setPlayer(PlayerName.player2);
+    mockedHitResponse.setPlayer(PlayerName.player1);
     mockedHitResponse.setMove(moveRequest);
-    mockedHitResponse.setPlayerBoard(boardWithHit);
+    mockedHitResponse.setPlayerBoard(mockedBoard);
     mockedHitResponse.setMoveResult(PrivateBoardCellState.ship);
     assertEquals(gameEngine.requestToMakeMove(moveRequest), mockedHitResponse);
   }

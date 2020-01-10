@@ -23,6 +23,7 @@ public class JoinProcessor extends AbstractRequestProcessor<PlayerJoined> {
   // We define an INPUT to receive data from and dynamically specify the reply to
   // destination depending on the header and state of the game engine
   @StreamListener(JoinRequestBinding.INPUT)
+  
   public void handle(PlayerJoined joinRequest, @Header("reply-to") String replyTo) {
     // Pass the request to the game engine to join the game
     JoinResult result = gameEngine.requestToJoinGame(joinRequest);
