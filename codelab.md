@@ -1285,19 +1285,15 @@ this.solaceClient.subscribe(
   `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
   // game start event handler callback
   msg => {
-    let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
-    matchEndObj.player1Score = this.scoreMap.player1;
-    matchEndObj.player2Score = this.scoreMap.player2;
-    console.log(matchEndObj);
-    if (this.player.name == "player1" && this.scoreMap.player1 == 0) {
-      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
-    }
-    if (this.player.name == "player2" && this.scoreMap.player2 == 0) {
-      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
-    } else {
-      this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
-    }
-  }
+      let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+        if (this.player.name == "player1" && matchEndObj.player1Score == 0) {
+          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+        } else if (this.player.name == "player2" && matchEndObj.player2Score == 0) {
+          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+        } else {
+          this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
+        }
+      }
 );
 ```
 

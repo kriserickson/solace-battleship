@@ -924,19 +924,15 @@ queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
   `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
   // game start event handler callback
   msg =&gt; {
-    let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
-    matchEndObj.player1Score = this.scoreMap.player1;
-    matchEndObj.player2Score = this.scoreMap.player2;
-    console.log(matchEndObj);
-    if (this.player.name == &#34;player1&#34; &amp;&amp; this.scoreMap.player1 == 0) {
-      this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
-    }
-    if (this.player.name == &#34;player2&#34; &amp;&amp; this.scoreMap.player2 == 0) {
-      this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
-    } else {
-      this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU WON!&#34; });
-    }
-  }
+      let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+        if (this.player.name == &#34;player1&#34; &amp;&amp; matchEndObj.player1Score == 0) {
+          this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
+        } else if (this.player.name == &#34;player2&#34; &amp;&amp; matchEndObj.player2Score == 0) {
+          this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
+        } else {
+          this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU WON!&#34; });
+        }
+      }
 );
 </code></pre>
 <h2 is-upgraded>Running the application</h2>
