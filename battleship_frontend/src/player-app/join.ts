@@ -67,6 +67,8 @@ export class Join {
   }
 
   detached() {
-    //Unsubscribe from the <PREFIX>/GAME-START and <PREFIX>/JOIN-REPLY/[PLAYER1 or PLAYER2]
+    //Unsubscribe from the <PREFIX>/GAME-START and <PREFIX>>/JOIN-REPLY/[PLAYER1 or PLAYER2]
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
   }
 }
