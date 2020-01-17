@@ -155,7 +155,7 @@ Sync the following branch [battleship-lesson-1-connect-and-publish](https://gith
 
 ### Code structure
 
-The code for the project is located in the `battleship_frontend` directory. There are two 'app' folders within the `battleship_frontend`:
+The code for the project is located in the `battleship_frontend` directory. There are two 'app' folders under `src` within the `battleship_frontend`:
 
 1. contoller-app: Hosts all code as it relates to controlling the game
 2. player-app: Hosts all code as it relates to the screens for the player
@@ -272,7 +272,7 @@ topicHelper.prefix = "SOLACE/BATTLESHIP";
 
 ### Connect to Solace from the Player Join Page
 
-Navigate to `battleship_frontend/src/player-app/player-app/join.ts` and add the following below the `// Connect to Solace` comment in the `active(params, routeConfig){}` function.
+Navigate to `battleship_frontend/src/player-app/join.ts` and add the following below the `// Connect to Solace` comment in the `active(params, routeConfig){}` function.
 
 ```ts
 // Connect to Solace
@@ -454,7 +454,7 @@ this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.play
 
 Navigate to `battleship_frontend/src/player-app/board-set.ts`
 
-Once a player has finished setting up their board, it will publish a BOARD SET request.
+Once a player has finished setting up their board, it will publish a BOARD SET request. Replace the `beginMatch{}` function with the code below:
 
 ```ts
   /**
@@ -480,6 +480,7 @@ Once a player has finished setting up their board, it will publish a BOARD SET r
           this.error = err;
         });
     }
+  }
 ```
 
 In the example above, the publisher publishes a request on the topic `SOLACE/BATTLESHIP/BOARD-SET-REQUEST/PLAYER1` or `SOLACE/BATTLESHIP/BOARD-SET-REQUEST/PLAYER2` depending on who has set the board. It will expect the controller to reply to the topic, `SOLACE/BATTLESHIP/BOARD-SET-REPLY/PLAYER1/CONTROLLER` or `SOLACE/BATTLESHIP/BOARD-SET-REPLY/PLAYER2/CONTROLLER`.
@@ -1285,15 +1286,15 @@ this.solaceClient.subscribe(
   `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
   // game start event handler callback
   msg => {
-      let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
-        if (this.player.name == "player1" && matchEndObj.player1Score == 0) {
-          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
-        } else if (this.player.name == "player2" && matchEndObj.player2Score == 0) {
-          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
-        } else {
-          this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
-        }
-      }
+    let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+    if (this.player.name == "player1" && matchEndObj.player1Score == 0) {
+      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+    } else if (this.player.name == "player2" && matchEndObj.player2Score == 0) {
+      this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
+    } else {
+      this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
+    }
+  }
 );
 ```
 
