@@ -510,6 +510,8 @@ this.solaceClient.subscribe(
         this.player1Status = "Player1 Board Set!";
         boardSetResult.message = "Board set!";
         boardSetResult.success = true;
+        this.matchStartResult.player1Board = boardSetResult;
+
         this.boardsSet++;
       }
     } else {
@@ -520,6 +522,7 @@ this.solaceClient.subscribe(
         this.player2Status = "Player2 Board Set!";
         boardSetResult.message = "Board set!";
         boardSetResult.success = true;
+        this.matchStartResult.player2Board = boardSetResult;
         this.boardsSet++;
       }
     }
@@ -533,6 +536,7 @@ this.solaceClient.subscribe(
       this.solaceClient.disconnect();
     }
   }
+);
 ```
 
 With the code above, the Landing Page subscribes to the `SOLACE/BATTLESHIP/BOARD-SET-REQUEST/*` topic, send a reply to the player and will change the status state of the Landing Page to indicate each player that joined. In addition, once both players have joined the Landing Page will disconnect from the Solace PubSub+ Broker since it no longer has to process messages.

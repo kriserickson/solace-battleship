@@ -121,7 +121,7 @@
 <p>Sync the following branch <a href="https://github.com/solacese/battleship/tree/battleship-lesson-1-connect-and-publish" target="_blank">battleship-lesson-1-connect-and-publish</a> using the following command:</p>
 <p><code>git checkout battleship-lesson-1-connect-and-publish</code></p>
 <h2 is-upgraded>Code structure</h2>
-<p>The code for the project is located in the <code>battleship_frontend</code> directory. There are two ‘app&#39; folders within the <code>battleship_frontend</code>:</p>
+<p>The code for the project is located in the <code>battleship_frontend</code> directory. There are two ‘app&#39; folders under <code>src</code> within the <code>battleship_frontend</code>:</p>
 <ol type="1">
 <li>contoller-app: Hosts all code as it relates to controlling the game</li>
 <li>player-app: Hosts all code as it relates to the screens for the player</li>
@@ -195,7 +195,7 @@ SOLACE/BATTLESHIP/GAME-START/CONTROLLER
 topicHelper.prefix = &#34;SOLACE/BATTLESHIP&#34;;
 </code></pre>
 <h2 is-upgraded>Connect to Solace from the Player Join Page</h2>
-<p>Navigate to <code>battleship_frontend/src/player-app/player-app/join.ts</code> and add the following below the <code>// Connect to Solace</code> comment in the <code>active(params, routeConfig){}</code> function.</p>
+<p>Navigate to <code>battleship_frontend/src/player-app/join.ts</code> and add the following below the <code>// Connect to Solace</code> comment in the <code>active(params, routeConfig){}</code> function.</p>
 <pre><code>// Connect to Solace
 this.solaceClient
   .connect()
@@ -325,14 +325,14 @@ this.solaceClient.subscribe(
 </code></pre>
 <p>The code above establishes a subscription to the <code>SOLACE/BATTLESHIP/GAME-START/CONTROLLER</code> topic and navigates to the Board Set Page once the event was received.</p>
 <p>Once the page has transitioned to the Board Set Page, you also want to unsubscribe from the <code>SOLACE/BATTLESHIP/GAME-START/CONTROLLER</code> event so that the page doesn&#39;t trigger further callbacks. In the <code>detached()</code> function, add the following code:</p>
-<pre><code>//Unsubscribe from the &lt;PREFIX&gt;/GAME-START and &lt;PREFIX&gt;&gt;/JOIN-REPLY/[PLAYER1 or PLAYER2]
+<pre><code>//Unsubscribe from the &lt;PREFIX&gt;/GAME-START and &lt;PREFIX&gt;&gt;/JOIN-REPLY/[PLAYER1 or PLAYER2]/[PLAYER1 or PLAYER2]
 this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAME-START/CONTROLLER`);
-this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}`);
+this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getOtherPlayerNameForTopic()}/${this.player.getPlayerNameForTopic()}`);
 </code></pre>
 <h2 is-upgraded>Publishing BOARD SET events from the Board Set Page</h2>
 <p class="image-container"><img alt="Publish BOARD SET events" src="img\4898d2bb1fa03736.png"></p>
 <p>Navigate to <code>battleship_frontend/src/player-app/board-set.ts</code></p>
-<p>Once a player has finished setting up their board, it will publish a BOARD SET request.</p>
+<p>Once a player has finished setting up their board, it will publish a BOARD SET request. Replace the <code>beginMatch{}</code> function with the code below:</p>
 <pre><code>  /**
    * Function to begin a match - it publishes a board-set request message and then sets the done placing variable to true
    */
@@ -356,54 +356,57 @@ this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.play
           this.error = err;
         });
     }
+  }
 </code></pre>
 <p>In the example above, the publisher publishes a request on the topic <code>SOLACE/BATTLESHIP/BOARD-SET-REQUEST/PLAYER1</code> or <code>SOLACE/BATTLESHIP/BOARD-SET-REQUEST/PLAYER2</code> depending on who has set the board. It will expect the controller to reply to the topic, <code>SOLACE/BATTLESHIP/BOARD-SET-REPLY/PLAYER1/CONTROLLER</code> or <code>SOLACE/BATTLESHIP/BOARD-SET-REPLY/PLAYER2/CONTROLLER</code>.</p>
 <h2 is-upgraded>Subscribing the Landing Page to BOARD SET requests</h2>
 <p class="image-container"><img alt="Subscribe to Board Set" src="img\1eb21de22b771284.png"></p>
 <p>Navigate to <code>battleship_frontend/src/controller-app/landing-page.ts</code> and add the following code to the <code>activate(params, routeConfig)</code> function:</p>
-<pre><code>      //Listener for board set requests
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`,
-        // board set event handler
-        msg =&gt; {
-          let boardSetResult: BoardSetResult = new BoardSetResult();
-          // parse received message
-          let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
-          boardSetResult.playerName = boardSetEvent.playerName;
-          //Set the response object appropriately
-          if (boardSetEvent.playerName == &#34;Player1&#34;) {
-            if (this.player1Status === &#34;Player1 Board Set!&#34;) {
-              boardSetResult.message = &#34;Board already set by Player1&#34;;
-              boardSetResult.success = false;
-            } else {
-              this.player1Status = &#34;Player1 Board Set!&#34;;
-              boardSetResult.message = &#34;Board set!&#34;;
-              boardSetResult.success = true;
-              this.boardsSet++;
-            }
-          } else {
-            if (this.player2Status === &#34;Player2 Board Set!&#34;) {
-              boardSetResult.message = &#34;Board already set by Player2&#34;;
-              boardSetResult.success = false;
-            } else {
-              this.player2Status = &#34;Player2 Board Set!&#34;;
-              boardSetResult.message = &#34;Board set!&#34;;
-              boardSetResult.success = true;
-              this.boardsSet++;
-            }
-          }
+<pre><code>//Listener for board set requests
+this.solaceClient.subscribe(
+  `${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`,
+  // board set event handler
+  msg =&gt; {
+    let boardSetResult: BoardSetResult = new BoardSetResult();
+    // parse received message
+    let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
+    boardSetResult.playerName = boardSetEvent.playerName;
+    //Set the response object appropriately
+    if (boardSetEvent.playerName == &#34;Player1&#34;) {
+      if (this.player1Status === &#34;Player1 Board Set!&#34;) {
+        boardSetResult.message = &#34;Board already set by Player1&#34;;
+        boardSetResult.success = false;
+      } else {
+        this.player1Status = &#34;Player1 Board Set!&#34;;
+        boardSetResult.message = &#34;Board set!&#34;;
+        boardSetResult.success = true;
+        this.matchStartResult.player1Board = boardSetResult;
 
-          //Send the reply
-          this.solaceClient.sendReply(msg, JSON.stringify(boardSetResult));
+        this.boardsSet++;
+      }
+    } else {
+      if (this.player2Status === &#34;Player2 Board Set!&#34;) {
+        boardSetResult.message = &#34;Board already set by Player2&#34;;
+        boardSetResult.success = false;
+      } else {
+        this.player2Status = &#34;Player2 Board Set!&#34;;
+        boardSetResult.message = &#34;Board set!&#34;;
+        boardSetResult.success = true;
+        this.matchStartResult.player2Board = boardSetResult;
+        this.boardsSet++;
+      }
+    }
 
-        //If both boards have been set, publish a matchstart event and disconnect the landing page
-          if (this.boardsSet == 2) {
-            this.solaceClient.publish(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, JSON.stringify(this.matchStartResult));
-            this.solaceClient.disconnect();
-          }
-        }
-      );
-    });
+    //Send the reply
+    this.solaceClient.sendReply(msg, JSON.stringify(boardSetResult));
+
+    //If both boards have been set, publish a matchstart event and disconnect the landing page
+    if (this.boardsSet == 2) {
+      this.solaceClient.publish(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, JSON.stringify(this.matchStartResult));
+      this.solaceClient.disconnect();
+    }
+  }
+);
 </code></pre>
 <p>With the code above, the Landing Page subscribes to the <code>SOLACE/BATTLESHIP/BOARD-SET-REQUEST/*</code> topic, send a reply to the player and will change the status state of the Landing Page to indicate each player that joined. In addition, once both players have joined the Landing Page will disconnect from the Solace PubSub+ Broker since it no longer has to process messages.</p>
 <h2 is-upgraded>Summary</h2>
@@ -924,15 +927,15 @@ queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
   `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
   // game start event handler callback
   msg =&gt; {
-      let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
-        if (this.player.name == &#34;player1&#34; &amp;&amp; matchEndObj.player1Score == 0) {
-          this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
-        } else if (this.player.name == &#34;player2&#34; &amp;&amp; matchEndObj.player2Score == 0) {
-          this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
-        } else {
-          this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU WON!&#34; });
-        }
-      }
+    let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
+    if (this.player.name == &#34;player1&#34; &amp;&amp; matchEndObj.player1Score == 0) {
+      this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
+    } else if (this.player.name == &#34;player2&#34; &amp;&amp; matchEndObj.player2Score == 0) {
+      this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU LOSE!&#34; });
+    } else {
+      this.router.navigateToRoute(&#34;game-over&#34;, { msg: &#34;YOU WON!&#34; });
+    }
+  }
 );
 </code></pre>
 <h2 is-upgraded>Running the application</h2>
