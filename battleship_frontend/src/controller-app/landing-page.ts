@@ -1,4 +1,4 @@
-import { BoardSetResult } from "./../common/events";
+import { BoardSetResult, MatchStart } from "./../common/events";
 import { JoinResult } from "../common/events";
 import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent } from "../common/events";
 import { inject } from "aurelia-framework";
@@ -13,7 +13,8 @@ export class LandingPage {
   player1Status: string = "Waiting for Player1 to Join...";
   player2Status: string = "Waiting for Player2 to Join...";
 
-  boardsSet: number = 0;
+  private boardsSet: number = 0;
+  private matchStartResult: MatchStart = new MatchStart();
 
   constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart) {}
 
