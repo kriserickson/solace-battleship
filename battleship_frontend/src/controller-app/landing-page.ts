@@ -33,5 +33,8 @@ export class LandingPage {
 
   detached() {
     //Unsubscribe from the ../JOIN-REQUEST/* event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REQUEST/*`);
+    //Unsubscribe from the ../BOARD-SET-REQUEST/* event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REQUEST/*`);
   }
 }
