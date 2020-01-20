@@ -2,7 +2,6 @@ package com.solace.battleship.engine;
 
 import java.util.Objects;
 
-import com.solace.battleship.BattleshipServer;
 import com.solace.battleship.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
