@@ -977,7 +977,7 @@ spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientPassword=
 ```
 
 Once you entered in the credentials, navigate to `battleship_backend` and type the following command:
-`.\mvnw.cmd spring-boot:run` if under windows, otherwise run `chmod +x mvnw & ./mvnw spring-boot:run`.
+`.\mvnw.cmd spring-boot:run` if under windows, otherwise run `chmod +x mvnw && ./mvnw spring-boot:run`.
 
 This will kickoff a process to download all dependent libraries, run unit tests, launch a Spring Boot Server, and create associated Queues, and also create a filewatcher to detect any changes upon succesful compilation.
 

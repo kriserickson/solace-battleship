@@ -696,7 +696,7 @@ spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientUsername=
 spring.cloud.stream.binders.solace_cloud.environment.solace.java.clientPassword= //Password
 
 </code></pre>
-<p>Once you entered in the credentials, navigate to <code>battleship_backend</code> and type the following command:<br><code>.\mvnw.cmd spring-boot:run</code> if under windows, otherwise run <code>chmod +x mvnw &amp; ./mvnw spring-boot:run</code>.</p>
+<p>Once you entered in the credentials, navigate to <code>battleship_backend</code> and type the following command:<br><code>.\mvnw.cmd spring-boot:run</code> if under windows, otherwise run <code>chmod +x mvnw &amp;&amp; ./mvnw spring-boot:run</code>.</p>
 <p>This will kickoff a process to download all dependent libraries, run unit tests, launch a Spring Boot Server, and create associated Queues, and also create a filewatcher to detect any changes upon succesful compilation.</p>
 <p>The console outputted log should contain the following snippet if the properties were created succesfully:</p>
 <pre><code>INFO 8296 --- [  restartedMain] c.s.j.protocol.impl.TcpClientChannel     : Connecting to host &#39;orig=tcp://&lt;HOST&gt;:&lt;PORT&gt;, scheme=tcp://, host=&lt;HOST&gt;, port=&lt;PORT&gt;&#39; (host 1 of 1, smfclient 6, attempt 1 of 3, this_host_attempt: 1 of 1)
