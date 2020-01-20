@@ -1,5 +1,4 @@
 */.idea/*
+battleship_frontend/*
 battleship_backend/*
-battleship_frontend/node_modules
-battleship_frontend/src/common/game-config.ts
 claat.exe
