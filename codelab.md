@@ -1285,9 +1285,10 @@ Navigate to `battleship_backend\src\main\java\com\solace\battleship\flows\MoveRe
 
 Our application's state is almost completely managed by our backend server component. All that is left is to modify the match page to expect move requests to be handled by the Spring Cloud Stream server. What this means is that the match page will no longer handle Move Requests, and instead of using guards (if statements) to check whether the game should end, the match page should subscribe to the MATCH-END topic that the backend server will use to publish MatchEnd events.
 
-This can be accomplished by navigating to `battleship_frontend/src/controller_app/match.ts` and adding the following in the `activate(...)` function:
+This can be accomplished by navigating to `battleship_frontend/src/player-app/match.ts` and adding the following in the `activate(...)` function:
 
 ```typescript
+//Subscribe to the MATCH-END event
 this.solaceClient.subscribe(
   `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
   // game start event handler callback
