@@ -61,20 +61,6 @@ export class Match {
     );
 
     //Subscribe to the MATCH-END event
-    this.solaceClient.subscribe(
-      `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
-      // game start event handler callback
-      msg => {
-        let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
-        if (this.player.name == "player1" && matchEndObj.player1Score == 0) {
-          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
-        } else if (this.player.name == "player2" && matchEndObj.player2Score == 0) {
-          this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
-        } else {
-          this.router.navigateToRoute("game-over", { msg: "YOU WON!" });
-        }
-      }
-    );
   }
 
   /**
