@@ -150,8 +150,5 @@ public class BoardSetRequestProcessorTest {
     verify(resolver, times(1)).resolveDestination("ReplyTopic1");
     verify(resolver, times(1)).resolveDestination("ReplyTopic2");
     verify(resolver, times(1)).resolveDestination("SOLACE/BATTLESHIP/" + sessionId + "/MATCH-START/CONTROLLER");
-  }<<<<<<<HEAD
-
-    =======>>>>>>>battleship-lesson-9-implement-match-logic-in-scs-solution
-
+  }
 }
