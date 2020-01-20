@@ -824,7 +824,6 @@ Duration: 0:05:00
 
 - The benefits of doing request/reply over an event broker
 - Create a dashboard widget that listens to replies from both player1 and player2
--
 
 ### Github Branch
 
