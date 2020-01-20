@@ -127,9 +127,9 @@ public class GameEngine implements IGameEngine {
   public MoveResponseEvent requestToMakeMove(Move request) {
     GameSession session = gameSessionMap.get(request.getSessionId());
     if (session == null) {
-      // I don't know if we want to implement error classes too .. seems unnecessary
       return new MoveResponseEvent();
     }
+
     return session.makeMove(request);
   }
 
@@ -137,7 +137,6 @@ public class GameEngine implements IGameEngine {
   public boolean shouldMatchEnd(String sessionId) {
     GameSession session = gameSessionMap.get(sessionId);
     if (session == null) {
-      // I don't know if we want to implement error classes too .. seems unnecessary
       return false;
     }
     return (session.getPlayer1Score() == 0) || (session.getPlayer2Score() == 0);
@@ -147,7 +146,6 @@ public class GameEngine implements IGameEngine {
   public MatchEnd endMatch(String sessionId) {
     GameSession session = gameSessionMap.get(sessionId);
     if (session == null) {
-      // I don't know if we want to implement error classes too .. seems unnecessary
       return new MatchEnd();
     }
 
@@ -162,5 +160,9 @@ public class GameEngine implements IGameEngine {
 
     // error
     return new MatchEnd();
+  }
+
+  public void updateBoard(MoveResponseEvent event){
+    gameSessionMap.get(event.getSessionId()).updateBoard(event);
   }
 }
