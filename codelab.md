@@ -8,15 +8,17 @@ status: Draft
 feedback link: http://github.com/solacese/battleship/issues
 analytics account: UA-3921398-10
 
-# Battleship
+# Building Battleship with TypeScript, Java and Solace PubSub+
 
 ## Welcome!
 
 Duration: 0:15:00
 
-Hello and welcome to this course on Advanced Messaging Fundamentals with Solace!
+In this course, you will learn about features the Solace PubSub+ platform to create event driven distributed applications using modern frameworks and languages by implementing a multiplayer game of Battleship. The course will run you through the creation of a front-end built using TypeScript (with the Aurelia framework)and a backend built using Java (using the Spring Cloud Stream framework) - and using Solace PubSub+ to seamlessly communicate between these two components.
 
-The target audience for this workshop is for someone who is interested in learning about more advanced messaging concepts in Solace.
+![Course Logos](assets/course-logos.png)
+
+By the end of the course, you will have an understanding of different message exchange patterns that can be implemented over Solace PubSub+, the rich polyglot support of the Solace PubSub+ APIs, and the fundamentals of how to architect distributed systems with event driven microservices.
 
 ### Course Structure
 
