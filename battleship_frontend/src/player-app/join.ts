@@ -11,6 +11,7 @@ import { SolaceClient } from "../common/solace-client";
 export class Join {
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
   pageStatus = "Waiting for other player to join...";
+  connectStatus: string = null;
   playerNickname: string = null;
 
   constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper, private gameStart: GameStart) {}
@@ -21,14 +22,14 @@ export class Join {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    //Connect to Solace
+    // Connect to Solace
     this.solaceClient
       .connect()
       .then(() => {
-        console.log("Connected to Solace");
+        this.connectStatus = "Connected to Solace!";
       })
-      .catch(ex => {
-        console.log(ex);
+      .catch(error => {
+        this.connectStatus = `Failed to connect to Solace because of ${error}!`;
       });
 
     //Set the name for the player from the route parameter
