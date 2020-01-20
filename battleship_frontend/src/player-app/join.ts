@@ -1,4 +1,4 @@
-import { Player, PlayerJoined, TopicHelper, GameStart } from "../common/events";
+import { Player, PlayerJoined, TopicHelper, GameStart, JoinResult } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "../common/solace-client";
@@ -11,6 +11,8 @@ import { SolaceClient } from "../common/solace-client";
 export class Join {
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
   playerNickname: string = null;
+  connectStatus: string = null;
+  pageStatus: string = null;
 
   constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper, private gameStart: GameStart) {}
 
