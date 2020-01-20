@@ -41,6 +41,8 @@ export class Match {
 
     //Warm up the reply subscription
     this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
+
+    // subscribe to the other player's moves here
   }
 
   /**
