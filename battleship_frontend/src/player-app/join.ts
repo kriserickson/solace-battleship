@@ -11,6 +11,7 @@ import { SolaceClient } from "../common/solace-client";
 export class Join {
   pageState = "PLAYER_DETAILS"; // PLAYER_DETAILS => WAITING
   playerNickname: string = null;
+  connectStatus: string = null;
   pageStatus: string = null;
 
   constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private topicHelper: TopicHelper, private gameStart: GameStart) {}
