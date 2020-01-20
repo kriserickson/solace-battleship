@@ -1,10 +1,12 @@
 package com.solace.battleship.flows;
 
+import com.solace.battleship.events.JoinResult;
 import com.solace.battleship.events.PlayerJoined;
 import com.solace.battleship.flows.JoinProcessor.JoinRequestBinding;
-
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.handler.annotation.Header;
 
