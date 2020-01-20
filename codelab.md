@@ -157,10 +157,10 @@ Sync the following branch [battleship-lesson-1-connect-and-publish](https://gith
 
 ### Code structure
 
-The code for the project is located in the `battleship_frontend` directory. There are two 'app' folders under `src` within the `battleship_frontend`:
+The code for the project is located in the `battleship_frontend` directory. There are two `*-app` folders under `src` within `battleship_frontend`:
 
-1. contoller-app: Hosts all code as it relates to controlling the game
-2. player-app: Hosts all code as it relates to the screens for the player
+1. **contoller-app**: Hosts all code as it relates to controlling the game
+2. **player-app**: Hosts all code as it relates to the screens for the player
 
 For the sake of simplicity, you can imagine that these two subfolders contain different components of the application and they will communicate with each other over Solace PubSub+ as shown below:
 
@@ -169,6 +169,9 @@ For the sake of simplicity, you can imagine that these two subfolders contain di
 ### Creating a configuration file
 
 You will create a configuration file that holds your Solace Connection details by copying `battleship_frontend/src/common/game-config-template.ts` to `battleship_frontend/src/common/game-config.ts` and fill in the solace\_\* properties in the gameConfig object with the values retrieved from the Solace Cloud console.
+
+Positive
+: REMINDER: Before moving on, take a second to double check that your config file is named `game-config.ts`, is properly populated with your connection details, and is located at `battleship_frontend/src/common/game-config.ts`. This is step #1 to establishing connecting to our Solace PubSub+ Event Broker.
 
 Navigate to [Environment Setup](#environment-setup) to get these details from the connect details in your Solace Cloud tab:
 
