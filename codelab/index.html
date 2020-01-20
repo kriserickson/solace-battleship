@@ -285,7 +285,7 @@ this.solaceClient.subscribe(
       if (!this.gameStart[playerJoined.playerName]) {
         // update client statuses
         this.gameStart[playerJoined.playerName] = playerJoined;
-        if (playerJoined.playerName == &#34;Player1&#34;) {
+        if (playerJoined.playerName == &#34;player1&#34;) {
           this.player1Status = &#34;Player1 Joined!&#34;;
         } else {
           this.player2Status = &#34;Player2 Joined!&#34;;
@@ -375,7 +375,7 @@ this.solaceClient.subscribe(
     let boardSetEvent: BoardSetEvent = JSON.parse(msg.getBinaryAttachment());
     boardSetResult.playerName = boardSetEvent.playerName;
     //Set the response object appropriately
-    if (boardSetEvent.playerName == &#34;Player1&#34;) {
+    if (boardSetEvent.playerName == &#34;player1&#34;) {
       if (this.player1Status === &#34;Player1 Board Set!&#34;) {
         boardSetResult.message = &#34;Board already set by Player1&#34;;
         boardSetResult.success = false;
@@ -502,12 +502,12 @@ this.solaceClient
     //Update the approrpaite score/icons based on the move response
     if (moveResponseEvent.moveResult == &#34;ship&#34;) {
       this.enemyBoard[move.x][move.y] = &#34;hit&#34;;
-      this.shipHit(this.player.name == &#34;Player1&#34; ? &#34;Player2&#34; : &#34;Player1&#34;);
+      this.shipHit(this.player.name == &#34;player1&#34; ? &#34;player2&#34; : &#34;player1&#34;);
     } else {
       this.enemyBoard[move.x][move.y] = &#34;miss&#34;;
     }
     //Change the page state
-    this.pageState = this.player.name == &#34;Player1&#34; ? &#34;Player2&#34; : &#34;Player1&#34;;
+    this.pageState = this.player.name == &#34;player1&#34; ? &#34;player2&#34; : &#34;player1&#34;;
     //Rotate the turn message
     this.rotateTurnMessage();
   })
@@ -764,7 +764,7 @@ this.solaceClient.subscribe(
       let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
       if (joinResult.success) {
         // update client statuses
-        if (joinResult.playerName == &#34;Player1&#34;) {
+        if (joinResult.playerName == &#34;player1&#34;) {
           this.player1Status = &#34;Player1 Joined!&#34;;
         } else {
           this.player2Status = &#34;Player2 Joined!&#34;;
@@ -790,7 +790,7 @@ this.solaceClient.subscribe(
 );
 </code></pre>
 <h2 is-upgraded>Running the application</h2>
-<p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>chmod +x mvnw &amp; ./mvnw spring-boot:run</code> from the battleship_backend folder.</p>
+<p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>chmod +x mvnw &amp;&amp; ./mvnw spring-boot:run</code> from the battleship_backend folder.</p>
 <p>Now navigate to <a href="http://localhost:12345" target="_blank">http://localhost:12345</a>, the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.</p>
 <h2 is-upgraded>Summary</h2>
 <p class="image-container"><img alt="Lesson 7 Summary" src="img/c5c2817689aba1b1.png"></p>
@@ -867,7 +867,7 @@ this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`,
 });
 </code></pre>
 <h2 is-upgraded>Running the application</h2>
-<p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>chmod +x mvnw &amp; ./mvnw spring-boot:run</code> from the battleship_backend folder.</p>
+<p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>chmod +x mvnw &amp;&amp; ./mvnw spring-boot:run</code> from the battleship_backend folder.</p>
 <p>Now navigate to <a href="http://localhost:12345" target="_blank">http://localhost:12345</a>, the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.</p>
 <h2 is-upgraded>Summary</h2>
 <p class="image-container"><img alt="Lesson 8 Summary" src="img/5fded5ee0086efb4.png"></p>
@@ -942,7 +942,7 @@ queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
 );
 </code></pre>
 <h2 is-upgraded>Running the application</h2>
-<p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>chmod +x mvnw &amp; ./mvnw spring-boot:run</code> from the battleship_backend folder.</p>
+<p>Run either <code>mvnw.cmd spring-boot:run</code> if on Windows or <code>chmod +x mvnw &amp;&amp; ./mvnw spring-boot:run</code> from the battleship_backend folder.</p>
 <p>Now navigate to <a href="http://localhost:12345" target="_blank">http://localhost:12345</a>, the game should operate exactly as before but now the Join Requests are being handled by the Battleship Spring Cloud Stream server.</p>
 <h2 is-upgraded>Summary</h2>
 <p class="image-container"><img alt="Lesson 9 Summary" src="img/68149511d9a7e47.png"></p>
