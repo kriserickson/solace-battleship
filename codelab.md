@@ -35,13 +35,20 @@ All the code used in this Codelab can be found in [this GitHub repository](https
 
 The repository is split up into branches that correspond to the lessons. Each lesson has two corresponding branches: one branch that accompanies the copy and paste sections of the Codelab, and one solutions branch. E.g. battleship-lesson-1-connect-and-publish, and battleship-lesson-1-connect-and-publish-solution-solution. If you want to build a version of the game before completing its corresponding lesson, `git checkout` the `battleship-lesson-*-solution` branch of your choosing.
 
+### Udemy
+
+Accessing the Udemy Video links in the codelab requires a few things:
+
+  1. An account on [Udemy](https://www.udemy.com)
+  2. Enroll in the Battleship With PubSub+ Udemy Course
+
 ### Udemy Videos
 
-- [Welcome](https://youtu.be/5k9lPE5Ey-g?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
+- [Welcome]()
 
-- [Why Messaging](https://www.youtube.com/watch?v=6fwuwwt31rY)
+- [Event Driven Architecture]()
 
-- [Who is Solace](https://www.youtube.com/watch?v=Lfyvps9QjSg)
+- [Who is Solace]()
 
 ### What We'll Be Building
 
@@ -137,9 +144,11 @@ Duration: 0:20:00
 
 ### Udemy Videos
 
-- [Section 1 Overview](https://www.youtube.com/watch?v=MJPj3s4dGYo)
+- [Battleship - Section 1 Overview]()
 
-- [Solace Topics](https://youtu.be/_SUcEu-Mg0o?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
+- [Battleship Client Side Flow]()
+
+- [Solace Topics]()
 
 ### Objectives
 
@@ -355,8 +364,8 @@ Duration: 0:20:00
 
 ### Udemy Videos
 
-- [Topic Dispatch](https://youtu.be/owwx_EBNVS4?list=PL2jCnl3jH1qXdJ-WW52Bgz7oclSoofu9e)
-- [Request Reply](https://www.youtube.com/watch?v=yQUwWIY9mi4)
+- [Topic Dispatch]()
+- [Request Reply]()
 
 ### Objectives
 
@@ -808,6 +817,8 @@ You can optionally also run the `now` command again in the battleship_frontend d
 
 ### Summary
 
+[Summary Udemy Video]()
+
 In this lesson you learned about the flexibility of topic routing. By simply adding a random string to the prefix of your topic and persisting that prefix through the lifecycle of your application, you can now have more than one game going on at once. No major changes were needed for your game logic to deal with this.
 
 Be sure to commit the changes you made to this branch by running `git commit -m "lesson4"`
@@ -819,6 +830,10 @@ To see the completed code for this section, sync the following branch [battleshi
 ## Lesson 5 - Creating a Battleship Dashboard
 
 Duration: 0:05:00
+
+### Udemy Videos
+
+  * [Microservices]()
 
 ### Objectives
 
@@ -894,6 +909,12 @@ To see the completed code for this section, sync the following branch [battleshi
 ## Lesson 6 - Creating a Spring Cloud Stream server skeleton for the battleship backend
 
 Duration: 0:20:00
+
+### Udemy Videos
+
+- [Battleship: Adding Serverside]()
+- [Topic to Queue Mappings]()
+- [Overview of Spring Cloud Stream]()
 
 ### Objectives
 
@@ -1209,6 +1230,8 @@ Now navigate to [http://localhost:12345](http://localhost:12345), the game shoul
 
 ### Summary
 
+[Udemy Summary Video]()
+
 ![Lesson 8 Summary](assets/lesson-08-summary.png)
 
 In this lesson, you implemented another message handler in our Spring Cloud Stream application using the same pattern we used in lesson 7. Spring Cloud Stream does a lot of the heavy lifting in terms of session management, connect logic, etc. when it comes to Solace. As you saw, all you had to do was implement your business logic and modify the `application.yml` configuration file to make sure the correct messages are being attracted and queued.
@@ -1315,6 +1338,8 @@ Now navigate to [http://localhost:12345](http://localhost:12345), the game shoul
 
 ![Lesson 9 Summary](assets/lesson-09-summary.png)
 
+[Udemy Summary Video]()
+
 In this final lesson of the course, you implemented another message handler in Spring Cloud Stream using the same patter we used in lessons 7 and 8. Lessons 7-9 show you how building applications using event-driven architecture allows you to build microservices in a decoupled manner. Instead of modifying a single orchestrating "backend service," we're able to add flow processors that act independently.
 
 Additionally, you modified the client-side controller app further so that it is not responsible for any game state. Instead, it is able to derive the match's state from events it receives from our more secure Spring Cloud Stream backend application. Better yet, we were able to implement this transition without a major overhaul of our client application because it was built using event-driven architecture and a message broker instead of tightly coupled REST microservices exposed via an API.
@@ -1332,6 +1357,12 @@ Duration: 0:15:00
 In this course we'll be using `solace-client.ts` to interact with the Solace Event Broker. This client is a custom wrapper around Solace's JavaScript client that is written in TypeScript and includes topic dispatch functionality, i.e. the ability to map events to different callbacks based on the event's topic. Examples of Solace's standard JavaScript client can be found [here](https://github.com/SolaceSamples/solace-samples-javascript).
 
 This section of the Codelab is entirely optional. If you're interested in learning more about the lifecycle of a Solace client, read on. Otherwise, feel free to skip this section and jump to Lesson 1.
+
+### Udemy Videos
+
+- [Client Connections]()
+- [Subscription Lifecycle]()
+- [Topic Dispatch]()
 
 ### Connect Logic
 

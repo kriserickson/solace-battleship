@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-01-20T15:59:50-05:00",
+  "updated": "2020-01-21T10:41:11-05:00",
   "id": "codelab",
   "duration": 130,
   "title": "Building Battleship with TypeScript, Java and Solace PubSub+",
