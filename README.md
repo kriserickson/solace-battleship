@@ -1,1 +1,1 @@
-Navigate to the Codelab [https://solacese.github.io/battleship/codelab/#0](https://solacese.github.io/battleship/codelab/#0)
+Navigate to the Codelab [https://codelabs.solace.dev/codelabs/solace-battleship/index.html](https://codelabs.solace.dev/codelabs/solace-battleship/index.html)
